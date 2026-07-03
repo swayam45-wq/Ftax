@@ -1,0 +1,301 @@
+// This is your Prisma schema file for FTax
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  STUDENT
+  ADMIN
+}
+
+enum VisaType {
+  F1
+  F2
+  J1
+  J2
+  H1B
+  OPT
+  CPT
+  OTHER
+}
+
+enum DegreeType {
+  BACHELORS
+  MASTERS
+  PHD
+  CERTIFICATE
+  OTHER
+}
+
+enum ResidencyStatus {
+  NONRESIDENT_ALIEN
+  RESIDENT_ALIEN
+  DUAL_STATUS
+  UNKNOWN
+}
+
+enum IncomeType {
+  W2
+  FORM_1042S
+  FORM_1099_INT
+  FORM_1099_MISC
+  FORM_1099_NEC
+  SCHOLARSHIP
+  FELLOWSHIP
+  ASSISTANTSHIP_TA
+  ASSISTANTSHIP_RA
+  OPT_EMPLOYMENT
+  CPT_EMPLOYMENT
+  INTERNSHIP
+  OTHER
+}
+
+// ─── Users ────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  emailVerified Boolean  @default(false)
+  role          UserRole @default(STUDENT)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  profile            Profile?
+  refreshTokens      RefreshToken[]
+  emailVerifications EmailVerification[]
+  passwordResets     PasswordReset[]
+  travelHistory      TravelHistory[]
+  residencyHistory   ResidencyHistory[]
+  incomeSources      IncomeSource[]
+  taxReturns         TaxReturn[]
+  auditLogs          AuditLog[]
+
+  @@map("users")
+}
+
+// ─── Profiles ─────────────────────────────────────────────────────────────────
+
+model Profile {
+  id                 String      @id @default(cuid())
+  userId             String      @unique
+  firstName          String
+  lastName           String
+  dateOfBirth        DateTime?
+  passportCountry    String?     // ISO 3166-1 alpha-2 (e.g., "IN", "CN")
+  nationality        String?
+  visaType           VisaType?   @default(F1)
+  visaStartDate      DateTime?
+  visaExpiryDate     DateTime?
+  sevisId            String?
+  // UIC-specific fields
+  university         String      @default("University of Illinois Chicago")
+  uicStudentId       String?
+  department         String?
+  degree             DegreeType?
+  programStartDate   DateTime?
+  expectedGraduation DateTime?
+  // Sensitive fields (encrypted)
+  ssnEncrypted       String?     // AES-256-GCM encrypted
+  itinEncrypted      String?     // AES-256-GCM encrypted
+  hasSsn             Boolean     @default(false)
+  hasItin            Boolean     @default(false)
+  // Meta
+  completionPct      Int         @default(0)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+// ─── Travel History ────────────────────────────────────────────────────────────
+
+model TravelHistory {
+  id            String    @id @default(cuid())
+  userId        String
+  departureDate DateTime
+  returnDate    DateTime?
+  destination   String    // Country/city
+  reason        String?
+  daysOutside   Int       @default(0)
+  isCurrentTrip Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, departureDate])
+  @@map("travel_history")
+}
+
+// ─── Residency History ────────────────────────────────────────────────────────
+
+model ResidencyHistory {
+  id          String          @id @default(cuid())
+  userId      String
+  visaType    VisaType
+  startDate   DateTime
+  endDate     DateTime?
+  status      ResidencyStatus @default(UNKNOWN)
+  notes       String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("residency_history")
+}
+
+// ─── Income Sources ───────────────────────────────────────────────────────────
+
+model IncomeSource {
+  id              String     @id @default(cuid())
+  userId          String
+  taxYear         Int
+  incomeType      IncomeType
+  payer           String?    // Employer/institution name
+  amount          Decimal    @db.Decimal(12, 2)
+  taxWithheld     Decimal    @default(0) @db.Decimal(12, 2)
+  stateWithheld   Decimal    @default(0) @db.Decimal(12, 2)
+  isTreatyExempt  Boolean    @default(false)
+  treatyAmount    Decimal    @default(0) @db.Decimal(12, 2)
+  notes           String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taxReturn TaxReturn? @relation(fields: [taxReturnId], references: [id])
+  taxReturnId String?
+
+  @@index([userId, taxYear])
+  @@map("income_sources")
+}
+
+// ─── Tax Returns ──────────────────────────────────────────────────────────────
+
+model TaxReturn {
+  id                String          @id @default(cuid())
+  userId            String
+  taxYear           Int
+  residencyStatus   ResidencyStatus @default(UNKNOWN)
+  totalIncome       Decimal         @default(0) @db.Decimal(12, 2)
+  treatyDeduction   Decimal         @default(0) @db.Decimal(12, 2)
+  taxableIncome     Decimal         @default(0) @db.Decimal(12, 2)
+  estimatedTax      Decimal         @default(0) @db.Decimal(12, 2)
+  totalWithheld     Decimal         @default(0) @db.Decimal(12, 2)
+  estimatedRefund   Decimal         @default(0) @db.Decimal(12, 2)
+  completionPct     Int             @default(0)
+  isSubmitted       Boolean         @default(false)
+  submittedAt       DateTime?
+  ruleSetVersion    String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  incomeSources IncomeSource[]
+
+  @@unique([userId, taxYear])
+  @@map("tax_returns")
+}
+
+// ─── Auth: Refresh Tokens ──────────────────────────────────────────────────────
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  isRevoked Boolean  @default(false)
+  userAgent String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+// ─── Auth: Email Verification ─────────────────────────────────────────────────
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("email_verifications")
+}
+
+// ─── Auth: Password Reset ────────────────────────────────────────────────────
+
+model PasswordReset {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_resets")
+}
+
+// ─── Audit Logs ───────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String   // e.g., "PROFILE_UPDATED", "SSN_VIEWED", "LOGIN"
+  resource  String?  // e.g., "Profile", "TaxReturn"
+  resourceId String?
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@map("audit_logs")
+}
+
+// ─── Tax Treaties ─────────────────────────────────────────────────────────────
+
+model TaxTreaty {
+  id               String   @id @default(cuid())
+  country          String   @unique // ISO country name
+  countryCode      String   // ISO 3166-1 alpha-2
+  treatyExists     Boolean  @default(false)
+  article          String?
+  maxExemption     Decimal? @db.Decimal(12, 2) // null = unlimited
+  eligibleTypes    String[] // income types covered
+  durationYears    Int?     // null = duration of studies
+  explanation      String?
+  referenceUrl     String?
+  lastUpdated      DateTime @default(now())
+  createdAt        DateTime @default(now())
+
+  @@map("tax_treaties")
+}

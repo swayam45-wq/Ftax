@@ -1,0 +1,9 @@
+{
+  "name": "@ftax/rules",
+  "version": "1.0.0",
+  "description": "Tax rule configuration files for FTax",
+  "main": "index.js",
+  "scripts": {
+    "validate": "node scripts/validate-rules.js"
+  }
+}

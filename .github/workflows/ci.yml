@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  lint-and-type-check:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check (API)
+        run: cd apps/api && pnpm tsc --noEmit
+
+      - name: Type check (Web)
+        run: cd apps/web && pnpm tsc --noEmit
+
+  test-api:
+    name: API Unit Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ftax_user
+          POSTGRES_PASSWORD: ftax_password
+          POSTGRES_DB: ftax_test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://ftax_user:ftax_password@localhost:5432/ftax_test_db
+      JWT_ACCESS_SECRET: test_access_secret_at_least_64_chars_long_xxxxxxxxxxxxxxxxxxxxxxxxxx
+      JWT_REFRESH_SECRET: test_refresh_secret_at_least_64_chars_long_xxxxxxxxxxxxxxxxxxxxxxxxx
+      JWT_ACCESS_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Prisma migrations
+        run: cd apps/api && pnpm db:migrate
+
+      - name: Run unit tests
+        run: cd apps/api && pnpm test
+
+      - name: Run e2e tests
+        run: cd apps/api && pnpm test:e2e
+
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    needs: [lint-and-type-check, test-api]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build API
+        run: cd apps/api && pnpm build
+
+      - name: Build Web
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+        run: cd apps/web && pnpm build

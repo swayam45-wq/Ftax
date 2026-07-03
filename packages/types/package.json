@@ -1,0 +1,14 @@
+{
+  "name": "@ftax/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for FTax",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "lint": "eslint src --ext .ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

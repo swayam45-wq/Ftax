@@ -1,0 +1,187 @@
+{
+  "year": 2025,
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-01",
+  "description": "Tax rules for tax year 2025 — F-1 visa students at UIC",
+  "constants": {
+    "SUBSTANTIAL_PRESENCE_THRESHOLD": 183,
+    "F1_EXEMPT_YEARS": 5,
+    "STANDARD_DEDUCTION_NONRESIDENT": 0,
+    "FEDERAL_TAX_RATE_10": 0.10,
+    "FEDERAL_TAX_RATE_12": 0.12,
+    "FEDERAL_TAX_RATE_22": 0.22,
+    "FEDERAL_TAX_RATE_24": 0.24,
+    "BRACKET_10_MAX": 11925,
+    "BRACKET_12_MAX": 48475,
+    "BRACKET_22_MAX": 103350,
+    "BRACKET_24_MAX": 197300,
+    "FICA_EXEMPT_YEARS_F1": 5,
+    "FORM_8843_REQUIRED_THRESHOLD": 1,
+    "TAX_FILING_DEADLINE": "2025-04-15",
+    "EXTENSION_DEADLINE": "2025-10-15"
+  },
+  "rules": [
+    {
+      "ruleId": "R001",
+      "description": "F-1 student within first 5 calendar years — exempt from Substantial Presence Test",
+      "priority": 1,
+      "conditions": [
+        {
+          "field": "visaType",
+          "operator": "equals",
+          "value": "F1"
+        },
+        {
+          "field": "calendarYearsInUS",
+          "operator": "<=",
+          "value": 5
+        }
+      ],
+      "result": {
+        "residencyStatus": "NONRESIDENT_ALIEN",
+        "explanation": "As an F-1 student within your first 5 calendar years in the U.S., you are automatically considered an 'Exempt Individual' and do not count your days toward the Substantial Presence Test. This means you are a Nonresident Alien for tax purposes.",
+        "formRequired": ["8843", "1040-NR"],
+        "ficaExempt": true
+      }
+    },
+    {
+      "ruleId": "R002",
+      "description": "F-1 student beyond 5 calendar years — must apply Substantial Presence Test",
+      "priority": 2,
+      "conditions": [
+        {
+          "field": "visaType",
+          "operator": "equals",
+          "value": "F1"
+        },
+        {
+          "field": "calendarYearsInUS",
+          "operator": ">",
+          "value": 5
+        },
+        {
+          "field": "substantialPresenceMet",
+          "operator": "equals",
+          "value": true
+        }
+      ],
+      "result": {
+        "residencyStatus": "RESIDENT_ALIEN",
+        "explanation": "You have been in the U.S. for more than 5 calendar years on an F-1 visa and meet the Substantial Presence Test (183 weighted days). You are now considered a Resident Alien for tax purposes and must file Form 1040 instead of 1040-NR.",
+        "formRequired": ["1040"],
+        "ficaExempt": false
+      }
+    },
+    {
+      "ruleId": "R003",
+      "description": "F-1 student beyond 5 calendar years — does NOT meet Substantial Presence Test",
+      "priority": 3,
+      "conditions": [
+        {
+          "field": "visaType",
+          "operator": "equals",
+          "value": "F1"
+        },
+        {
+          "field": "calendarYearsInUS",
+          "operator": ">",
+          "value": 5
+        },
+        {
+          "field": "substantialPresenceMet",
+          "operator": "equals",
+          "value": false
+        }
+      ],
+      "result": {
+        "residencyStatus": "NONRESIDENT_ALIEN",
+        "explanation": "Even though you have been in the U.S. for more than 5 calendar years on an F-1 visa, you do not meet the Substantial Presence Test. You remain a Nonresident Alien for tax purposes.",
+        "formRequired": ["8843", "1040-NR"],
+        "ficaExempt": false
+      }
+    },
+    {
+      "ruleId": "R004",
+      "description": "Form 8843 required for all F-1 students regardless of income",
+      "priority": 10,
+      "conditions": [
+        {
+          "field": "visaType",
+          "operator": "equals",
+          "value": "F1"
+        },
+        {
+          "field": "daysInUSCurrentYear",
+          "operator": ">=",
+          "value": 1
+        }
+      ],
+      "result": {
+        "form8843Required": true,
+        "explanation": "All F-1 students who spent any time in the U.S. during the tax year must file Form 8843, even if they had no income. This form declares your exempt individual status.",
+        "deadline": "2025-04-15"
+      }
+    },
+    {
+      "ruleId": "R005",
+      "description": "FICA (Social Security + Medicare) tax exemption for F-1 students in first 5 years",
+      "priority": 5,
+      "conditions": [
+        {
+          "field": "visaType",
+          "operator": "equals",
+          "value": "F1"
+        },
+        {
+          "field": "calendarYearsInUS",
+          "operator": "<=",
+          "value": 5
+        }
+      ],
+      "result": {
+        "ficaExempt": true,
+        "socialSecurityExempt": true,
+        "medicareExempt": true,
+        "explanation": "F-1 students in their first 5 calendar years are exempt from FICA taxes (Social Security 6.2% + Medicare 1.45%). If your employer withheld these taxes, you may be entitled to a refund. Check your W-2 boxes 4 and 6.",
+        "refundPossible": true
+      }
+    },
+    {
+      "ruleId": "R006",
+      "description": "Illinois state income tax applies to all income earned in Illinois",
+      "priority": 20,
+      "conditions": [
+        {
+          "field": "stateOfResidence",
+          "operator": "equals",
+          "value": "IL"
+        }
+      ],
+      "result": {
+        "stateFilingRequired": true,
+        "stateTaxRate": 0.0495,
+        "stateForm": "IL-1040-NR",
+        "explanation": "Illinois has a flat 4.95% income tax rate on all income earned in Illinois. As a student at UIC in Chicago, you likely need to file Illinois Form IL-1040-NR (Nonresident and Part-Year Resident Return).",
+        "illinoisStandardDeduction": 2775
+      }
+    }
+  ],
+  "treatySummary": {
+    "description": "Tax treaties may reduce or eliminate U.S. tax on certain types of income. Check the treaty module for your country.",
+    "topCountriesAtUIC": ["India", "China", "South Korea", "Mexico", "Nigeria", "Iran", "Taiwan", "Pakistan"],
+    "indiaArticle21": {
+      "article": "21",
+      "description": "Students and Business Apprentices",
+      "exemptIncome": ["Scholarships", "Grants", "Fellowship"],
+      "maximumExemption": "Unlimited",
+      "durationLimit": "Duration of studies"
+    },
+    "chinaArticle20": {
+      "article": "20",
+      "description": "Students and Trainees",
+      "exemptIncome": ["Scholarships", "Grants", "Teaching/Research income"],
+      "maximumExemption": 5000,
+      "durationLimit": 5
+    }
+  }
+}
