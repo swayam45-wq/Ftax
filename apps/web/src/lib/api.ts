@@ -75,7 +75,13 @@ apiClient.interceptors.response.use(
 // ─── API Functions ────────────────────────────────────────────────────────────
 
 export const authApi = {
-  register: (data: { email: string; password: string; firstName: string; lastName: string }) =>
+  sendOtp: (email: string) =>
+    apiClient.post<{ message: string }>('/auth/send-otp', { email }),
+
+  verifyOtp: (email: string, otp: string) =>
+    apiClient.post<{ message: string; otpToken: string }>('/auth/verify-otp', { email, otp }),
+
+  register: (data: { email: string; password: string; firstName: string; lastName: string; otpToken: string }) =>
     apiClient.post('/auth/register', data),
 
   login: (data: { email: string; password: string }) =>

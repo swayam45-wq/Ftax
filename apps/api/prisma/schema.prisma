@@ -262,6 +262,23 @@ model PasswordReset {
   @@map("password_resets")
 }
 
+// ─── Auth: Email OTP (pre-registration) ─────────────────────────────────────
+
+model EmailOtp {
+  id        String    @id @default(cuid())
+  email     String    // UIC email before account creation
+  otpHash   String    // bcrypt hash of 6-digit OTP
+  token     String    @unique // short-lived token returned after OTP verified
+  verified  Boolean   @default(false)
+  expiresAt DateTime
+  usedAt    DateTime?
+  attempts  Int       @default(0) // track brute-force attempts
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+  @@map("email_otps")
+}
+
 // ─── Audit Logs ───────────────────────────────────────────────────────────────
 
 model AuditLog {

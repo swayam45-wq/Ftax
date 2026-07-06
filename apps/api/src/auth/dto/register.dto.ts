@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 export class RegisterDto {
-  @ApiProperty({ example: 'john.doe@uic.edu' })
+  @ApiProperty({ example: 'john.doe@uic.edu', description: 'Must be a @uic.edu email address' })
   @IsEmail({}, { message: 'Please enter a valid email address' })
   @Transform(({ value }) => value?.toLowerCase().trim())
   email: string;
@@ -27,4 +27,11 @@ export class RegisterDto {
   @MaxLength(50)
   @Transform(({ value }) => value?.trim())
   lastName: string;
+
+  @ApiProperty({
+    description: 'Short-lived token returned by POST /auth/verify-otp after OTP is confirmed',
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'OTP verification token is required' })
+  otpToken: string;
 }

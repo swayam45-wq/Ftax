@@ -3,7 +3,7 @@ import {
   UnauthorizedException,
   BadRequestException,
   ConflictException,
-  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -13,7 +13,6 @@ import { AuditService } from '../audit/audit.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
@@ -23,6 +22,9 @@ export class AuthService {
   private readonly REFRESH_TOKEN_EXPIRY_DAYS = 7;
   private readonly EMAIL_VERIFY_EXPIRY_HOURS = 24;
   private readonly PASSWORD_RESET_EXPIRY_HOURS = 1;
+  private readonly OTP_EXPIRY_MINUTES = 10;
+  private readonly OTP_MAX_ATTEMPTS = 5;
+  private readonly OTP_VERIFIED_TOKEN_EXPIRY_MINUTES = 30;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -32,26 +34,168 @@ export class AuthService {
     private readonly auditService: AuditService,
   ) {}
 
+  // ─── Send OTP ─────────────────────────────────────────────────────────────
+
+  async sendOtp(email: string, ipAddress?: string) {
+    const normalised = email.toLowerCase().trim();
+
+    // Enforce @uic.edu domain
+    if (!normalised.endsWith('@uic.edu')) {
+      throw new ForbiddenException(
+        'Only University of Illinois Chicago email addresses (@uic.edu) are allowed to register.',
+      );
+    }
+
+    // Don't let someone who already has an account re-use OTP flow
+    const existing = await this.prisma.user.findUnique({ where: { email: normalised } });
+    if (existing) {
+      throw new ConflictException('An account with this UIC email already exists. Please log in.');
+    }
+
+    // Rate-limit: invalidate any unexpired OTPs for this email first
+    await this.prisma.emailOtp.updateMany({
+      where: { email: normalised, verified: false, usedAt: null },
+      data: { usedAt: new Date() }, // mark old ones as consumed
+    });
+
+    // Generate a cryptographically secure 6-digit OTP
+    const otp = this.generateSixDigitOtp();
+    const otpHash = await bcrypt.hash(otp, 10);
+
+    // Also create a pre-verified token (used AFTER OTP confirmed)
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + this.OTP_EXPIRY_MINUTES * 60 * 1000);
+
+    await this.prisma.emailOtp.create({
+      data: { email: normalised, otpHash, token, expiresAt },
+    });
+
+    // Send OTP email
+    await this.mailService.sendOtp(normalised, otp);
+
+    await this.auditService.log({
+      action: 'OTP_SENT',
+      resource: 'EmailOtp',
+      metadata: { email: normalised },
+      ipAddress,
+    });
+
+    return {
+      message: `A 6-digit verification code has been sent to ${normalised}. It expires in ${this.OTP_EXPIRY_MINUTES} minutes.`,
+    };
+  }
+
+  // ─── Verify OTP ───────────────────────────────────────────────────────────
+
+  async verifyOtp(email: string, otp: string, ipAddress?: string) {
+    const normalised = email.toLowerCase().trim();
+
+    // Find the most recent valid OTP record for this email
+    const record = await this.prisma.emailOtp.findFirst({
+      where: {
+        email: normalised,
+        verified: false,
+        usedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!record) {
+      throw new BadRequestException(
+        'No valid OTP found for this email. Please request a new one.',
+      );
+    }
+
+    // Brute-force guard
+    if (record.attempts >= this.OTP_MAX_ATTEMPTS) {
+      await this.prisma.emailOtp.update({
+        where: { id: record.id },
+        data: { usedAt: new Date() },
+      });
+      throw new BadRequestException(
+        'Too many incorrect attempts. Please request a new OTP.',
+      );
+    }
+
+    const isCorrect = await bcrypt.compare(otp, record.otpHash);
+
+    if (!isCorrect) {
+      // Increment attempts
+      await this.prisma.emailOtp.update({
+        where: { id: record.id },
+        data: { attempts: { increment: 1 } },
+      });
+      const remaining = this.OTP_MAX_ATTEMPTS - (record.attempts + 1);
+      throw new BadRequestException(
+        `Incorrect code. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`,
+      );
+    }
+
+    // Mark OTP as verified, extend token expiry to 30 min for account creation
+    const verifiedTokenExpiry = new Date(
+      Date.now() + this.OTP_VERIFIED_TOKEN_EXPIRY_MINUTES * 60 * 1000,
+    );
+    await this.prisma.emailOtp.update({
+      where: { id: record.id },
+      data: { verified: true, expiresAt: verifiedTokenExpiry },
+    });
+
+    await this.auditService.log({
+      action: 'OTP_VERIFIED',
+      metadata: { email: normalised },
+      ipAddress,
+    });
+
+    return {
+      message: 'Email verified successfully. You can now create your account.',
+      otpToken: record.token, // frontend passes this to /register
+    };
+  }
+
   // ─── Register ─────────────────────────────────────────────────────────────
 
   async register(dto: RegisterDto, ipAddress?: string) {
-    // Check if email already exists
-    const existing = await this.prisma.user.findUnique({
-      where: { email: dto.email.toLowerCase() },
-    });
-    if (existing) {
-      throw new ConflictException('An account with this email already exists');
+    const normalised = dto.email.toLowerCase().trim();
+
+    // 1. Enforce @uic.edu domain (double-check even though OTP also enforces it)
+    if (!normalised.endsWith('@uic.edu')) {
+      throw new ForbiddenException('Only @uic.edu email addresses are allowed.');
     }
 
-    // Hash password
+    // 2. Validate OTP token
+    const otpRecord = await this.prisma.emailOtp.findUnique({
+      where: { token: dto.otpToken },
+    });
+
+    if (
+      !otpRecord ||
+      otpRecord.email !== normalised ||
+      !otpRecord.verified ||
+      otpRecord.usedAt ||
+      otpRecord.expiresAt < new Date()
+    ) {
+      throw new BadRequestException(
+        'Email verification expired or invalid. Please verify your email again.',
+      );
+    }
+
+    // 3. Check duplicate email
+    const existing = await this.prisma.user.findUnique({ where: { email: normalised } });
+    if (existing) {
+      throw new ConflictException('An account with this email already exists.');
+    }
+
+    // 4. Hash password
     const passwordHash = await bcrypt.hash(dto.password, this.BCRYPT_ROUNDS);
 
-    // Create user + profile in a transaction
+    // 5. Create user + profile + consume OTP in a transaction
     const user = await this.prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
         data: {
-          email: dto.email.toLowerCase(),
+          email: normalised,
           passwordHash,
+          emailVerified: true, // already verified via OTP
           profile: {
             create: {
               firstName: dto.firstName,
@@ -62,38 +206,26 @@ export class AuthService {
         },
       });
 
-      // Create email verification token
-      const token = crypto.randomBytes(32).toString('hex');
-      const expiresAt = new Date(
-        Date.now() + this.EMAIL_VERIFY_EXPIRY_HOURS * 60 * 60 * 1000,
-      );
-
-      await tx.emailVerification.create({
-        data: { userId: newUser.id, token, expiresAt },
+      // Mark OTP token as used
+      await tx.emailOtp.update({
+        where: { token: dto.otpToken },
+        data: { usedAt: new Date() },
       });
 
-      return { user: newUser, verificationToken: token };
+      return newUser;
     });
 
-    // Send verification email
-    await this.mailService.sendEmailVerification(
-      dto.email,
-      dto.firstName,
-      user.verificationToken,
-    );
-
-    // Audit log
     await this.auditService.log({
-      userId: user.user.id,
+      userId: user.id,
       action: 'USER_REGISTERED',
       resource: 'User',
-      resourceId: user.user.id,
+      resourceId: user.id,
       ipAddress,
     });
 
     return {
-      message: 'Account created. Please check your email to verify your account.',
-      userId: user.user.id,
+      message: 'Account created successfully. You can now log in.',
+      userId: user.id,
     };
   }
 
@@ -118,17 +250,17 @@ export class AuthService {
 
   // ─── Login ────────────────────────────────────────────────────────────────
 
-  async login(user: { id: string; email: string; role: string }, ipAddress?: string, userAgent?: string) {
+  async login(
+    user: { id: string; email: string; role: string },
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const accessToken = this.generateAccessToken(user.id, user.email, user.role);
     const refreshToken = await this.generateRefreshToken(user.id, ipAddress, userAgent);
 
-    await this.auditService.log({
-      userId: user.id,
-      action: 'USER_LOGIN',
-      ipAddress,
-    });
+    await this.auditService.log({ userId: user.id, action: 'USER_LOGIN', ipAddress });
 
     return { accessToken, refreshToken };
   }
@@ -136,7 +268,6 @@ export class AuthService {
   // ─── Refresh Token ────────────────────────────────────────────────────────
 
   async refresh(refreshToken: string, ipAddress?: string) {
-    // Hash the incoming token to compare with stored hash
     const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
 
     const storedToken = await this.prisma.refreshToken.findUnique({
@@ -148,7 +279,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    // Rotate: revoke old, issue new
     await this.prisma.refreshToken.update({
       where: { id: storedToken.id },
       data: { isRevoked: true },
@@ -159,10 +289,7 @@ export class AuthService {
       storedToken.user.email,
       storedToken.user.role,
     );
-    const newRefreshToken = await this.generateRefreshToken(
-      storedToken.user.id,
-      ipAddress,
-    );
+    const newRefreshToken = await this.generateRefreshToken(storedToken.user.id, ipAddress);
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
@@ -178,70 +305,6 @@ export class AuthService {
     });
 
     await this.auditService.log({ userId, action: 'USER_LOGOUT' });
-  }
-
-  // ─── Email Verification ───────────────────────────────────────────────────
-
-  async verifyEmail(token: string) {
-    const record = await this.prisma.emailVerification.findUnique({
-      where: { token },
-      include: { user: true },
-    });
-
-    if (!record || record.usedAt || record.expiresAt < new Date()) {
-      throw new BadRequestException('Invalid or expired verification link');
-    }
-
-    await this.prisma.$transaction([
-      this.prisma.emailVerification.update({
-        where: { id: record.id },
-        data: { usedAt: new Date() },
-      }),
-      this.prisma.user.update({
-        where: { id: record.userId },
-        data: { emailVerified: true },
-      }),
-    ]);
-
-    await this.auditService.log({
-      userId: record.userId,
-      action: 'EMAIL_VERIFIED',
-    });
-
-    return { message: 'Email verified successfully. You can now log in.' };
-  }
-
-  // ─── Resend Verification ──────────────────────────────────────────────────
-
-  async resendVerification(email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-      include: { profile: true },
-    });
-
-    if (!user) {
-      // Don't reveal if email exists
-      return { message: 'If this email is registered, a verification link has been sent.' };
-    }
-
-    if (user.emailVerified) {
-      return { message: 'Email is already verified.' };
-    }
-
-    const token = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + this.EMAIL_VERIFY_EXPIRY_HOURS * 60 * 60 * 1000);
-
-    await this.prisma.emailVerification.create({
-      data: { userId: user.id, token, expiresAt },
-    });
-
-    await this.mailService.sendEmailVerification(
-      user.email,
-      user.profile?.firstName || 'Student',
-      token,
-    );
-
-    return { message: 'If this email is registered, a verification link has been sent.' };
   }
 
   // ─── Forgot Password ──────────────────────────────────────────────────────
@@ -277,9 +340,7 @@ export class AuthService {
   // ─── Reset Password ───────────────────────────────────────────────────────
 
   async resetPassword(dto: ResetPasswordDto) {
-    const record = await this.prisma.passwordReset.findUnique({
-      where: { token: dto.token },
-    });
+    const record = await this.prisma.passwordReset.findUnique({ where: { token: dto.token } });
 
     if (!record || record.usedAt || record.expiresAt < new Date()) {
       throw new BadRequestException('Invalid or expired reset link');
@@ -296,7 +357,6 @@ export class AuthService {
         where: { id: record.userId },
         data: { passwordHash },
       }),
-      // Revoke all refresh tokens for security
       this.prisma.refreshToken.updateMany({
         where: { userId: record.userId },
         data: { isRevoked: true },
@@ -310,11 +370,22 @@ export class AuthService {
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
 
+  private generateSixDigitOtp(): string {
+    // Cryptographically random 6-digit code (000000–999999)
+    const bytes = crypto.randomBytes(3);
+    const num = (bytes.readUIntBE(0, 3) % 1000000).toString().padStart(6, '0');
+    return num;
+  }
+
   private generateAccessToken(userId: string, email: string, role: string) {
     return this.jwtService.sign({ sub: userId, email, role });
   }
 
-  private async generateRefreshToken(userId: string, ipAddress?: string, userAgent?: string) {
+  private async generateRefreshToken(
+    userId: string,
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
     const token = crypto.randomBytes(40).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     const expiresAt = new Date(

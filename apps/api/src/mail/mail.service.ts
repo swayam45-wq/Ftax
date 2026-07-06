@@ -29,6 +29,14 @@ export class MailService {
     });
   }
 
+  async sendOtp(email: string, otp: string) {
+    await this.send({
+      to: email,
+      subject: `${otp} — Your FTax verification code`,
+      html: this.otpTemplate(otp),
+    });
+  }
+
   async sendPasswordReset(email: string, firstName: string, token: string) {
     const frontendUrl = this.config.get<string>('app.frontendUrl');
     const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
@@ -54,6 +62,50 @@ export class MailService {
   }
 
   // ─── Email Templates ──────────────────────────────────────────────────────
+
+  private otpTemplate(otp: string): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f5; margin: 0; padding: 20px; }
+            .container { max-width: 480px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+            .header { background: #0f172a; padding: 28px 32px; text-align: center; }
+            .header h1 { color: white; margin: 0; font-size: 22px; letter-spacing: -0.5px; }
+            .header span { color: #3b82f6; }
+            .body { padding: 32px; text-align: center; }
+            .body p { color: #374151; line-height: 1.6; margin: 0 0 16px; }
+            .otp-box { display: inline-block; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px 40px; margin: 20px 0; }
+            .otp-code { font-size: 42px; font-weight: 800; letter-spacing: 10px; color: #0f172a; font-family: 'Courier New', monospace; }
+            .expiry { color: #6b7280; font-size: 13px; margin-top: 4px; }
+            .footer { padding: 20px 32px; border-top: 1px solid #e5e7eb; text-align: center; }
+            .footer p { color: #9ca3af; font-size: 12px; margin: 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>F<span>Tax</span></h1>
+            </div>
+            <div class="body">
+              <p style="font-size:16px; font-weight:600; color:#0f172a;">Your UIC verification code</p>
+              <p>Enter this code to verify your @uic.edu email and create your FTax account.</p>
+              <div class="otp-box">
+                <div class="otp-code">${otp}</div>
+                <div class="expiry">Expires in 10 minutes</div>
+              </div>
+              <p style="font-size:13px; color:#6b7280;">If you didn't request this, you can safely ignore this email. Do not share this code with anyone.</p>
+            </div>
+            <div class="footer">
+              <p>University of Illinois Chicago &middot; International Student Tax Assistant</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+  }
 
   private emailVerificationTemplate(firstName: string, verifyUrl: string): string {
     return `
