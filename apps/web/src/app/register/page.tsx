@@ -65,8 +65,13 @@ export default function RegisterPage() {
       toast.success('Account created! You can now sign in.');
       router.push('/login?registered=true');
     } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string } } };
-      toast.error(e.response?.data?.message || 'Failed to create account. Please try again.');
+      const e = err as { response?: { data?: { message?: string | string[] }; status?: number }; message?: string };
+      // Surface the real error — helps diagnose API/DB issues
+      const apiMsg = e.response?.data?.message;
+      const displayMsg = Array.isArray(apiMsg)
+        ? apiMsg.join(', ')
+        : apiMsg || e.message || 'Cannot reach the API. Is the backend running on port 3001?';
+      toast.error(displayMsg);
     } finally {
       setIsLoading(false);
     }
