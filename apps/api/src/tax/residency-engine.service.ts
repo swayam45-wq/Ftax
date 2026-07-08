@@ -205,14 +205,14 @@ export class ResidencyEngineService {
         stepNumber: 2,
         title: 'Years in F-1 Status',
         description: `You have been in F-1 status for ${input.calendarYearsInUS} calendar year(s)`,
-        result: (input.calendarYearsInUS <= 5 ? 'PASS' : 'INFO') as const,
+        result: input.calendarYearsInUS <= 5 ? ('PASS' as const) : ('INFO' as const),
         value: `${input.calendarYearsInUS} year(s)`,
       },
       {
         stepNumber: 3,
         title: 'Substantial Presence Test',
         description: `${daysCount.currentYear} days (this year) + ${daysCount.priorYearWeighted} days (1/3 of ${daysCount.priorYear}) + ${daysCount.twoYearsAgoWeighted} days (1/6 of ${daysCount.twoYearsAgo}) = ${daysCount.totalWeighted} weighted days`,
-        result: (daysCount.meetsThreshold ? 'FAIL' : 'PASS') as const,
+        result: daysCount.meetsThreshold ? ('FAIL' as const) : ('PASS' as const),
         value: `${daysCount.totalWeighted} / ${daysCount.threshold} required`,
       },
       {

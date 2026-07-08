@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 interface AuditLogEntry {
   userId?: string;
@@ -19,7 +20,16 @@ export class AuditService {
 
   async log(entry: AuditLogEntry): Promise<void> {
     try {
-      await this.prisma.auditLog.create({ data: entry });
+      const data: Prisma.AuditLogUncheckedCreateInput = {
+        action: entry.action,
+        userId: entry.userId,
+        resource: entry.resource,
+        resourceId: entry.resourceId,
+        metadata: entry.metadata as Prisma.InputJsonValue,
+        ipAddress: entry.ipAddress,
+        userAgent: entry.userAgent,
+      };
+      await this.prisma.auditLog.create({ data });
     } catch (error) {
       // Audit failures should never crash the app
       this.logger.error('Failed to write audit log', error);

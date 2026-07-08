@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -35,10 +35,8 @@ export class AuthController {
   @Post('send-otp')
   @Throttle({ short: { limit: 3, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Send a 6-digit OTP to a @uic.edu email before registration' })
+  @ApiOperation({ summary: 'Send a 6-digit OTP to a @uic.edu email (optional, kept for future use)' })
   @ApiResponse({ status: 200, description: 'OTP sent to email' })
-  @ApiResponse({ status: 403, description: 'Email is not @uic.edu' })
-  @ApiResponse({ status: 409, description: 'Account already exists with this email' })
   async sendOtp(@Body() dto: SendOtpDto, @Req() req: Request) {
     return this.authService.sendOtp(dto.email, req.ip);
   }
@@ -48,9 +46,8 @@ export class AuthController {
   @Post('verify-otp')
   @Throttle({ short: { limit: 5, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Verify the 6-digit OTP and receive an otpToken for registration' })
-  @ApiResponse({ status: 200, description: 'OTP verified, otpToken returned' })
-  @ApiResponse({ status: 400, description: 'Invalid or expired OTP' })
+  @ApiOperation({ summary: 'Verify a 6-digit OTP (optional, kept for future use)' })
+  @ApiResponse({ status: 200, description: 'OTP verified' })
   async verifyOtp(@Body() dto: VerifyOtpDto, @Req() req: Request) {
     return this.authService.verifyOtp(dto.email, dto.otp, req.ip);
   }
@@ -58,10 +55,9 @@ export class AuthController {
   // ─── Register ─────────────────────────────────────────────────────────────
 
   @Post('register')
-  @Throttle({ short: { limit: 3, ttl: 60000 } })
-  @ApiOperation({ summary: 'Create a new student account (requires verified otpToken)' })
+  @Throttle({ short: { limit: 5, ttl: 60000 } })
+  @ApiOperation({ summary: 'Create a new UIC student account' })
   @ApiResponse({ status: 201, description: 'Account created successfully' })
-  @ApiResponse({ status: 400, description: 'OTP token invalid or expired' })
   @ApiResponse({ status: 403, description: 'Email is not @uic.edu' })
   @ApiResponse({ status: 409, description: 'Email already in use' })
   async register(@Body() dto: RegisterDto, @Req() req: Request) {
@@ -88,12 +84,11 @@ export class AuthController {
       req.headers['user-agent'],
     );
 
-    // Set refresh token in httpOnly cookie
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/api/v1/auth',
     });
 
@@ -106,7 +101,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh access token using refresh token cookie' })
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const refreshToken = req.cookies?.['refresh_token'];
+    const refreshToken = (req as any).cookies?.['refresh_token'];
     if (!refreshToken) {
       return { message: 'No refresh token provided' };
     }
@@ -139,7 +134,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.cookies?.['refresh_token'];
+    const refreshToken = (req as any).cookies?.['refresh_token'];
     if (refreshToken) {
       await this.authService.logout(refreshToken, user.id);
     }
@@ -148,20 +143,20 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
-  // ─── Email Verification ───────────────────────────────────────────────────
+  // ─── Email Verification (no-op — @uic.edu domain is trusted) ─────────────
 
   @Get('verify-email')
-  @ApiOperation({ summary: 'Verify email address using token from email link' })
-  async verifyEmail(@Query('token') token: string) {
-    return this.authService.verifyEmail(token);
+  @ApiOperation({ summary: 'Email verification (no-op — UIC domain is trusted)' })
+  async verifyEmail(@Query('token') _token: string) {
+    return { message: 'Email already verified via UIC domain.' };
   }
 
   @Post('resend-verification')
   @Throttle({ short: { limit: 2, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Resend email verification link' })
-  async resendVerification(@Body() dto: ResendVerificationDto) {
-    return this.authService.resendVerification(dto.email);
+  @ApiOperation({ summary: 'Resend verification (no-op — UIC domain is trusted)' })
+  async resendVerification(@Body() _dto: ResendVerificationDto) {
+    return { message: 'Your UIC email is already verified.' };
   }
 
   // ─── Password Reset ───────────────────────────────────────────────────────
