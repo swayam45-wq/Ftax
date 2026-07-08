@@ -27,11 +27,4 @@ export class RegisterDto {
   @MaxLength(50)
   @Transform(({ value }) => value?.trim())
   lastName: string;
-
-  @ApiProperty({
-    description: 'Short-lived token returned by POST /auth/verify-otp after OTP is confirmed',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'OTP verification token is required' })
-  otpToken: string;
 }

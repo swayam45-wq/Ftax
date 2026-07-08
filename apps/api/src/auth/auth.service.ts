@@ -158,61 +158,36 @@ export class AuthService {
   async register(dto: RegisterDto, ipAddress?: string) {
     const normalised = dto.email.toLowerCase().trim();
 
-    // 1. Enforce @uic.edu domain (double-check even though OTP also enforces it)
+    // 1. Enforce @uic.edu domain — the domain itself is the verification
     if (!normalised.endsWith('@uic.edu')) {
-      throw new ForbiddenException('Only @uic.edu email addresses are allowed.');
-    }
-
-    // 2. Validate OTP token
-    const otpRecord = await this.prisma.emailOtp.findUnique({
-      where: { token: dto.otpToken },
-    });
-
-    if (
-      !otpRecord ||
-      otpRecord.email !== normalised ||
-      !otpRecord.verified ||
-      otpRecord.usedAt ||
-      otpRecord.expiresAt < new Date()
-    ) {
-      throw new BadRequestException(
-        'Email verification expired or invalid. Please verify your email again.',
+      throw new ForbiddenException(
+        'Only University of Illinois Chicago email addresses (@uic.edu) are allowed to register.',
       );
     }
 
-    // 3. Check duplicate email
+    // 2. Check duplicate email
     const existing = await this.prisma.user.findUnique({ where: { email: normalised } });
     if (existing) {
-      throw new ConflictException('An account with this email already exists.');
+      throw new ConflictException('An account with this UIC email already exists. Please log in.');
     }
 
-    // 4. Hash password
+    // 3. Hash password
     const passwordHash = await bcrypt.hash(dto.password, this.BCRYPT_ROUNDS);
 
-    // 5. Create user + profile + consume OTP in a transaction
-    const user = await this.prisma.$transaction(async (tx) => {
-      const newUser = await tx.user.create({
-        data: {
-          email: normalised,
-          passwordHash,
-          emailVerified: true, // already verified via OTP
-          profile: {
-            create: {
-              firstName: dto.firstName,
-              lastName: dto.lastName,
-              university: 'University of Illinois Chicago',
-            },
+    // 4. Create user + profile
+    const user = await this.prisma.user.create({
+      data: {
+        email: normalised,
+        passwordHash,
+        emailVerified: true, // @uic.edu domain is trusted — no OTP needed
+        profile: {
+          create: {
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            university: 'University of Illinois Chicago',
           },
         },
-      });
-
-      // Mark OTP token as used
-      await tx.emailOtp.update({
-        where: { token: dto.otpToken },
-        data: { usedAt: new Date() },
-      });
-
-      return newUser;
+      },
     });
 
     await this.auditService.log({

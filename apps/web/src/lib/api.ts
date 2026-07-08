@@ -81,7 +81,7 @@ export const authApi = {
   verifyOtp: (email: string, otp: string) =>
     apiClient.post<{ message: string; otpToken: string }>('/auth/verify-otp', { email, otp }),
 
-  register: (data: { email: string; password: string; firstName: string; lastName: string; otpToken: string }) =>
+  register: (data: { email: string; password: string; firstName: string; lastName: string }) =>
     apiClient.post('/auth/register', data),
 
   login: (data: { email: string; password: string }) =>
