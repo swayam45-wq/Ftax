@@ -46,7 +46,7 @@ body {
 
 /* ── Buttons ── */
 .btn-primary {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #538083, #2A7F62);
   color: #fff;
   font-weight: 700;
   border: none;
@@ -59,7 +59,7 @@ body {
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 36px rgba(99,102,241,.45);
+  box-shadow: 0 10px 36px rgba(83,128,131,.40);
 }
 
 .btn-ghost {
@@ -78,14 +78,14 @@ body {
 
 /* ── Dark card ── */
 .dark-card {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.09);
+  background: rgba(83,128,131,0.06);
+  border: 1px solid rgba(83,128,131,0.18);
   border-radius: 18px;
   transition: border-color .25s, background .25s, transform .25s, box-shadow .25s;
 }
 .dark-card:hover {
-  border-color: rgba(99,102,241,.45);
-  background: rgba(99,102,241,.07);
+  border-color: rgba(83,128,131,0.50);
+  background: rgba(83,128,131,0.10);
   transform: translateY(-4px);
   box-shadow: 0 16px 48px rgba(0,0,0,.3);
 }
@@ -93,8 +93,8 @@ body {
 /* ── Hero grid ── */
 .hero-grid-bg {
   background-image:
-    linear-gradient(rgba(99,102,241,.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,102,241,.07) 1px, transparent 1px);
+    linear-gradient(rgba(83,128,131,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(83,128,131,.07) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -105,7 +105,7 @@ body {
 
 /* ── Nav ── */
 .nav-a {
-  color: rgba(255,255,255,.55);
+  color: rgba(240,238,238,0.50);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -115,10 +115,10 @@ body {
 .nav-a::after {
   content:''; position:absolute; bottom:-3px; left:0;
   width:0; height:2px;
-  background:#6366f1; border-radius:9999px;
+  background:#538083; border-radius:9999px;
   transition: width .22s;
 }
-.nav-a:hover { color:#fff; }
+.nav-a:hover { color:#f0eeee; }
 .nav-a:hover::after { width:100%; }
 
 /* ── Scrollbar ── */

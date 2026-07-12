@@ -8,21 +8,22 @@ import {
   ChevronDown, ChevronUp, Star, Menu, X, Sparkles, Clock,
 } from 'lucide-react';
 
-/* ─── Palette ─── */
+/* ─── Palette: Pine Blue + Jungle Teal + Lavender ─── */
 const C = {
-  bg:    '#030712',
-  bg2:   '#06091a',
-  border:'rgba(255,255,255,0.08)',
-  card:  'rgba(255,255,255,0.04)',
-  text:  '#fff',
-  muted: 'rgba(255,255,255,0.52)',
-  dim:   'rgba(255,255,255,0.22)',
-  indigo:'#6366f1',
-  violet:'#8b5cf6',
-  cyan:  '#38bdf8',
+  bg:     '#0a0f14',          // deep charcoal-navy
+  bg2:    '#0f1920',          // slightly lighter section bg
+  border: 'rgba(83,128,131,0.18)',   // pine blue tinted border
+  card:   'rgba(83,128,131,0.06)',   // pine blue tinted card
+  text:   '#f0eeee',          // soft white (not harsh)
+  muted:  '#89909F',          // lavender grey
+  dim:    'rgba(137,144,159,0.45)',
+  pine:   '#538083',          // Pine Blue — primary accent
+  teal:   '#2A7F62',          // Jungle Teal — secondary / success
+  lilac:  '#C3ACCE',          // Lilac — highlight / gradient
+  lgrey:  '#89909F',          // Lavender Grey
 };
-const grad     = `linear-gradient(135deg,${C.indigo},${C.violet})`;
-const gradText = `linear-gradient(135deg,#818cf8 0%,#a78bfa 45%,#38bdf8 100%)`;
+const grad     = `linear-gradient(135deg,${C.pine},${C.teal})`;
+const gradText = `linear-gradient(135deg,${C.lilac} 0%,${C.pine} 55%,${C.teal} 100%)`;
 
 /* ─── Helpers ─── */
 const GText = ({ children }: { children: React.ReactNode }) => (
@@ -31,7 +32,7 @@ const GText = ({ children }: { children: React.ReactNode }) => (
   </span>
 );
 
-const Pill = ({ children, color = C.indigo }: { children: React.ReactNode; color?: string }) => (
+const Pill = ({ children, color = C.pine }: { children: React.ReactNode; color?: string }) => (
   <span style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'5px 14px', borderRadius:999, background:`${color}1a`, border:`1px solid ${color}40`, fontSize:11, fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase' as const, color }}>
     {children}
   </span>
@@ -44,8 +45,8 @@ function Faq({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
     <div onClick={() => setOpen(o=>!o)} style={{
-      background: open ? 'rgba(99,102,241,0.08)' : C.card,
-      border:`1px solid ${open ? 'rgba(99,102,241,0.3)' : C.border}`,
+      background: open ? `rgba(83,128,131,0.10)` : C.card,
+      border:`1px solid ${open ? 'rgba(83,128,131,0.4)' : C.border}`,
       borderRadius:14, cursor:'pointer', marginBottom:10, transition:'all .2s',
     }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 22px' }}>
@@ -61,12 +62,12 @@ function Faq({ q, a }: { q: string; a: string }) {
 
 /* ─── Data ─── */
 const features = [
-  { Icon:Shield,     color:'#6366f1', title:'Residency Determination',  body:'Automatically calculates your tax residency using the Substantial Presence Test with plain-English explanations at every step.' },
-  { Icon:FileText,   color:'#3b82f6', title:'Form 8843 Guidance',       body:'Every F-1 student must file Form 8843. We walk you through every field — no jargon, no confusion.' },
-  { Icon:Globe,      color:'#a78bfa', title:'Tax Treaty Detection',     body:'Students from India, China, South Korea and 60+ countries may qualify for exemptions. We check automatically.' },
-  { Icon:Calculator, color:'#10b981', title:'Tax Calculation',          body:'Federal and Illinois state tax, step-by-step. Every number explained with zero black boxes.' },
-  { Icon:Lock,       color:'#f59e0b', title:'Bank-Grade Security',      body:'SSN/ITIN encrypted at rest with AES-256. JWT auth. SOC 2 aligned. We never sell your data.' },
-  { Icon:Zap,        color:'#f43f5e', title:'Always Up to Date',        body:'Tax rules change every year. FTax updates automatically so you never worry about outdated guidance.' },
+  { Icon:Shield,     color:'#538083', title:'Residency Determination',  body:'Automatically calculates your tax residency using the Substantial Presence Test with plain-English explanations at every step.' },
+  { Icon:FileText,   color:'#2A7F62', title:'Form 8843 Guidance',       body:'Every F-1 student must file Form 8843. We walk you through every field — no jargon, no confusion.' },
+  { Icon:Globe,      color:'#C3ACCE', title:'Tax Treaty Detection',     body:'Students from India, China, South Korea and 60+ countries may qualify for exemptions. We check automatically.' },
+  { Icon:Calculator, color:'#2A7F62', title:'Tax Calculation',          body:'Federal and Illinois state tax, step-by-step. Every number explained with zero black boxes.' },
+  { Icon:Lock,       color:'#89909F', title:'Bank-Grade Security',      body:'SSN/ITIN encrypted at rest with AES-256. JWT auth. SOC 2 aligned. We never sell your data.' },
+  { Icon:Zap,        color:'#538083', title:'Always Up to Date',        body:'Tax rules change every year. FTax updates automatically so you never worry about outdated guidance.' },
 ];
 
 const steps = [
@@ -113,7 +114,7 @@ export default function Home() {
         height:64, padding:'0 32px',
         display:'flex', alignItems:'center', justifyContent:'space-between',
         transition:'all .3s',
-        background: scrolled ? 'rgba(3,7,18,0.9)' : 'transparent',
+        background: scrolled ? `rgba(10,15,20,0.92)` : 'transparent',
         borderBottom: `1px solid ${scrolled ? C.border : 'transparent'}`,
         backdropFilter: scrolled ? 'blur(18px)' : 'none',
       }}>
@@ -146,7 +147,7 @@ export default function Home() {
 
       {/* mobile menu */}
       {mobile && (
-        <div style={{ position:'fixed', top:64, left:0, right:0, zIndex:99, background:'rgba(3,7,18,0.97)', borderBottom:`1px solid ${C.border}`, padding:'12px 24px 20px' }}>
+        <div style={{ position:'fixed', top:64, left:0, right:0, zIndex:99, background:'rgba(10,15,20,0.97)', borderBottom:`1px solid ${C.border}`, padding:'12px 24px 20px' }}>
           {['Features','How it works','FAQ'].map(l=>(
             <a key={l} href={`#${l.toLowerCase().replace(/ /g,'-')}`} onClick={()=>setMobile(false)}
               style={{ display:'block', padding:'12px 0', color:C.muted, textDecoration:'none', fontSize:15, fontWeight:500, borderBottom:`1px solid ${C.border}` }}>{l}</a>
@@ -158,13 +159,13 @@ export default function Home() {
       {/* ── HERO ── */}
       <section className="hero-grid-bg" style={{ paddingTop:140, paddingBottom:80, paddingLeft:24, paddingRight:24, position:'relative', overflow:'hidden', minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
         {/* radial glow */}
-        <div style={{ position:'absolute', top:'-15%', left:'50%', transform:'translateX(-50%)', width:1000, height:700, background:'radial-gradient(ellipse at 50% 30%, rgba(99,102,241,0.22) 0%, rgba(139,92,246,0.09) 45%, transparent 70%)', pointerEvents:'none', zIndex:0 }}/>
+        <div style={{ position:'absolute', top:'-15%', left:'50%', transform:'translateX(-50%)', width:1000, height:700, background:'radial-gradient(ellipse at 50% 30%, rgba(83,128,131,0.20) 0%, rgba(42,127,98,0.08) 45%, transparent 70%)', pointerEvents:'none', zIndex:0 }}/>
 
         <div style={{ maxWidth:820, margin:'0 auto', textAlign:'center', position:'relative', zIndex:1 }}>
 
           {/* Badge — immediate, no delay */}
           <div style={{ marginBottom:28 }}>
-            <Pill color={C.indigo}><Sparkles size={12}/> Built for UIC F-1 International Students</Pill>
+            <Pill color={C.pine}><Sparkles size={12}/> Built for UIC F-1 International Students</Pill>
           </div>
 
           {/* Headline */}
@@ -191,14 +192,14 @@ export default function Home() {
 
           <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'center', gap:24, color:C.dim, fontSize:13 }}>
             {[[Lock,'AES-256 encrypted'],[Star,'Always free for UIC'],[Clock,'Ready in &lt; 10 min']].map(([Icon,t]:any)=>(
-              <span key={t} style={{ display:'flex', alignItems:'center', gap:6 }}><Icon size={13} color={C.indigo}/> {t}</span>
+              <span key={t} style={{ display:'flex', alignItems:'center', gap:6 }}><Icon size={13} color={C.pine}/> {t}</span>
             ))}
           </div>
         </div>
 
         {/* Floating preview card */}
         <div className="anim-float" style={{ maxWidth:620, width:'100%', margin:'56px auto 0', position:'relative', zIndex:1 }}>
-          <div style={{ background:'rgba(8,12,28,0.92)', border:'1px solid rgba(99,102,241,0.3)', borderRadius:20, overflow:'hidden', boxShadow:'0 32px 80px rgba(0,0,0,0.7)' }}>
+          <div style={{ background:'rgba(8,14,20,0.94)', border:`1px solid rgba(83,128,131,0.35)`, borderRadius:20, overflow:'hidden', boxShadow:'0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(83,128,131,0.15)' }}>
             <div style={{ display:'flex', alignItems:'center', gap:8, padding:'12px 18px', borderBottom:`1px solid ${C.border}`, background:'rgba(255,255,255,0.02)' }}>
               <div style={{ width:11, height:11, borderRadius:'50%', background:'#ff5f57' }}/>
               <div style={{ width:11, height:11, borderRadius:'50%', background:'#febc2e' }}/>
@@ -216,7 +217,7 @@ export default function Home() {
                 </div>
               </div>
               <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:18 }}>
-                {[['180','Days in U.S.','#818cf8'],['210','Weighted total','#a78bfa'],['2','Forms needed','#38bdf8']].map(([v,l,c])=>(
+                {[['180','Days in U.S.',C.pine],['210','Weighted total',C.teal],['2','Forms needed',C.lilac]].map(([v,l,c])=>(
                   <div key={l} style={{ textAlign:'center', background:'rgba(255,255,255,0.04)', borderRadius:10, padding:'12px 8px', border:`1px solid ${C.border}` }}>
                     <p style={{ fontSize:26, fontWeight:900, color:c as string, letterSpacing:'-0.03em' }}>{v}</p>
                     <p style={{ fontSize:11, color:C.muted, marginTop:4 }}>{l}</p>
@@ -226,7 +227,7 @@ export default function Home() {
               <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
                 {['Form 8843 — Required','1040-NR — Required (stipend)','India–US Treaty — Check eligibility'].map(t=>(
                   <div key={t} style={{ display:'flex', alignItems:'center', gap:10, fontSize:12, color:C.muted }}>
-                    <div style={{ width:6, height:6, borderRadius:'50%', background:C.indigo, flexShrink:0 }}/> {t}
+                    <div style={{ width:6, height:6, borderRadius:'50%', background:C.pine, flexShrink:0 }}/> {t}
                   </div>
                 ))}
               </div>
@@ -253,7 +254,7 @@ export default function Home() {
       <section id="features" style={{ background:C.bg, padding:'100px 24px' }}>
         <div style={{ maxWidth:1100, margin:'0 auto' }}>
           <ScrollReveal style={{ textAlign:'center', marginBottom:64 }}>
-            <div style={{ marginBottom:16 }}><Pill color={C.indigo}>Features</Pill></div>
+            <div style={{ marginBottom:16 }}><Pill color={C.pine}>Features</Pill></div>
             <h2 style={{ fontSize:'clamp(28px,4vw,46px)', fontWeight:900, letterSpacing:'-0.03em', marginBottom:16 }}>
               Everything you need to file{' '}<GText>with confidence</GText>
             </h2>
@@ -280,7 +281,7 @@ export default function Home() {
       <section id="how-it-works" style={{ background:C.bg2, padding:'100px 24px' }}>
         <div style={{ maxWidth:1000, margin:'0 auto' }}>
           <ScrollReveal style={{ textAlign:'center', marginBottom:64 }}>
-            <div style={{ marginBottom:16 }}><Pill color={C.violet}>How it works</Pill></div>
+            <div style={{ marginBottom:16 }}><Pill color={C.teal}>How it works</Pill></div>
             <h2 style={{ fontSize:'clamp(28px,4vw,46px)', fontWeight:900, letterSpacing:'-0.03em' }}>
               From confused to <GText>filing-ready</GText><br/>in 4 simple steps
             </h2>
@@ -289,10 +290,10 @@ export default function Home() {
           <StaggerReveal style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:16 }}>
             {steps.map(({n,Icon,title,body})=>(
               <ScrollReveal key={n} direction="up" className="dark-card" style={{ padding:28, textAlign:'center' }}>
-                <div style={{ width:52, height:52, borderRadius:14, background:'rgba(99,102,241,0.15)', border:'1px solid rgba(99,102,241,0.3)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px' }}>
-                  <Icon size={22} color={C.indigo}/>
+                <div style={{ width:52, height:52, borderRadius:14, background:'rgba(83,128,131,0.15)', border:'1px solid rgba(83,128,131,0.3)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px' }}>
+                  <Icon size={22} color={C.pine}/>
                 </div>
-                <div style={{ fontSize:11, fontWeight:800, color:C.indigo, letterSpacing:'0.1em', marginBottom:8 }}>{n}</div>
+                <div style={{ fontSize:11, fontWeight:800, color:C.pine, letterSpacing:'0.1em', marginBottom:8 }}>{n}</div>
                 <h3 style={{ fontWeight:700, fontSize:16, marginBottom:10 }}>{title}</h3>
                 <p style={{ fontSize:14, color:C.muted, lineHeight:1.65 }}>{body}</p>
               </ScrollReveal>
@@ -306,7 +307,7 @@ export default function Home() {
       <section style={{ background:C.bg, padding:'100px 24px' }}>
         <div style={{ maxWidth:1100, margin:'0 auto' }}>
           <ScrollReveal style={{ textAlign:'center', marginBottom:64 }}>
-            <div style={{ marginBottom:16 }}><Pill color="#10b981">Global coverage</Pill></div>
+            <div style={{ marginBottom:16 }}><Pill color={C.teal}>Global coverage</Pill></div>
             <h2 style={{ fontSize:'clamp(28px,4vw,46px)', fontWeight:900, letterSpacing:'-0.03em', marginBottom:16 }}>
               We cover students from <GText>60+ countries</GText>
             </h2>
@@ -338,9 +339,9 @@ export default function Home() {
                 </div>
                 <span style={{
                   fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:999,
-                  background: treaty ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.07)',
-                  border: `1px solid ${treaty ? 'rgba(16,185,129,0.35)' : 'rgba(255,255,255,0.12)'}`,
-                  color: treaty ? '#10b981' : C.muted,
+                  background: treaty ? 'rgba(42,127,98,0.18)' : 'rgba(137,144,159,0.08)',
+                  border: `1px solid ${treaty ? 'rgba(42,127,98,0.4)' : 'rgba(137,144,159,0.2)'}`,
+                  color: treaty ? C.teal : C.muted,
                 }}>
                   {treaty ? 'Treaty ✓' : 'No treaty'}
                 </span>
@@ -351,7 +352,7 @@ export default function Home() {
           {/* Bottom note */}
           <ScrollReveal style={{ textAlign:'center' }}>
             <div style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'14px 28px', borderRadius:14, background:C.card, border:`1px solid ${C.border}`, color:C.muted, fontSize:14 }}>
-              <Globe size={16} color={C.indigo}/>
+              <Globe size={16} color={C.pine}/>
               <span>Don't see your country? <strong style={{ color:C.text }}>FTax still works for all F-1 students</strong> — treaty status simply won't apply.</span>
             </div>
           </ScrollReveal>
@@ -371,8 +372,8 @@ export default function Home() {
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }} className="grid-cols-1 md:grid-cols-2">
             {/* Left light card */}
             <ScrollReveal direction="left" className="dark-card" style={{ padding:40, display:'flex', flexDirection:'column', gap:16 }}>
-              <div style={{ width:52, height:52, borderRadius:14, background:'rgba(99,102,241,0.15)', border:'1px solid rgba(99,102,241,0.3)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                <Lock size={24} color={C.indigo}/>
+              <div style={{ width:52, height:52, borderRadius:14, background:'rgba(83,128,131,0.15)', border:'1px solid rgba(83,128,131,0.3)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <Lock size={24} color={C.pine}/>
               </div>
               <h3 style={{ fontWeight:800, fontSize:24, lineHeight:1.2 }}>Unmatched security</h3>
               <p style={{ color:C.muted, lineHeight:1.75, fontSize:15 }}>
@@ -389,7 +390,7 @@ export default function Home() {
             </ScrollReveal>
 
             {/* Right dark card */}
-            <ScrollReveal direction="right" style={{ background:'linear-gradient(135deg,rgba(99,102,241,0.18),rgba(139,92,246,0.12))', border:'1px solid rgba(99,102,241,0.3)', borderRadius:18, padding:40, display:'flex', flexDirection:'column', gap:16 }}>
+            <ScrollReveal direction="right" style={{ background:'linear-gradient(135deg,rgba(83,128,131,0.18),rgba(42,127,98,0.14))', border:`1px solid rgba(83,128,131,0.35)`, borderRadius:18, padding:40, display:'flex', flexDirection:'column', gap:16 }}>
               <div style={{ width:52, height:52, borderRadius:14, background:'rgba(255,255,255,0.1)', display:'flex', alignItems:'center', justifyContent:'center' }}>
                 <Shield size={24} color="#fff"/>
               </div>
@@ -414,7 +415,7 @@ export default function Home() {
       <section id="faq" style={{ background:C.bg, padding:'100px 24px' }}>
         <div style={{ maxWidth:740, margin:'0 auto' }}>
           <ScrollReveal style={{ textAlign:'center', marginBottom:56 }}>
-            <div style={{ marginBottom:16 }}><Pill color="#22d3ee">FAQ</Pill></div>
+            <div style={{ marginBottom:16 }}><Pill color={C.pine}>FAQ</Pill></div>
             <h2 style={{ fontSize:'clamp(28px,4vw,44px)', fontWeight:900, letterSpacing:'-0.03em', marginBottom:12 }}>Common questions</h2>
             <p style={{ color:C.muted }}>Everything you need to know before getting started.</p>
           </ScrollReveal>
@@ -428,8 +429,8 @@ export default function Home() {
       <section style={{ background:C.bg2, padding:'80px 24px' }}>
         <div style={{ maxWidth:820, margin:'0 auto' }}>
           <ScrollReveal direction="scale">
-            <div style={{ borderRadius:24, padding:'72px 40px', textAlign:'center', position:'relative', overflow:'hidden', background:'linear-gradient(135deg,rgba(99,102,241,0.16),rgba(139,92,246,0.11),rgba(34,211,238,0.07))', border:'1px solid rgba(99,102,241,0.35)', boxShadow:'0 0 80px rgba(99,102,241,0.1) inset' }}>
-              <div style={{ position:'absolute', top:'-30%', left:'50%', transform:'translateX(-50%)', width:500, height:300, background:'radial-gradient(ellipse,rgba(99,102,241,0.25),transparent)', filter:'blur(50px)', pointerEvents:'none' }}/>
+            <div style={{ borderRadius:24, padding:'72px 40px', textAlign:'center', position:'relative', overflow:'hidden', background:'linear-gradient(135deg,rgba(83,128,131,0.16),rgba(42,127,98,0.12),rgba(195,172,206,0.07))', border:`1px solid rgba(83,128,131,0.38)`, boxShadow:'0 0 80px rgba(83,128,131,0.1) inset' }}>
+              <div style={{ position:'absolute', top:'-30%', left:'50%', transform:'translateX(-50%)', width:500, height:300, background:'radial-gradient(ellipse,rgba(83,128,131,0.28),transparent)', filter:'blur(50px)', pointerEvents:'none' }}/>
               <div style={{ position:'relative', zIndex:1 }}>
                 <div style={{ marginBottom:20 }}><Pill color="#fbbf24"><Star size={11}/> Trusted by UIC F-1 students</Pill></div>
                 <h2 style={{ fontSize:'clamp(28px,4vw,48px)', fontWeight:900, letterSpacing:'-0.03em', marginBottom:16 }}>
