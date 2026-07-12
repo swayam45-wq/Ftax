@@ -6,7 +6,6 @@ import {
   Shield, FileText, Globe, Calculator, Lock, Zap,
   ArrowRight, CheckCircle, GraduationCap, TrendingUp,
   ChevronDown, ChevronUp, Star, Menu, X, Sparkles, Clock,
-  Quote,
 } from 'lucide-react';
 
 /* ─── Palette ─── */
@@ -38,11 +37,7 @@ const Pill = ({ children, color = C.indigo }: { children: React.ReactNode; color
   </span>
 );
 
-const Stars = () => (
-  <div style={{ display:'flex', gap:3 }}>
-    {[...Array(5)].map((_,i) => <Star key={i} size={13} color="#fbbf24" fill="#fbbf24" />)}
-  </div>
-);
+
 
 /* ─── FAQ ─── */
 function Faq({ q, a }: { q: string; a: string }) {
@@ -81,14 +76,7 @@ const steps = [
   { n:'04', Icon:CheckCircle,   title:'Prepare & File',  body:'Download your checklist, forms guide, and filing instructions.' },
 ];
 
-const testimonials = [
-  { name:'Priya S.',   country:'India',   text:'FTax saved me hours of confusion. I finally understood my Form 8843 in minutes. Absolutely essential for every F-1 student.' },
-  { name:'Wei L.',     country:'China',   text:'The tax treaty detection is brilliant. I had no idea I qualified for a China–US treaty exemption on my scholarship income.' },
-  { name:'Ji-ho K.',   country:'Korea',   text:'Super clear step-by-step process. I went from completely lost to filing-ready in under 10 minutes. Highly recommend.' },
-  { name:'Fatima A.',  country:'Morocco', text:'As someone with no tax background, this tool was a lifesaver. Plain English explanations for everything. Thank you FTax!' },
-  { name:'Aryan M.',   country:'India',   text:'The residency check alone is worth it. I learned I was still a nonresident in my 4th year — could have made a costly mistake.' },
-  { name:'Sofia R.',   country:'Mexico',  text:"Incredible free tool. Every section is explained clearly. I shared it with my entire international student group at UIC." },
-];
+
 
 const faqs = [
   { q:'Do I need to file taxes as an F-1 student?', a:"Yes — even with zero income. If you were in the U.S. during the tax year you must file Form 8843 to declare your 'Exempt Individual' status. With income, you also file Form 1040-NR." },
@@ -313,44 +301,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── auto-scrolling ticker */}
-      <section style={{ background:C.bg, padding:'100px 0', overflow:'hidden' }}>
-        <ScrollReveal style={{ textAlign:'center', marginBottom:56, padding:'0 24px' }}>
-          <div style={{ marginBottom:16 }}><Pill color="#fbbf24"><Star size={11}/> Social proof</Pill></div>
-          <h2 style={{ fontSize:'clamp(28px,4vw,44px)', fontWeight:900, letterSpacing:'-0.03em', marginBottom:12 }}>
-            Loved by UIC <GText>international students</GText>
-          </h2>
-          <p style={{ color:C.muted }}>Real stories from students who used FTax to file with confidence.</p>
-        </ScrollReveal>
 
-        {/* infinite ticker */}
-        <div style={{ overflow:'hidden', position:'relative' }}>
-          {/* edge fades */}
-          <div style={{ position:'absolute', left:0, top:0, bottom:0, width:120, background:`linear-gradient(to right,${C.bg},transparent)`, zIndex:2, pointerEvents:'none' }}/>
-          <div style={{ position:'absolute', right:0, top:0, bottom:0, width:120, background:`linear-gradient(to left,${C.bg},transparent)`, zIndex:2, pointerEvents:'none' }}/>
+      {/* ── COUNTRIES & TREATIES ── */}
+      <section style={{ background:C.bg, padding:'100px 24px' }}>
+        <div style={{ maxWidth:1100, margin:'0 auto' }}>
+          <ScrollReveal style={{ textAlign:'center', marginBottom:64 }}>
+            <div style={{ marginBottom:16 }}><Pill color="#10b981">Global coverage</Pill></div>
+            <h2 style={{ fontSize:'clamp(28px,4vw,46px)', fontWeight:900, letterSpacing:'-0.03em', marginBottom:16 }}>
+              We cover students from <GText>60+ countries</GText>
+            </h2>
+            <p style={{ color:C.muted, fontSize:17, maxWidth:540, margin:'0 auto' }}>
+              FTax automatically detects your country of tax residence and checks U.S. tax treaty eligibility — no manual research needed.
+            </p>
+          </ScrollReveal>
 
-          <div className="ticker-track" style={{ gap:20, padding:'8px 0' }}>
-            {[...testimonials,...testimonials].map((t,i)=>(
-              <div key={i} className="testi-card">
-                <Stars/>
-                <p style={{ marginTop:14, fontSize:14, color:C.muted, lineHeight:1.7 }}>
-                  <Quote size={14} color={C.indigo} style={{ display:'inline', marginRight:4 }}/>
-                  {t.text}
-                </p>
-                <div style={{ marginTop:18, display:'flex', alignItems:'center', gap:10 }}>
-                  <div style={{ width:36, height:36, borderRadius:'50%', background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:14, color:'#fff', flexShrink:0 }}>
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <p style={{ fontWeight:600, fontSize:14 }}>{t.name}</p>
-                    <p style={{ fontSize:12, color:C.dim }}>{t.country}</p>
-                  </div>
+          {/* Country grid */}
+          <StaggerReveal style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:12, marginBottom:48 }}>
+            {[
+              { flag:'🇮🇳', name:'India',         treaty:true  },
+              { flag:'🇨🇳', name:'China',         treaty:true  },
+              { flag:'🇰🇷', name:'South Korea',   treaty:true  },
+              { flag:'🇩🇪', name:'Germany',       treaty:true  },
+              { flag:'🇫🇷', name:'France',        treaty:true  },
+              { flag:'🇨🇦', name:'Canada',        treaty:true  },
+              { flag:'🇯🇵', name:'Japan',         treaty:true  },
+              { flag:'🇬🇧', name:'United Kingdom',treaty:true  },
+              { flag:'🇲🇽', name:'Mexico',        treaty:true  },
+              { flag:'🇧🇷', name:'Brazil',        treaty:false },
+              { flag:'🇳🇬', name:'Nigeria',       treaty:false },
+              { flag:'🇵🇰', name:'Pakistan',      treaty:false },
+            ].map(({ flag, name, treaty }) => (
+              <ScrollReveal key={name} direction="up" className="dark-card" style={{ padding:'18px 20px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+                  <span style={{ fontSize:26 }}>{flag}</span>
+                  <span style={{ fontWeight:600, fontSize:14 }}>{name}</span>
                 </div>
-              </div>
+                <span style={{
+                  fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:999,
+                  background: treaty ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.07)',
+                  border: `1px solid ${treaty ? 'rgba(16,185,129,0.35)' : 'rgba(255,255,255,0.12)'}`,
+                  color: treaty ? '#10b981' : C.muted,
+                }}>
+                  {treaty ? 'Treaty ✓' : 'No treaty'}
+                </span>
+              </ScrollReveal>
             ))}
-          </div>
+          </StaggerReveal>
+
+          {/* Bottom note */}
+          <ScrollReveal style={{ textAlign:'center' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'14px 28px', borderRadius:14, background:C.card, border:`1px solid ${C.border}`, color:C.muted, fontSize:14 }}>
+              <Globe size={16} color={C.indigo}/>
+              <span>Don't see your country? <strong style={{ color:C.text }}>FTax still works for all F-1 students</strong> — treaty status simply won't apply.</span>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
+
 
       {/* ── SECURITY ── slide in from sides, Expatfile-style split */}
       <section style={{ background:C.bg2, padding:'100px 24px' }}>
