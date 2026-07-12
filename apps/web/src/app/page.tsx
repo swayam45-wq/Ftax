@@ -63,7 +63,7 @@ function Faq({ q, a }: { q: string; a: string }) {
 /* ─── Data ─── */
 const features = [
   { Icon:Shield,     color:'#538083', title:'Residency Determination',  body:'Automatically calculates your tax residency using the Substantial Presence Test with plain-English explanations at every step.' },
-  { Icon:FileText,   color:'#2A7F62', title:'Form 8843 Guidance',       body:'Every F-1 student must file Form 8843. We walk you through every field — no jargon, no confusion.' },
+  { Icon:FileText,   color:'#2A7F62', title:'Form 8843 Guidance',       body:'Every F-1 student must file Form 8843. We walk you through every field, no jargon, no confusion.' },
   { Icon:Globe,      color:'#C3ACCE', title:'Tax Treaty Detection',     body:'Students from India, China, South Korea and 60+ countries may qualify for exemptions. We check automatically.' },
   { Icon:Calculator, color:'#2A7F62', title:'Tax Calculation',          body:'Federal and Illinois state tax, step-by-step. Every number explained with zero black boxes.' },
   { Icon:Lock,       color:'#89909F', title:'Bank-Grade Security',      body:'SSN/ITIN encrypted at rest with AES-256. JWT auth. SOC 2 aligned. We never sell your data.' },
@@ -80,9 +80,9 @@ const steps = [
 
 
 const faqs = [
-  { q:'Do I need to file taxes as an F-1 student?', a:"Yes — even with zero income. If you were in the U.S. during the tax year you must file Form 8843 to declare your 'Exempt Individual' status. With income, you also file Form 1040-NR." },
+  { q:'Do I need to file taxes as an F-1 student?', a:"Yes, even with zero income. If you were in the U.S. during the tax year you must file Form 8843 to declare your 'Exempt Individual' status. With income, you also file Form 1040-NR." },
   { q:'What is Form 8843 and why does it matter?', a:"Form 8843 tells the IRS you are an exempt individual on an F-1 visa. Failing to file can jeopardize your immigration status and future visa applications." },
-  { q:'Is FTax a tax filing service?', a:'No. FTax is an educational assistant — we help you understand your situation and prepare your information. You submit to the IRS yourself.' },
+  { q:'Is FTax a tax filing service?', a:'No. FTax is an educational assistant. We help you understand your situation and prepare your information. You submit to the IRS yourself.' },
   { q:'Which countries have U.S. tax treaties?', a:'India, China, South Korea, Canada, Germany, France and many more. Treaties can exempt scholarship or TA income. FTax detects your eligibility automatically.' },
   { q:'Is my personal information safe?', a:'Yes. Sensitive data like SSN/ITIN is encrypted with AES-256. All connections use TLS. We follow SOC 2 principles and never share your information.' },
 ];
@@ -175,7 +175,7 @@ export default function Home() {
 
           <p style={{ fontSize:18, color:C.muted, lineHeight:1.75, maxWidth:580, margin:'0 auto 36px' }}>
             FTax helps international students at UIC determine their tax residency,
-            complete Form 8843, and prepare their filing — in plain English.
+            complete Form 8843, and prepare their filing, in plain English.
             No jargon. No guesswork. Always free.
           </p>
 
@@ -204,7 +204,7 @@ export default function Home() {
               <div style={{ width:11, height:11, borderRadius:'50%', background:'#ff5f57' }}/>
               <div style={{ width:11, height:11, borderRadius:'50%', background:'#febc2e' }}/>
               <div style={{ width:11, height:11, borderRadius:'50%', background:'#28c840' }}/>
-              <span style={{ fontSize:11, color:'rgba(255,255,255,0.3)', marginLeft:'auto', marginRight:18, fontFamily:'monospace' }}>FTax — Residency Check</span>
+              <span style={{ fontSize:11, color:'rgba(255,255,255,0.3)', marginLeft:'auto', marginRight:18, fontFamily:'monospace' }}>FTax - Residency Check</span>
             </div>
             <div style={{ padding:24 }}>
               <div style={{ display:'flex', alignItems:'center', gap:14, background:'rgba(16,185,129,0.1)', border:'1px solid rgba(16,185,129,0.25)', borderRadius:12, padding:'14px 18px', marginBottom:18 }}>
@@ -212,7 +212,7 @@ export default function Home() {
                   <CheckCircle size={18} color="#10b981"/>
                 </div>
                 <div>
-                  <p style={{ fontWeight:700, fontSize:14 }}>Nonresident Alien — Confirmed ✓</p>
+                  <p style={{ fontWeight:700, fontSize:14 }}>Nonresident Alien - Confirmed ✓</p>
                   <p style={{ fontSize:12, color:C.muted, marginTop:3 }}>F-1 students in first 5 years are exempt from Substantial Presence Test</p>
                 </div>
               </div>
@@ -225,7 +225,7 @@ export default function Home() {
                 ))}
               </div>
               <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-                {['Form 8843 — Required','1040-NR — Required (stipend)','India–US Treaty — Check eligibility'].map(t=>(
+                {['Form 8843 - Required','1040-NR - Required (stipend)','India-US Treaty - Check eligibility'].map(t=>(
                   <div key={t} style={{ display:'flex', alignItems:'center', gap:10, fontSize:12, color:C.muted }}>
                     <div style={{ width:6, height:6, borderRadius:'50%', background:C.pine, flexShrink:0 }}/> {t}
                   </div>
@@ -259,7 +259,7 @@ export default function Home() {
               Everything you need to file{' '}<GText>with confidence</GText>
             </h2>
             <p style={{ color:C.muted, fontSize:17, maxWidth:520, margin:'0 auto' }}>
-              Built specifically for F-1 students at UIC — not a generic tool that leaves you guessing.
+              Built specifically for F-1 students at UIC, not a generic tool that leaves you guessing.
             </p>
           </ScrollReveal>
 
@@ -312,7 +312,7 @@ export default function Home() {
               We cover students from <GText>60+ countries</GText>
             </h2>
             <p style={{ color:C.muted, fontSize:17, maxWidth:540, margin:'0 auto' }}>
-              FTax automatically detects your country of tax residence and checks U.S. tax treaty eligibility — no manual research needed.
+              FTax automatically detects your country of tax residence and checks U.S. tax treaty eligibility, no manual research needed.
             </p>
           </ScrollReveal>
 
@@ -353,7 +353,7 @@ export default function Home() {
           <ScrollReveal style={{ textAlign:'center' }}>
             <div style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'14px 28px', borderRadius:14, background:C.card, border:`1px solid ${C.border}`, color:C.muted, fontSize:14 }}>
               <Globe size={16} color={C.pine}/>
-              <span>Don't see your country? <strong style={{ color:C.text }}>FTax still works for all F-1 students</strong> — treaty status simply won't apply.</span>
+              <span>Don't see your country? <strong style={{ color:C.text }}>FTax still works for all F-1 students</strong>. Treaty status simply won't apply.</span>
             </div>
           </ScrollReveal>
         </div>
