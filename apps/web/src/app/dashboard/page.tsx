@@ -12,6 +12,7 @@ import {
 /* ── Sidebar nav items ── */
 const NAV = [
   { href:'/dashboard',  icon:LayoutDashboard, label:'Dashboard' },
+  { href:'/profile',    icon:User,            label:'My Profile' },
   { href:'/residency',  icon:Calculator,      label:'Residency Check' },
   { href:'/dashboard#form8843', icon:FileText, label:'Form 8843' },
   { href:'/dashboard#treaty',   icon:Globe,   label:'Tax Treaties' },
