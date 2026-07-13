@@ -25,7 +25,8 @@ function PasswordStrength({ password }: { password: string }) {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [name,     setName]     = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName,  setLastName]  = useState('');
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [showPw,   setShowPw]   = useState(false);
@@ -39,7 +40,7 @@ export default function RegisterPage() {
     try {
       await apiFetch('/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ firstName, lastName, email, password }),
       });
       router.push('/login?registered=1');
     } catch (err: any) {
@@ -87,20 +88,35 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:16 }}>
-            {/* Name */}
-            <div style={{ position:'relative' }}>
-              <User size={16} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)' }}/>
-              <input
-                id="register-name"
-                type="text"
-                placeholder="Full name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                style={input}
-                required
-                onFocus={e => (e.target.style.borderColor = C.pine)}
-                onBlur={e  => (e.target.style.borderColor = C.border)}
-              />
+            {/* First + Last name row */}
+            <div style={{ display:'flex', gap:12 }}>
+              <div style={{ position:'relative', flex:1 }}>
+                <User size={16} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)' }}/>
+                <input
+                  id="register-firstname"
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={e => setFirstName(e.target.value)}
+                  style={input}
+                  required
+                  onFocus={e => (e.target.style.borderColor = C.pine)}
+                  onBlur={e  => (e.target.style.borderColor = C.border)}
+                />
+              </div>
+              <div style={{ position:'relative', flex:1 }}>
+                <input
+                  id="register-lastname"
+                  type="text"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={e => setLastName(e.target.value)}
+                  style={{ ...input, paddingLeft:14 }}
+                  required
+                  onFocus={e => (e.target.style.borderColor = C.pine)}
+                  onBlur={e  => (e.target.style.borderColor = C.border)}
+                />
+              </div>
             </div>
 
             {/* Email */}

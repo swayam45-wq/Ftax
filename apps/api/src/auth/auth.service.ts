@@ -158,8 +158,8 @@ export class AuthService {
   async register(dto: RegisterDto, ipAddress?: string) {
     const normalised = dto.email.toLowerCase().trim();
 
-    // 1. Enforce @uic.edu domain — the domain itself is the verification
-    if (!normalised.endsWith('@uic.edu')) {
+    // 1. Enforce @uic.edu domain (disabled in dev for testing)
+    if (process.env.NODE_ENV === 'production' && !normalised.endsWith('@uic.edu')) {
       throw new ForbiddenException(
         'Only University of Illinois Chicago email addresses (@uic.edu) are allowed to register.',
       );
