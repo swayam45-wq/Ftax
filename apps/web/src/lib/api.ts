@@ -1,7 +1,7 @@
 // Shared API helpers — wraps the backend at http://localhost:3001
 // Uses plain fetch (no axios dependency) to keep the lib simple.
 
-export const API_BASE = 'http://localhost:3001';
+export const API_BASE = 'http://localhost:3001/api/v1';
 
 export async function apiFetch(path: string, opts: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;

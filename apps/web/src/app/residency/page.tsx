@@ -142,17 +142,10 @@ export default function ResidencyPage() {
     setError('');
     setLoading(true);
     try {
-      // Try the real API endpoint first, fall back gracefully
-      const data = await apiFetch('/tax/residency', {
+      const data = await apiFetch('/tax/residency-check', {
         method:'POST',
-        body: JSON.stringify({ visaType, calendarYearsInUS:years, taxYear }),
-      }).catch(() =>
-        // If API isn't up, show a demo result so the UI is visible
-        apiFetch('/tax/residency-check', {
-          method:'POST',
-          body: JSON.stringify({ visaType:'F1', calendarYearsInUS:years, taxYear }),
-        })
-      );
+        body: JSON.stringify({ visaType: visaType.replace('-',''), calendarYearsInUS: years, taxYear }),
+      });
       setResult(data);
       setStep(3);
       window.scrollTo({ top:0, behavior:'smooth' });
