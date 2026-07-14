@@ -22,7 +22,7 @@ export default function LoginPage() {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       });
-      localStorage.setItem('token', data.accessToken);
+      localStorage.setItem('access_token', data.accessToken);
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.message);
