@@ -1,6 +1,10 @@
 import { defineConfig } from 'prisma/config';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-// Prisma v7 uses `datasource: { url }` — NOT `datasourceUrl`
+// Explicitly load .env from apps/api directory
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
 export default defineConfig({
   datasource: {
     url:
