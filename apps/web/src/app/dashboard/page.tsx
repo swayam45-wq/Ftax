@@ -14,8 +14,8 @@ const NAV = [
   { href:'/dashboard',  icon:LayoutDashboard, label:'Dashboard' },
   { href:'/profile',    icon:User,            label:'My Profile' },
   { href:'/residency',  icon:Calculator,      label:'Residency Check' },
-  { href:'/dashboard#form8843', icon:FileText, label:'Form 8843' },
-  { href:'/dashboard#treaty',   icon:Globe,   label:'Tax Treaties' },
+  { href:'/form-8843',  icon:FileText,        label:'Form 8843' },
+  { href:'/treaty',     icon:Globe,           label:'Tax Treaties' },
 ];
 
 /* ── Task cards ── */
@@ -29,19 +29,19 @@ const TASKS = [
     badge:'Step 1',
   },
   {
-    id:'form8843', href:'/dashboard#form8843',
+    id:'form8843', href:'/form-8843',
     icon:FileText, color:C.teal,
     title:'Form 8843 Guide',
     desc:'Step-by-step instructions for exempt individual declaration.',
-    status:'Soon',
+    status:'Start',
     badge:'Step 2',
   },
   {
-    id:'treaty', href:'/dashboard#treaty',
+    id:'treaty', href:'/treaty',
     icon:Globe, color:C.lilac,
     title:'Tax Treaty Check',
     desc:'Verify your country\'s treaty with the U.S. and claim eligible exemptions.',
-    status:'Soon',
+    status:'Start',
     badge:'Step 3',
   },
   {
