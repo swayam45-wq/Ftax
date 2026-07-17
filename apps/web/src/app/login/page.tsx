@@ -23,6 +23,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       localStorage.setItem('access_token', data.accessToken);
+      document.cookie = `access_token=${data.accessToken}; path=/; max-age=900; SameSite=Strict`;
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.message);

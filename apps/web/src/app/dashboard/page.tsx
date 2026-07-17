@@ -16,6 +16,7 @@ const NAV = [
   { href:'/residency',  icon:Calculator,      label:'Residency Check' },
   { href:'/form-8843',  icon:FileText,        label:'Form 8843' },
   { href:'/treaty',     icon:Globe,           label:'Tax Treaties' },
+  { href:'/tax',        icon:Calculator,      label:'Tax Calculator' },
 ];
 
 /* ── Task cards ── */
@@ -45,11 +46,11 @@ const TASKS = [
     badge:'Step 3',
   },
   {
-    id:'calc', href:'/dashboard#calc',
-    icon:Calculator, color:C.muted,
+    id:'calc', href:'/tax',
+    icon:Calculator, color:C.pine,
     title:'Tax Calculation',
     desc:'Federal + Illinois state tax, fully explained with zero black boxes.',
-    status:'Soon',
+    status:'Start',
     badge:'Step 4',
   },
 ];
