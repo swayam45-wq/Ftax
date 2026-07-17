@@ -34,17 +34,21 @@ Follow these instructions to run FTax locally for development.
    ```
 
 5. **Initialize the Database**
-   Push the Prisma schema to the Postgres database and generate the client:
+   Since we use a local Postgres container, make sure Docker is running. To sync the database schema and generate the client:
    ```bash
    pnpm run db:migrate
    ```
-   *(Optional)* Run the seed script to populate test data:
+   If there are no migrations, you can directly push the schema structure:
+   ```bash
+   pnpm exec prisma db push --schema=apps/api/prisma/schema.prisma
+   ```
+   *(Optional)* Run the seed script to populate initial test data:
    ```bash
    pnpm run db:seed
    ```
 
 6. **Start the Development Servers**
-   This command starts both the NestJS API and Next.js Frontend concurrently:
+   This starts both NestJS backend (port 3001) and Next.js frontend (port 3000) concurrently:
    ```bash
    pnpm run dev
    ```
@@ -52,7 +56,12 @@ Follow these instructions to run FTax locally for development.
 ## Accessing the Apps
 * **Frontend Web App:** [http://localhost:3000](http://localhost:3000)
 * **Backend API Swagger Docs:** [http://localhost:3001/api/docs](http://localhost:3001/api/docs)
-* **Prisma Database Studio:** Run `pnpm run db:studio` to view the DB at [http://localhost:5555](http://localhost:5555)
+* **Prisma Database Studio:** Run `pnpm run db:studio` to view the database at [http://localhost:5555](http://localhost:5555)
 
-## Mailtrap (Local Email Testing)
-In development, emails (like verification and password reset) are routed through Nodemailer. By default, they log to the console. To capture them in a GUI, sign up for a free [Mailtrap](https://mailtrap.io/) account and update the `MAIL_USER` and `MAIL_PASS` variables in your `.env` file.
+## Main Features Configured
+1. **Residency Check (Step 1):** Substantial Presence Test (SPT) engine based on travel history.
+2. **Form 8843 Auto-Filler (Step 2):** Uses client-side `pdf-lib` to pre-populate and download the official, original fillable IRS Form 8843 PDF.
+3. **Tax Treaty Lookup (Step 3):** Standard student exemption rules for countries (India, China, South Korea, Germany).
+4. **Tax Calculator (Step 4):** Federal 1040-NR marginal tax rates + Illinois 4.95% flat state tax with visual bracket breakdown.
+5. **Auth Route Protection:** Route-guarding via Next.js Edge middleware.
+
