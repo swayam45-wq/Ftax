@@ -1,16 +1,20 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { PageShell } from '@/components/page-shell';
 import { C, apiFetch, grad } from '@/lib/api';
-import { FileText, Download, Check, Info } from 'lucide-react';
+import { FileText, Download, Check, Info, Landmark, Shield, Printer } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 
 export default function Form8843Page() {
-  const [mode, setMode] = useState<'guide' | 'fill'>('guide');
+  const [mode, setMode] = useState<'guide' | 'fill' | 'state'>('guide');
   const [profile, setProfile] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  
+  // State worksheet values
+  const [wages, setWages] = useState('0');
+  const [interest, setInterest] = useState('0');
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -36,7 +40,6 @@ export default function Form8843Page() {
           countryPassport: p.passportCountry || '',
           visaType: p.visaType || 'F-1',
           entryDate: p.programStartDate ? p.programStartDate.slice(0, 10) : '',
-          programName: p.department || '',
         }));
       })
       .catch(() => {});
@@ -91,6 +94,113 @@ export default function Form8843Page() {
     }
   };
 
+  const printStateWorksheet = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const wNum = parseFloat(wages) || 0;
+    const iNum = parseFloat(interest) || 0;
+    const gross = wNum + iNum;
+    const baseExempt = 2775; // 2024-2025 IL exemption threshold
+    const taxOwed = Math.max(0, (gross - baseExempt) * 0.0495);
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>IL-1040 State Tax Helper Sheet - ${formData.firstName} ${formData.lastName}</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+            .header { border-bottom: 2px solid #2A7F62; padding-bottom: 20px; margin-bottom: 30px; }
+            .title { font-size: 22px; font-weight: bold; color: #2A7F62; }
+            .subtitle { font-size: 13px; color: #666; margin-top: 5px; }
+            .section { margin-top: 25px; border: 1px solid #ddd; padding: 20px; border-radius: 6px; }
+            .section-title { font-weight: bold; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px; color: #111; }
+            .line-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dotted #ccc; }
+            .line-num { font-weight: bold; color: #2A7F62; min-width: 140px; }
+            .line-desc { flex: 1; margin-right: 15px; }
+            .line-val { font-weight: bold; text-align: right; }
+            .footer { margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; font-size: 11px; color: #777; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="title">Illinois Form IL-1040 Nonresident Helper Worksheet</div>
+            <div class="subtitle">Tax Year 2025 - For Student: ${formData.firstName} ${formData.lastName}</div>
+          </div>
+
+          <p>Use this reference sheet to fill out the official Illinois State Individual Income Tax Return (Form IL-1040) and Schedule NR. Do not mail this helper sheet itself.</p>
+
+          <div class="section">
+            <div class="section-title">Schedule NR (Nonresident Allocation)</div>
+            <div class="line-row">
+              <span class="line-num">Part I, Line 1, Col A</span>
+              <span class="line-desc">Total Wages from Federal Return</span>
+              <span class="line-val">$${wNum.toFixed(2)}</span>
+            </div>
+            <div class="line-row">
+              <span class="line-num">Part I, Line 1, Col B</span>
+              <span class="line-desc">Wages earned inside Illinois (UIC/OPT)</span>
+              <span class="line-val">$${wNum.toFixed(2)}</span>
+            </div>
+            <div class="line-row">
+              <span class="line-num">Part I, Line 21, Col B</span>
+              <span class="line-desc">Illinois Base Income</span>
+              <span class="line-val">$${gross.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Form IL-1040 Line-by-Line Guide</div>
+            <div class="line-row">
+              <span class="line-num">Line 1</span>
+              <span class="line-desc">Adjusted Gross Income (from Federal 1040-NR)</span>
+              <span class="line-val">$${gross.toFixed(2)}</span>
+            </div>
+            <div class="line-row">
+              <span class="line-num">Line 9</span>
+              <span class="line-desc">Illinois Base Income (matching Schedule NR)</span>
+              <span class="line-val">$${gross.toFixed(2)}</span>
+            </div>
+            <div class="line-row">
+              <span class="line-num">Line 10</span>
+              <span class="line-desc">Standard Exemption (allocated based on residency)</span>
+              <span class="line-val">$${baseExempt.toFixed(2)}</span>
+            </div>
+            <div class="line-row">
+              <span class="line-num">Line 12</span>
+              <span class="line-desc">Net Taxable Income</span>
+              <span class="line-val">$${Math.max(0, gross - baseExempt).toFixed(2)}</span>
+            </div>
+            <div class="line-row">
+              <span class="line-num">Line 13</span>
+              <span class="line-desc">Illinois Tax Due (Flat 4.95%)</span>
+              <span class="line-val">$${taxOwed.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Mailing Instructions</div>
+            <p><strong>If you owe tax (attaching payment):</strong><br>
+            Illinois Department of Revenue<br>
+            P.O. Box 19027<br>
+            Springfield, IL 62794-9027</p>
+            
+            <p><strong>If you are claiming a refund or owe $0:</strong><br>
+            Illinois Department of Revenue<br>
+            P.O. Box 19005<br>
+            Springfield, IL 62794-9005</p>
+          </div>
+
+          <div class="footer">
+            Generated via FTax Assistant - UIC. Based on flat tax rates for tax year 2025.
+          </div>
+          <script>window.print();</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const inputStyle = {
     width: '100%',
     background: 'rgba(83,128,131,0.08)',
@@ -105,31 +215,43 @@ export default function Form8843Page() {
   };
 
   return (
-    <PageShell title="Form 8843 Guide" back="/dashboard" backLabel="Dashboard">
+    <PageShell title="Tax Form Hub" back="/dashboard" backLabel="Dashboard">
+      {/* Three tabs */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'rgba(83,128,131,0.06)', border: `1px solid ${C.border}`, borderRadius: 12, padding: 4 }}>
-        <button onClick={() => setMode('guide')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, transition: 'all .15s', background: mode === 'guide' ? C.pine : 'transparent', color: mode === 'guide' ? '#fff' : C.muted }}>Filing Guide</button>
-        <button onClick={() => setMode('fill')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, transition: 'all .15s', background: mode === 'fill' ? C.pine : 'transparent', color: mode === 'fill' ? '#fff' : C.muted }}>Auto-Fill Original Form</button>
+        <button onClick={() => setMode('guide')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'guide' ? C.pine : 'transparent', color: mode === 'guide' ? '#fff' : C.muted }}>Filing Guide</button>
+        <button onClick={() => setMode('fill')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'fill' ? C.pine : 'transparent', color: mode === 'fill' ? '#fff' : C.muted }}>Federal 8843</button>
+        <button onClick={() => setMode('state')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'state' ? C.teal : 'transparent', color: mode === 'state' ? '#fff' : C.muted }}>Illinois State (IL-1040)</button>
       </div>
 
-      {mode === 'guide' ? (
+      {/* ── MODE: GUIDE ── */}
+      {mode === 'guide' && (
         <div>
           <div style={{ marginBottom: 30 }}>
-            <h1 style={{ fontSize: 28, fontWeight: 900, letterSpacing: '-0.02em', marginBottom: 8 }}>Form 8843 Instructions</h1>
-            <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.6 }}>Exempt individuals on F-1, J-1, or M-1 visas must file Form 8843 annually to exclude days of presence in the U.S. for tax residency testing.</p>
+            <h1 style={{ fontSize: 26, fontWeight: 900, letterSpacing: '-0.02em', marginBottom: 8 }}>Federal vs State Filing</h1>
+            <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.6 }}>F-1 student tax returns consist of two separate components: Federal (sent to the IRS) and State (sent to the Illinois Department of Revenue).</p>
           </div>
-          <div style={{ background: 'rgba(83,128,131,0.04)', border: `1px solid ${C.border}`, borderRadius: 12, padding: 20, marginBottom: 24 }}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}><Info size={16} color={C.teal} /> Filing Information</h3>
-            <ul style={{ paddingLeft: 18, color: C.muted, fontSize: 13, lineHeight: 1.8 }}>
-              <li><strong>Requirement:</strong> Mandatory for all international students on F-1 status present in the U.S. during the tax year.</li>
-              <li><strong>Filing Deadline:</strong> April 15, 2025.</li>
-              <li><strong>Mailing Address:</strong> Department of the Treasury, Internal Revenue Service Center, Austin, TX 73301-0215.</li>
-            </ul>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+            <div style={{ background: 'rgba(83,128,131,0.04)', border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, color: C.pine }}><Shield size={16} /> 1. U.S. Federal Tax</h3>
+              <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7 }}>
+                All F-1 students must file **Form 8843** to declare their exempt individual status, even with zero income. If you earned wages, you must also file **Form 1040-NR**.
+              </p>
+            </div>
+            <div style={{ background: 'rgba(42,127,98,0.04)', border: '1px solid rgba(42,127,98,0.2)', borderRadius: 12, padding: 20 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, color: C.teal }}><Landmark size={16} /> 2. Illinois State Tax</h3>
+              <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7 }}>
+                If you earned income in Illinois (campus job, OPT, CPT), you must file **Form IL-1040** along with **Schedule NR** to pay Illinois's flat 4.95% income tax.
+              </p>
+            </div>
           </div>
           <button onClick={() => setMode('fill')} style={{ width: '100%', padding: '14px', borderRadius: 12, border: 'none', background: grad, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <FileText size={16} /> Fill out the original form
+            <FileText size={16} /> Get started with tax forms
           </button>
         </div>
-      ) : (
+      )}
+
+      {/* ── MODE: FEDERAL FILL ── */}
+      {mode === 'fill' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div style={{ background: 'rgba(83,128,131,0.04)', border: `1px solid ${C.border}`, borderRadius: 16, padding: 24 }}>
             <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16, color: C.text }}>Part I - General Information</h2>
@@ -176,7 +298,39 @@ export default function Form8843Page() {
           </div>
 
           <button onClick={handleDownloadFilledPDF} disabled={loading} style={{ padding: '14px', borderRadius: 12, border: 'none', background: loading ? 'rgba(83,128,131,0.4)' : grad, color: '#fff', fontWeight: 700, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {loading ? 'Processing...' : success ? <><Check size={16} /> Generated Successfully!</> : <><Download size={16} /> Fill & Download Original U.S. Form 8843</>}
+            {loading ? 'Processing...' : success ? <><Check size={16} /> Generated Successfully!</> : <><Download size={16} /> Fill &amp; Download Original U.S. Form 8843</>}
+          </button>
+        </div>
+      )}
+
+      {/* ── MODE: STATE FILL ── */}
+      {mode === 'state' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div style={{ background: 'rgba(42,127,98,0.04)', border: '1px solid rgba(42,127,98,0.2)', borderRadius: 16, padding: 24 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 8, color: C.text }}>Illinois IL-1040 Calculator Data</h2>
+            <p style={{ color: C.muted, fontSize: 13, marginBottom: 16 }}>Input your income details to determine line items for Form IL-1040 and Schedule NR.</p>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div>
+                <label style={{ fontSize: 12, color: C.muted }}>Total Wages (Box 1 of W-2)</label>
+                <input type="number" style={inputStyle} value={wages} onChange={e => setWages(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, color: C.muted }}>Other Income / Interest</label>
+                <input type="number" style={inputStyle} value={interest} onChange={e => setInterest(e.target.value)} />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: 'rgba(83,128,131,0.04)', border: `1px solid ${C.border}`, borderRadius: 16, padding: 20 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}><Info size={16} color={C.teal} /> Filing instructions</h3>
+            <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.6 }}>
+              Illinois requires nonresidents with source income to file **Form IL-1040** individual tax return along with **Schedule NR** (to allocate portion of federal income earned in IL). 
+            </p>
+          </div>
+
+          <button onClick={printStateWorksheet} style={{ padding: '14px', borderRadius: 12, border: 'none', background: `linear-gradient(135deg, ${C.teal}, #1b533f)`, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <Printer size={16} /> Generate &amp; Print IL-1040 Helper Sheet
           </button>
         </div>
       )}
