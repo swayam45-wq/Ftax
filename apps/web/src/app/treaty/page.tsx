@@ -48,7 +48,7 @@ export default function TreatyPage() {
   return (
     <PageShell title="Tax Treaty Lookup" back="/dashboard" backLabel="Dashboard">
       <div style={{ marginBottom: 30 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '3px 10px', borderRadius: 999, background: `${C.teal}1a`, border: `1px solid ${C.teal}40`, color: C.teal }}>STEP 3 OF 4</span>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '3px 10px', borderRadius: 999, background: `${C.pine}1a`, border: `1px solid ${C.pine}40`, color: C.pine }}>STEP 3 OF 4</span>
         <h1 style={{ fontSize: 'clamp(24px, 4vw, 34px)', fontWeight: 900, letterSpacing: '-0.03em', margin: '12px 0 8px' }}>Tax Treaty Lookup</h1>
         <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.7 }}>Find out if your country has a bilateral tax treaty with the U.S. that can reduce your tax liability.</p>
       </div>

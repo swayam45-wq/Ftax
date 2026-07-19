@@ -39,7 +39,7 @@ const TASKS = [
   },
   {
     id:'treaty', href:'/treaty',
-    icon:Globe, color:C.lilac,
+    icon:Globe, color:C.pine,
     title:'Tax Treaty Check',
     desc:'Verify your country\'s treaty with the U.S. and claim eligible exemptions.',
     status:'Start',
@@ -47,7 +47,7 @@ const TASKS = [
   },
   {
     id:'calc', href:'/tax',
-    icon:Calculator, color:C.pine,
+    icon:Calculator, color:C.teal,
     title:'Tax Calculation',
     desc:'Federal + Illinois state tax, fully explained with zero black boxes.',
     status:'Start',

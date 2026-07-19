@@ -76,7 +76,7 @@ export default function TaxPage() {
   return (
     <PageShell title="Tax Calculator" back="/dashboard" backLabel="Dashboard">
       <div style={{ marginBottom: 28 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '3px 10px', borderRadius: 999, background: `${C.lilac}1a`, border: `1px solid ${C.lilac}40`, color: C.lilac }}>STEP 4 OF 4</span>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '3px 10px', borderRadius: 999, background: `${C.teal}1a`, border: `1px solid ${C.teal}40`, color: C.teal }}>STEP 4 OF 4</span>
         <h1 style={{ fontSize: 'clamp(22px,4vw,32px)', fontWeight: 900, letterSpacing: '-0.02em', margin: '12px 0 6px' }}>Tax Estimate Calculator</h1>
         <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.6 }}>Federal (1040-NR) + Illinois (IL-1040) estimate for nonresident F-1 students. No black boxes.</p>
       </div>
@@ -144,7 +144,7 @@ export default function TaxPage() {
             {[
               { label: 'Federal Tax', value: fmt(fedTax),  color: C.pine  },
               { label: 'Illinois Tax', value: fmt(ilTax),  color: C.teal  },
-              { label: 'Effective Rate', value: `${effectiveRate}%`, color: C.lilac },
+              { label: 'Effective Rate', value: `${effectiveRate}%`, color: C.teal },
             ].map(({ label, value, color }) => (
               <div key={label} style={{ textAlign: 'center', padding: '18px 12px', background: 'rgba(83,128,131,0.05)', border: `1px solid ${C.border}`, borderRadius: 14 }}>
                 <p style={{ fontSize: 20, fontWeight: 900, color }}>{value}</p>
