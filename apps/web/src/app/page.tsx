@@ -69,17 +69,17 @@ export default function Home() {
   return (
     <div className="relative w-full min-h-screen overflow-x-hidden bg-[#0a0f14]" style={{ fontFamily: 'var(--font-body)', color: '#f0eeee' }}>
       
-      {/* ── HERO VIEWPORT CONTAINER (Height fixed to 100vh for landing feel) ── */}
-      <div className="relative w-full h-[100vh] flex flex-col justify-between">
+      {/* ── HERO VIEWPORT CONTAINER (Height minimum 100vh for landing feel) ── */}
+      <div className="relative w-full min-h-screen flex flex-col justify-between">
         
         {/* Background video with overlay */}
         <video autoPlay muted loop playsInline className="absolute inset-0 z-0 w-full h-full object-cover">
           <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#0a0f14]/85 z-0" />
+        <div className="absolute inset-0 bg-[#0a0f14]/90 z-10" />
 
         {/* Navbar */}
-        <header className="relative z-10 w-full">
+        <header className="relative z-20 w-full">
           <div className="max-w-[1280px] mx-auto px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
             <Link href="/" className="flex items-center">
               <Logo />
@@ -126,7 +126,7 @@ export default function Home() {
         </header>
 
         {/* Hero content */}
-        <main className="relative z-10 max-w-[1280px] mx-auto px-5 sm:px-8 flex-grow flex flex-col items-center justify-center">
+        <main className="relative z-20 max-w-[1280px] mx-auto px-5 sm:px-8 flex-grow flex flex-col items-center justify-center">
           <div className="max-w-[680px] w-full flex flex-col items-center text-center">
             {/* Tagline */}
             <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible" className="mb-4">
@@ -216,7 +216,7 @@ export default function Home() {
         </main>
 
         {/* Scroll prompt anchor */}
-        <div className="relative z-10 w-full text-center pb-8 flex flex-col items-center gap-2">
+        <div className="relative z-20 w-full text-center pb-8 flex flex-col items-center gap-2">
           <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.05em' }}>SCROLL TO LEARN MORE</span>
           <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-5 h-5 flex items-center justify-center">
             <ChevronDown size={16} color={C.muted} />
