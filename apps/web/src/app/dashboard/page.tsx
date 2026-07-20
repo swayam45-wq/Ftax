@@ -4,26 +4,26 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch, C, grad, gradText } from '@/lib/api';
 import {
-  LayoutDashboard, FileText, Calculator, Globe, LogOut,
+  LayoutDashboard, FileText, Globe, LogOut,
   CheckCircle, Clock, ArrowRight, User, ChevronRight,
-  Shield, AlertTriangle, Menu, X,
+  Shield, AlertTriangle, Menu, X, ClipboardList, TrendingUp,
 } from 'lucide-react';
 
 /* ── Sidebar nav items ── */
 const NAV = [
   { href:'/dashboard',  icon:LayoutDashboard, label:'Dashboard' },
   { href:'/profile',    icon:User,            label:'My Profile' },
-  { href:'/residency',  icon:Calculator,      label:'Residency Check' },
+  { href:'/residency',  icon:ClipboardList,   label:'Residency Check' },
   { href:'/form-8843',  icon:FileText,        label:'Form 8843' },
   { href:'/treaty',     icon:Globe,           label:'Tax Treaties' },
-  { href:'/tax',        icon:Calculator,      label:'Tax Calculator' },
+  { href:'/tax',        icon:TrendingUp,      label:'Tax Calculator' },
 ];
 
 /* ── Task cards ── */
 const TASKS = [
   {
     id:'residency', href:'/residency',
-    icon:Calculator, color:C.pine,
+    icon:ClipboardList, color:C.pine,
     title:'Tax Residency Check',
     desc:'Run the IRS Substantial Presence Test and determine your filing status.',
     status:'Start',
@@ -47,7 +47,7 @@ const TASKS = [
   },
   {
     id:'calc', href:'/tax',
-    icon:Calculator, color:C.teal,
+    icon:TrendingUp, color:C.teal,
     title:'Tax Calculation',
     desc:'Federal + Illinois state tax, fully explained with zero black boxes.',
     status:'Start',

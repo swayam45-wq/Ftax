@@ -31,7 +31,7 @@ const TREATIES: Record<string, { article: string; type: string; limit: string; d
     type: 'Wages & Maintenance',
     limit: '$9,000/year for wages; Unlimited for maintenance',
     duration: 'Up to 4 calendar years',
-    details: ' जर्मन students can exempt up to $9,000 of wage income earned in the U.S. per year if it is necessary for maintenance.'
+    details: 'German students can exempt up to $9,000 of wage income earned in the U.S. per year if it is necessary for maintenance, education, or training.'
   }
 };
 
@@ -114,7 +114,7 @@ export default function TreatyPage() {
         <div>
           <h4 style={{ fontSize: 13, fontWeight: 700, color: C.text }}>How to Claim</h4>
           <p style={{ fontSize: 12, color: C.muted, marginTop: 4, lineHeight: 1.6 }}>
-            Treaty benefits are claimed by attaching **Form 8833** (Treaty-Based Return Position Disclosure) to your Form 1040-NR federal tax return, or by filing **Form 8233** with your employer's payroll office.
+            Treaty benefits are claimed by attaching <strong style={{ color: C.text }}>Form 8833</strong> (Treaty-Based Return Position Disclosure) to your Form 1040-NR federal tax return, or by filing <strong style={{ color: C.text }}>Form 8233</strong> with your employer&apos;s payroll office.
           </p>
         </div>
       </div>

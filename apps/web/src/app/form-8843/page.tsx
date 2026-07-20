@@ -220,7 +220,7 @@ export default function Form8843Page() {
       <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'rgba(83,128,131,0.06)', border: `1px solid ${C.border}`, borderRadius: 12, padding: 4 }}>
         <button onClick={() => setMode('guide')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'guide' ? C.pine : 'transparent', color: mode === 'guide' ? '#fff' : C.muted }}>Filing Guide</button>
         <button onClick={() => setMode('fill')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'fill' ? C.pine : 'transparent', color: mode === 'fill' ? '#fff' : C.muted }}>Federal 8843</button>
-        <button onClick={() => setMode('state')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'state' ? C.teal : 'transparent', color: mode === 'state' ? '#fff' : C.muted }}>Illinois State (IL-1040)</button>
+        <button onClick={() => setMode('state')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'state' ? C.pine : 'transparent', color: mode === 'state' ? '#fff' : C.muted }}>Illinois State (IL-1040)</button>
       </div>
 
       {/* ── MODE: GUIDE ── */}
@@ -234,13 +234,13 @@ export default function Form8843Page() {
             <div style={{ background: 'rgba(83,128,131,0.04)', border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, color: C.pine }}><Shield size={16} /> 1. U.S. Federal Tax</h3>
               <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7 }}>
-                All F-1 students must file **Form 8843** to declare their exempt individual status, even with zero income. If you earned wages, you must also file **Form 1040-NR**.
+                All F-1 students must file <strong style={{ color: C.text }}>Form 8843</strong> to declare their exempt individual status, even with zero income. If you earned wages, you must also file <strong style={{ color: C.text }}>Form 1040-NR</strong>.
               </p>
             </div>
             <div style={{ background: 'rgba(42,127,98,0.04)', border: '1px solid rgba(42,127,98,0.2)', borderRadius: 12, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, color: C.teal }}><Landmark size={16} /> 2. Illinois State Tax</h3>
               <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7 }}>
-                If you earned income in Illinois (campus job, OPT, CPT), you must file **Form IL-1040** along with **Schedule NR** to pay Illinois's flat 4.95% income tax.
+                If you earned income in Illinois (campus job, OPT, CPT), you must file <strong style={{ color: C.text }}>Form IL-1040</strong> along with <strong style={{ color: C.text }}>Schedule NR</strong> to pay Illinois&apos;s flat 4.95% income tax.
               </p>
             </div>
           </div>
@@ -325,7 +325,7 @@ export default function Form8843Page() {
           <div style={{ background: 'rgba(83,128,131,0.04)', border: `1px solid ${C.border}`, borderRadius: 16, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}><Info size={16} color={C.teal} /> Filing instructions</h3>
             <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.6 }}>
-              Illinois requires nonresidents with source income to file **Form IL-1040** individual tax return along with **Schedule NR** (to allocate portion of federal income earned in IL). 
+              Illinois requires nonresidents with source income to file <strong style={{ color: C.text }}>Form IL-1040</strong> individual tax return along with <strong style={{ color: C.text }}>Schedule NR</strong> (to allocate the portion of federal income earned in Illinois).
             </p>
           </div>
 
