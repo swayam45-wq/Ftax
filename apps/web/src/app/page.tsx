@@ -4,15 +4,14 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRightCircle, Shield, Calculator, FileText, Globe,
-  Menu, X, ChevronDown, ChevronUp, Clock, HelpCircle,
-  Sparkles, CheckCircle2, ChevronRight, Lock
+  Menu, X, ChevronDown, ChevronUp, CheckCircle2, Lock, HelpCircle
 } from 'lucide-react';
 import { C, grad, gradText } from '@/lib/api';
 
 /* ── Custom Logo (filled with brand color) ── */
 function Logo() {
   return (
-    <svg width="32" height="32" viewBox="0 0 256 256" fill={C.pine}>
+    <svg width="32" height="32" viewBox="0 0 256 256" fill={C.pine} className="transition-transform hover:scale-105 duration-200">
       <path d="M 64 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 L 128 64 L 128 64.5 L 161 32 L 192 0 L 256 0 L 256 64 L 192 128 L 128 128 L 128 192 L 96 223 L 63.5 256 L 0 256 L 0 192 Z M 256 192 L 224 223 L 191.5 256 L 128 256 L 128 192 L 192 128 L 256 128 Z" />
     </svg>
   );
@@ -20,14 +19,14 @@ function Logo() {
 
 /* ── Animation Variants ── */
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 32 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
       delay: i * 0.12,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as any,
+      duration: 0.7,
+      ease: [0.21, 1.02, 0.43, 1.01] as any,
     },
   }),
 };
@@ -45,13 +44,34 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   return (
     <div
       onClick={() => setOpen(!open)}
-      style={{ background: 'rgba(83,128,131,0.04)', border: `1px solid ${open ? 'rgba(83,128,131,0.3)' : C.border}`, borderRadius: 14, cursor: 'pointer', transition: 'all .2s' }}
+      style={{
+        background: open ? 'rgba(83,128,131,0.06)' : 'rgba(255,255,255,0.01)',
+        border: `1px solid ${open ? 'rgba(83,128,131,0.3)' : C.border}`,
+        borderRadius: 16,
+        cursor: 'pointer',
+        transition: 'all .25s ease',
+        overflow: 'hidden'
+      }}
+      className="hover:bg-white/[0.03] hover:border-white/10"
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px' }}>
         <span style={{ fontWeight: 600, fontSize: 15, color: '#f0eeee' }}>{q}</span>
-        {open ? <ChevronUp size={16} color={C.teal}/> : <ChevronDown size={16} color={C.muted}/>}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '50%', background: open ? grad : 'rgba(255,255,255,0.04)', transition: 'all .2s' }}>
+          {open ? <ChevronUp size={14} color="#fff"/> : <ChevronDown size={14} color={C.muted}/>}
+        </div>
       </div>
-      {open && <p style={{ padding: '0 22px 18px', color: C.muted, fontSize: 13, lineHeight: 1.7 }}>{a}</p>}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+          >
+            <p style={{ padding: '0 24px 20px', color: C.muted, fontSize: 13, lineHeight: 1.75 }}>{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -60,27 +80,26 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Residency', href: '#residency' },
+    { label: 'Residency Check', href: '#residency' },
     { label: 'Form 8843', href: '#8843' },
-    { label: 'Treaty Check', href: '#treaty' },
     { label: 'FAQ', href: '#faq' }
   ];
 
   return (
     <div className="relative w-full min-h-screen overflow-x-hidden bg-[#0a0f14]" style={{ fontFamily: 'var(--font-body)', color: '#f0eeee' }}>
       
-      {/* ── HERO VIEWPORT CONTAINER (Height minimum 100vh for landing feel) ── */}
+      {/* ── HERO VIEWPORT CONTAINER ── */}
       <div className="relative w-full min-h-screen flex flex-col justify-between">
         
         {/* Background video with overlay */}
         <video autoPlay muted loop playsInline className="absolute inset-0 z-0 w-full h-full object-cover">
           <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#0a0f14]/90 z-10" />
+        <div className="absolute inset-0 bg-[#0a0f14]/92 z-10" />
 
         {/* Navbar */}
         <header className="relative z-20 w-full">
-          <div className="max-w-[1280px] mx-auto px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
+          <div className="max-w-[1200px] mx-auto px-6 sm:px-8 py-5 flex justify-between items-center">
             <Link href="/" className="flex items-center">
               <Logo />
             </Link>
@@ -90,7 +109,7 @@ export default function Home() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-sm font-medium transition-opacity hover:opacity-70"
+                  className="text-sm font-medium transition-opacity hover:opacity-100"
                   style={{ color: C.muted }}
                 >
                   {link.label}
@@ -109,7 +128,7 @@ export default function Home() {
               <Link
                 href="/login"
                 className="text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 hover:shadow-md active:scale-95"
-                style={{ backgroundColor: 'rgba(83,128,131,0.12)', border: `1px solid ${C.border}`, color: '#f0eeee' }}
+                style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}`, color: '#f0eeee' }}
               >
                 Sign In
               </Link>
@@ -126,11 +145,11 @@ export default function Home() {
         </header>
 
         {/* Hero content */}
-        <main className="relative z-20 max-w-[1280px] mx-auto px-5 sm:px-8 flex-grow flex flex-col items-center justify-center">
-          <div className="max-w-[680px] w-full flex flex-col items-center text-center">
+        <main className="relative z-20 max-w-[1200px] mx-auto px-6 sm:px-8 flex-grow flex items-center justify-center py-12">
+          <div className="max-w-[720px] w-full flex flex-col items-center text-center">
             {/* Tagline */}
-            <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible" className="mb-4">
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '5px 14px', borderRadius: 999, background: `${C.teal}1a`, border: `1px solid ${C.teal}40`, color: C.teal }}>UIC F-1 TAX ASSISTANT</span>
+            <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible" className="mb-6">
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '6px 16px', borderRadius: 999, background: `${C.teal}1e`, border: `1px solid ${C.teal}35`, color: C.teal }}>UIC F-1 TAX ASSISTANT</span>
             </motion.div>
 
             {/* Heading */}
@@ -139,10 +158,10 @@ export default function Home() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="font-bold tracking-[-0.01em] mb-6"
+              className="font-bold tracking-[-0.02em] mb-6"
               style={{
                 fontFamily: 'var(--font-heading)',
-                fontSize: 'clamp(1.8rem, 5vw, 3.2rem)',
+                fontSize: 'clamp(2rem, 5.5vw, 3.5rem)',
                 lineHeight: '1.05',
                 color: '#f0eeee',
               }}
@@ -154,7 +173,7 @@ export default function Home() {
                   display: 'inline',
                   verticalAlign: 'middle',
                   position: 'relative',
-                  top: '-2px',
+                  top: '-3px',
                   color: C.pine,
                   margin: '0 4px',
                 }}
@@ -166,7 +185,7 @@ export default function Home() {
                   display: 'inline',
                   verticalAlign: 'middle',
                   position: 'relative',
-                  top: '-2px',
+                  top: '-3px',
                   color: C.teal,
                   margin: '0 4px',
                 }}
@@ -182,10 +201,10 @@ export default function Home() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="max-w-[560px] mb-8"
+              className="max-w-[580px] mb-10"
               style={{
-                fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)',
-                lineHeight: '1.65',
+                fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
+                lineHeight: '1.7',
                 color: C.muted,
               }}
             >
@@ -194,16 +213,16 @@ export default function Home() {
 
             {/* CTA */}
             <motion.div custom={3} variants={fadeUp} initial="hidden" animate="visible">
-              <motion.div whileHover={{ scale: 1.04, filter: 'brightness(1.1)' }} whileTap={{ scale: 0.96 }}>
+              <motion.div whileHover={{ scale: 1.03, filter: 'brightness(1.08)' }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/register"
                   className="inline-flex justify-between items-center rounded-full text-white font-semibold transition-all"
                   style={{
                     background: grad,
-                    fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                    padding: '17px 28px',
-                    minWidth: '230px',
-                    boxShadow: '0 4px 24px rgba(83,128,131,0.28)',
+                    fontSize: 'clamp(0.95rem, 2vw, 1.05rem)',
+                    padding: '18px 30px',
+                    minWidth: '240px',
+                    boxShadow: '0 8px 30px rgba(83,128,131,0.3)',
                     gap: '32px',
                   }}
                 >
@@ -217,8 +236,8 @@ export default function Home() {
 
         {/* Scroll prompt anchor */}
         <div className="relative z-20 w-full text-center pb-8 flex flex-col items-center gap-2">
-          <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.05em' }}>SCROLL TO LEARN MORE</span>
-          <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-5 h-5 flex items-center justify-center">
+          <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.08em', fontWeight: 600 }}>SCROLL TO LEARN MORE</span>
+          <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6 }} className="w-5 h-5 flex items-center justify-center">
             <ChevronDown size={16} color={C.muted} />
           </motion.div>
         </div>
@@ -227,70 +246,118 @@ export default function Home() {
       {/* ── SCROLLABLE SECTIONS ── */}
       
       {/* 1. The 4 Steps Grid */}
-      <section id="residency" className="py-24 border-t border-[#838083]/10 bg-[#0f1920]/40">
-        <div className="max-w-[1100px] mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)' }}>How It Works</h2>
+      <section id="residency" className="py-28 border-t border-white/[0.04] bg-[#0f1920]/30 relative z-20">
+        <div className="max-w-[1200px] mx-auto px-6 sm:px-8">
+          <div className="text-center mb-20">
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: C.pine }}>WORKFLOW</span>
+            <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginTop: 8 }}>How It Works</h2>
             <p style={{ color: C.muted, fontSize: 14, marginTop: 8 }}>From start to filing-ready in 4 simple checkpoints.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { step: '01', title: 'Residency Check', desc: 'Run the Substantial Presence Test dynamically.', icon: Shield, color: C.pine },
               { step: '02', title: 'Form 8843 Filler', desc: 'Generate and pre-fill the official IRS PDF statement.', icon: FileText, color: C.teal },
               { step: '03', title: 'Treaty Lookup', desc: 'Find country-specific student exemptions.', icon: Globe, color: C.pine },
               { step: '04', title: 'Tax Estimator', desc: 'Calculate federal and Illinois state allocations.', icon: Calculator, color: C.teal },
             ].map((s, idx) => (
-              <div key={idx} style={{ background: 'rgba(83,128,131,0.04)', border: `1px solid ${C.border}`, borderRadius: 18, padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: 28, fontWeight: 900, color: `${s.color}60` }}>{s.step}</span>
-                  <s.icon size={20} color={s.color} />
+              <div
+                key={idx}
+                style={{
+                  background: 'rgba(255,255,255,0.01)',
+                  border: `1px solid ${C.border}`,
+                  borderRadius: 20,
+                  padding: 28,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 16,
+                  transition: 'all .25s ease'
+                }}
+                className="hover:bg-white/[0.02] hover:border-white/10 hover:-translate-y-1"
+              >
+                <div className="flex justify-between items-center">
+                  <span style={{ fontSize: 32, fontWeight: 900, color: `${s.color}25` }}>{s.step}</span>
+                  <div style={{ borderRadius: 10, background: `${s.color}1e`, width: 36, height: 36 }} className="flex items-center justify-center">
+                    <s.icon size={18} color={s.color} />
+                  </div>
                 </div>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: '#f0eeee' }}>{s.title}</h3>
-                <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{s.desc}</p>
+                <div>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: '#f0eeee', marginBottom: 6 }}>{s.title}</h3>
+                  <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{s.desc}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 2. Feature Deep Dive */}
-      <section id="8843" className="py-24 border-t border-[#838083]/10">
-        <div className="max-w-[1100px] mx-auto px-6">
-          <div className="flex flex-col md:flex-row gap-16 items-center">
-            <div className="flex-1">
-              <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginBottom: 16 }}>Original U.S. Form Auto-Filling</h2>
-              <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.7, marginBottom: 20 }}>
+      {/* 2. Feature Deep Dive (2-Column Desktop Grid) */}
+      <section id="8843" className="py-28 border-t border-white/[0.04] relative z-20">
+        <div className="max-w-[1200px] mx-auto px-6 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch">
+            
+            {/* Left Content Column */}
+            <div className="flex flex-col justify-center">
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: C.teal }}>DOCUMENT COMPLIANCE</span>
+              <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginTop: 8, marginBottom: 16 }}>Original U.S. Form Auto-Filling</h2>
+              <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.75, marginBottom: 28 }}>
                 We use secure, client-side PDF document generation to populate your personal, academic, and visa entries directly into the official, interactive IRS Form 8843. No third-party data handlers, no black-box logic.
               </p>
-              <div className="flex flex-col gap-3">
-                {['Bank-grade AES-256 encryption at rest', 'Direct local download of official IRS PDFs', 'Pre-configured defaults for UIC student visa holders'].map((pt, i) => (
+              
+              <div className="flex flex-col gap-4">
+                {[
+                  'Bank-grade AES-256 encryption at rest',
+                  'Direct local download of official IRS PDFs',
+                  'Pre-configured defaults for UIC student visa holders'
+                ].map((pt, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <CheckCircle2 size={16} color={C.teal} />
-                    <span style={{ fontSize: 13, color: '#f0eeee', fontWeight: 500 }}>{pt}</span>
+                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                      <CheckCircle2 size={14} color={C.teal} />
+                    </div>
+                    <span style={{ fontSize: 14, color: '#f0eeee', fontWeight: 500 }}>{pt}</span>
                   </div>
                 ))}
               </div>
             </div>
             
-            <div className="flex-1 w-full max-w-[480px]">
-              <div style={{ background: 'rgba(42,127,98,0.04)', border: '1px solid rgba(42,127,98,0.22)', borderRadius: 20, padding: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <Lock size={32} color={C.teal} />
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#f0eeee' }}>Secure Tax Identifier Storage</h3>
-                <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>
-                  Unlike commercial filing networks, we encrypt sensitive SSN/ITIN digits on-device using a cryptographic key before storing, ensuring PII compliance.
-                </p>
+            {/* Right Card Column */}
+            <div className="flex items-center justify-center lg:justify-end">
+              <div
+                style={{
+                  background: 'rgba(255,255,255,0.01)',
+                  border: `1px solid ${C.border}`,
+                  borderRadius: 24,
+                  padding: 36,
+                  maxWidth: '480px',
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 20
+                }}
+                className="hover:border-white/10 transition-colors duration-300"
+              >
+                <div style={{ width: 48, height: 48, borderRadius: 12, background: `${C.teal}1e` }} className="flex items-center justify-center">
+                  <Lock size={22} color={C.teal} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f0eeee', marginBottom: 8 }}>Secure Tax Identifier Storage</h3>
+                  <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.65 }}>
+                    Unlike commercial filing networks, we encrypt sensitive SSN/ITIN digits on-device using a cryptographic key before storing, ensuring complete PII compliance.
+                  </p>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* 3. FAQ Section */}
-      <section id="faq" className="py-24 border-t border-[#838083]/10 bg-[#0f1920]/40">
-        <div className="max-w-[760px] mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)' }}>FAQ</h2>
+      <section id="faq" className="py-28 border-t border-white/[0.04] bg-[#0f1920]/30 relative z-20">
+        <div className="max-w-[800px] mx-auto px-6 sm:px-8">
+          <div className="text-center mb-20">
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: C.pine }}>SUPPORT</span>
+            <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginTop: 8 }}>FAQ</h2>
             <p style={{ color: C.muted, fontSize: 14, marginTop: 8 }}>Common student tax questions answered simply.</p>
           </div>
 
@@ -303,10 +370,10 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-12 border-t border-[#838083]/10 text-center">
-        <div className="max-w-[1280px] mx-auto px-6">
+      <footer className="py-16 border-t border-white/[0.04] text-center relative z-20 bg-[#0a0f14]">
+        <div className="max-w-[1200px] mx-auto px-6 flex flex-col items-center">
           <Logo />
-          <p style={{ color: C.muted, fontSize: 12, marginTop: 16, lineHeight: 1.6 }}>
+          <p style={{ color: C.muted, fontSize: 12, marginTop: 20, lineHeight: 1.7, maxWidth: '480px' }}>
             FTax is an educational assistant platform for international students at UIC.<br />
             &copy; 2026 FTax Assistant. All rights reserved.
           </p>
@@ -322,7 +389,7 @@ export default function Home() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-40 bg-[#0a0f14]/80 backdrop-blur-[4px]"
+              className="fixed inset-0 z-45 bg-[#0a0f14]/80 backdrop-blur-[4px]"
               onClick={() => setMobileMenuOpen(false)}
             />
 
