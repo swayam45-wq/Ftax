@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { apiFetch, C, grad } from '@/lib/api';
-import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import { C, grad } from '@/lib/api';
+import { Mail, ArrowRight, ShieldCheck, CheckCircle } from 'lucide-react';
+import { apiFetch } from '@/lib/api';
 
 export default function ForgotPasswordPage() {
   const [email,   setEmail]   = useState('');
@@ -15,104 +16,86 @@ export default function ForgotPasswordPage() {
     setError('');
     setLoading(true);
     try {
-      await apiFetch('/auth/forgot-password', {
-        method: 'POST',
-        body: JSON.stringify({ email }),
-      });
+      await apiFetch('/auth/forgot-password', { method:'POST', body: JSON.stringify({ email }) });
       setSent(true);
     } catch (err: any) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%', boxSizing: 'border-box',
-    background: 'rgba(83,128,131,0.08)',
-    border: `1px solid ${C.border}`,
-    borderRadius: 12, padding: '12px 16px 12px 44px',
-    color: C.text, fontSize: 15, outline: 'none',
-    transition: 'border-color .2s', fontFamily: 'inherit',
-  };
-
   return (
-    <div style={{ minHeight:'100vh', background:C.bg, display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"'Inter',system-ui,sans-serif" }}>
-      <div style={{ position:'fixed', top:'20%', left:'50%', transform:'translateX(-50%)', width:600, height:400, background:'radial-gradient(ellipse, rgba(83,128,131,0.18), transparent 70%)', pointerEvents:'none' }}/>
+    <div style={{
+      minHeight:'100vh', background:C.bg,
+      display:'flex', alignItems:'center', justifyContent:'center',
+      padding:24, fontFamily:"'Inter',system-ui,sans-serif", position:'relative', overflow:'hidden',
+    }}>
+      {/* Ambient glows */}
+      <div style={{ position:'fixed', top:'-10%', left:'50%', transform:'translateX(-50%)', width:700, height:500, background:'radial-gradient(ellipse, rgba(83,128,131,0.14) 0%, transparent 65%)', pointerEvents:'none' }}/>
 
-      <div style={{ width:'100%', maxWidth:420, position:'relative', zIndex:1 }}>
-        <div style={{ textAlign:'center', marginBottom:40 }}>
-          <Link href="/" style={{ textDecoration:'none', display:'inline-flex', alignItems:'center', gap:10 }}>
-            <div style={{ width:38, height:38, borderRadius:11, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:18, color:'#fff' }}>F</div>
-            <span style={{ fontWeight:800, fontSize:20, color:C.text, letterSpacing:'-0.03em' }}>FTax</span>
+      <div style={{ width:'100%', maxWidth:440, position:'relative', zIndex:1 }}>
+        {/* Logo */}
+        <div style={{ textAlign:'center', marginBottom:44 }}>
+          <Link href="/" style={{ textDecoration:'none', display:'inline-flex', alignItems:'center', gap:12 }}>
+            <div style={{ width:42, height:42, borderRadius:13, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:20, color:'#fff', boxShadow:'0 4px 20px rgba(83,128,131,0.4)' }}>F</div>
+            <span style={{ fontWeight:800, fontSize:22, color:C.text, letterSpacing:'-0.04em' }}>FTax</span>
           </Link>
         </div>
 
-        <div style={{ background:'rgba(83,128,131,0.05)', border:`1px solid ${C.border}`, borderRadius:24, padding:'40px 36px', boxShadow:'0 24px 64px rgba(0,0,0,0.5)' }}>
+        <div style={{
+          background:'rgba(13,21,32,0.80)', border:`1px solid rgba(83,145,150,0.22)`,
+          borderRadius:24, padding:'44px 40px',
+          backdropFilter:'blur(24px)',
+          boxShadow:'0 32px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04)',
+        }}>
           {sent ? (
-            <div style={{ textAlign:'center', padding:'8px 0' }}>
-              <div style={{ width:64, height:64, borderRadius:'50%', background:'rgba(42,127,98,0.15)', border:'1px solid rgba(42,127,98,0.3)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 24px' }}>
-                <CheckCircle size={30} color={C.teal}/>
+            <div style={{ textAlign:'center', padding:'24px 0' }}>
+              <div style={{ width:56, height:56, borderRadius:'50%', background:'rgba(42,127,98,0.15)', border:'1px solid rgba(42,127,98,0.30)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
+                <CheckCircle size={26} color={C.teal}/>
               </div>
-              <h1 style={{ fontSize:22, fontWeight:900, color:C.text, marginBottom:12 }}>Check your email</h1>
-              <p style={{ color:C.muted, fontSize:14, lineHeight:1.7, marginBottom:28 }}>
-                We sent a password reset link to <strong style={{ color:C.text }}>{email}</strong>. Check your inbox and follow the link to reset your password.
+              <h1 style={{ fontSize:24, fontWeight:800, letterSpacing:'-0.03em', marginBottom:10, color:C.text }}>Check your inbox</h1>
+              <p style={{ color:C.muted, fontSize:14, lineHeight:1.7 }}>
+                We&apos;ve sent a password reset link to <strong style={{ color:C.text }}>{email}</strong>. Check your spam folder if you don&apos;t see it.
               </p>
-              <Link href="/login" style={{ display:'inline-flex', alignItems:'center', gap:8, color:C.pine, fontSize:14, fontWeight:600, textDecoration:'none' }}>
-                <ArrowLeft size={14}/> Back to sign in
+              <Link href="/login" style={{ display:'inline-flex', alignItems:'center', gap:7, marginTop:28, background:grad, color:'#fff', fontWeight:700, fontSize:14, padding:'12px 22px', borderRadius:11, textDecoration:'none', boxShadow:'0 6px 22px rgba(83,128,131,0.30)' }}>
+                Back to sign in <ArrowRight size={14}/>
               </Link>
             </div>
           ) : (
             <>
-              <h1 style={{ fontSize:26, fontWeight:900, letterSpacing:'-0.03em', marginBottom:6, color:C.text }}>Reset password</h1>
-              <p style={{ color:C.muted, fontSize:14, marginBottom:32 }}>Enter your email and we will send you a reset link.</p>
+              <h1 style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.04em', marginBottom:6, color:C.text }}>Reset password</h1>
+              <p style={{ color:C.muted, fontSize:14, marginBottom:36 }}>Enter your email and we&apos;ll send you a reset link.</p>
 
               {error && (
-                <div style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:10, padding:'12px 16px', marginBottom:20, color:'#fca5a5', fontSize:14 }}>
-                  {error}
-                </div>
+                <div style={{ background:'rgba(239,68,68,0.09)', border:'1px solid rgba(239,68,68,0.28)', borderRadius:12, padding:'13px 16px', marginBottom:20, color:'#fca5a5', fontSize:14 }}>⚠ {error}</div>
               )}
 
-              <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:16 }}>
-                <div style={{ position:'relative' }}>
-                  <Mail size={16} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)' }}/>
-                  <input
-                    id="forgot-email"
-                    type="email"
-                    placeholder="Your email address"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    style={inputStyle}
-                    required
-                    onFocus={e => (e.target.style.borderColor = C.pine)}
-                    onBlur={e  => (e.target.style.borderColor = C.border)}
-                  />
+              <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:20 }}>
+                <div>
+                  <label style={{ display:'block', fontSize:12, fontWeight:600, color:C.muted, letterSpacing:'0.06em', textTransform:'uppercase', marginBottom:8 }}>Email address</label>
+                  <div style={{ position:'relative' }}>
+                    <Mail size={15} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}/>
+                    <input id="fp-email" type="email" placeholder="you@uic.edu" value={email} onChange={e => setEmail(e.target.value)} required className="inp" style={{ paddingLeft:42 }}/>
+                  </div>
                 </div>
 
-                <button
-                  id="forgot-submit"
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    background: loading ? 'rgba(83,128,131,0.4)' : grad,
-                    color:'#fff', fontWeight:700, border:'none', borderRadius:12,
-                    padding:'14px', fontSize:15, cursor: loading ? 'not-allowed' : 'pointer',
-                    transition:'transform .15s, box-shadow .15s',
-                  }}
-                  onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 10px 32px rgba(83,128,131,.4)'; } }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; (e.currentTarget as HTMLButtonElement).style.boxShadow = ''; }}
-                >
-                  {loading ? 'Sending...' : 'Send reset link'}
+                <button id="fp-submit" type="submit" disabled={loading} className="btn-primary" style={{ background:loading?'rgba(83,128,131,0.35)':grad, color:'#fff', padding:'15px', fontSize:15, justifyContent:'center', borderRadius:12, cursor:loading?'not-allowed':'pointer', boxShadow:loading?'none':'0 8px 28px rgba(83,128,131,0.32)' }}>
+                  {loading ? 'Sending…' : <><span>Send reset link</span><ArrowRight size={16}/></>}
                 </button>
               </form>
 
-              <div style={{ marginTop:24, textAlign:'center' }}>
-                <Link href="/login" style={{ display:'inline-flex', alignItems:'center', gap:6, color:C.pine, fontSize:14, fontWeight:500, textDecoration:'none' }}>
-                  <ArrowLeft size={14}/> Back to sign in
-                </Link>
+              <div style={{ marginTop:28, textAlign:'center' }}>
+                <Link href="/login" style={{ color:C.pine, fontSize:14, fontWeight:600, textDecoration:'none' }}>← Back to sign in</Link>
               </div>
             </>
           )}
+        </div>
+
+        <div style={{ textAlign:'center', marginTop:22 }}>
+          <span style={{ display:'inline-flex', alignItems:'center', gap:7, fontSize:12, color:C.dim }}>
+            <ShieldCheck size={13} color={C.pine}/> Secure password reset via email
+          </span>
         </div>
       </div>
     </div>

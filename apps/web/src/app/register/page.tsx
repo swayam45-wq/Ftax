@@ -3,20 +3,21 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { apiFetch, C, grad } from '@/lib/api';
-import { ArrowRight, Lock, Mail, User, Eye, EyeOff, Sparkles, CheckCircle } from 'lucide-react';
+import { ArrowRight, Lock, Mail, User, Eye, EyeOff, ShieldCheck, CheckCircle } from 'lucide-react';
 
 function PasswordStrength({ password }: { password: string }) {
   const checks = [
-    { label: '8+ characters', ok: password.length >= 8 },
-    { label: 'Uppercase letter', ok: /[A-Z]/.test(password) },
-    { label: 'Number', ok: /\d/.test(password) },
+    { label: '8+ chars',   ok: password.length >= 8 },
+    { label: 'Uppercase',  ok: /[A-Z]/.test(password) },
+    { label: 'Number',     ok: /\d/.test(password) },
   ];
   if (!password) return null;
+  const strong = checks.every(c => c.ok);
   return (
-    <div style={{ display:'flex', gap:12, marginTop:6 }}>
+    <div style={{ display:'flex', gap:10, marginTop:7 }}>
       {checks.map(({ label, ok }) => (
-        <span key={label} style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color: ok ? C.teal : C.dim }}>
-          <CheckCircle size={11} color={ok ? C.teal : C.dim}/> {label}
+        <span key={label} style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color: ok ? C.teal : C.dim, transition:'color .2s' }}>
+          <CheckCircle size={11} color={ok ? C.teal : 'rgba(138,151,168,0.35)'}/> {label}
         </span>
       ))}
     </div>
@@ -27,11 +28,11 @@ export default function RegisterPage() {
   const router = useRouter();
   const [firstName, setFirstName] = useState('');
   const [lastName,  setLastName]  = useState('');
-  const [email,    setEmail]    = useState('');
-  const [password, setPassword] = useState('');
-  const [showPw,   setShowPw]   = useState(false);
-  const [error,    setError]    = useState('');
-  const [loading,  setLoading]  = useState(false);
+  const [email,     setEmail]     = useState('');
+  const [password,  setPassword]  = useState('');
+  const [showPw,    setShowPw]    = useState(false);
+  const [error,     setError]     = useState('');
+  const [loading,   setLoading]   = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,109 +51,80 @@ export default function RegisterPage() {
     }
   };
 
-  const input: React.CSSProperties = {
-    width: '100%', boxSizing: 'border-box',
-    background: 'rgba(83,128,131,0.08)',
-    border: `1px solid ${C.border}`,
-    borderRadius: 12, padding: '12px 16px 12px 44px',
-    color: C.text, fontSize: 15, outline: 'none',
-    transition: 'border-color .2s',
-    fontFamily: 'inherit',
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: 12, fontWeight: 600,
+    color: C.muted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8,
   };
 
   return (
-    <div style={{ minHeight:'100vh', background:C.bg, display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"'Inter',system-ui,sans-serif" }}>
-      <div style={{ position:'fixed', top:'20%', left:'50%', transform:'translateX(-50%)', width:600, height:400, background:'radial-gradient(ellipse, rgba(83,128,131,0.18), transparent 70%)', pointerEvents:'none' }}/>
+    <div style={{
+      minHeight: '100vh', background: C.bg,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 24, fontFamily: "'Inter',system-ui,sans-serif", position: 'relative', overflow: 'hidden',
+    }}>
+      {/* Ambient glows */}
+      <div style={{ position:'fixed', top:'-15%', right:'-5%', width:600, height:600, background:'radial-gradient(ellipse, rgba(83,128,131,0.13) 0%, transparent 65%)', pointerEvents:'none' }}/>
+      <div style={{ position:'fixed', bottom:'0%', left:'-5%', width:500, height:500, background:'radial-gradient(ellipse, rgba(42,127,98,0.09) 0%, transparent 65%)', pointerEvents:'none' }}/>
 
-      <div style={{ width:'100%', maxWidth:440, position:'relative', zIndex:1 }}>
+      <div style={{ width:'100%', maxWidth:480, position:'relative', zIndex:1 }}>
         {/* Logo */}
-        <div style={{ textAlign:'center', marginBottom:40 }}>
-          <Link href="/" style={{ textDecoration:'none', display:'inline-flex', alignItems:'center', gap:10 }}>
-            <div style={{ width:38, height:38, borderRadius:11, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:18, color:'#fff' }}>F</div>
-            <span style={{ fontWeight:800, fontSize:20, color:C.text, letterSpacing:'-0.03em' }}>FTax</span>
+        <div style={{ textAlign:'center', marginBottom:44 }}>
+          <Link href="/" style={{ textDecoration:'none', display:'inline-flex', alignItems:'center', gap:12 }}>
+            <div style={{ width:42, height:42, borderRadius:13, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:20, color:'#fff', boxShadow:'0 4px 20px rgba(83,128,131,0.4)' }}>F</div>
+            <span style={{ fontWeight:800, fontSize:22, color:C.text, letterSpacing:'-0.04em' }}>FTax</span>
           </Link>
-          <p style={{ color:C.muted, fontSize:13, marginTop:8 }}>Tax guidance for international students</p>
+          <p style={{ color:C.muted, fontSize:13, marginTop:10 }}>Create your free account</p>
         </div>
 
         {/* Card */}
-        <div style={{ background:'rgba(83,128,131,0.05)', border:`1px solid ${C.border}`, borderRadius:24, padding:'40px 36px', boxShadow:'0 24px 64px rgba(0,0,0,0.5)' }}>
-          <h1 style={{ fontSize:26, fontWeight:900, letterSpacing:'-0.03em', marginBottom:6, color:C.text }}>
-            Create your account
-          </h1>
-          <p style={{ color:C.muted, fontSize:14, marginBottom:32 }}>Free forever for UIC F-1 students</p>
+        <div style={{
+          background: 'rgba(13,21,32,0.80)',
+          border: `1px solid rgba(83,145,150,0.22)`,
+          borderRadius: 24, padding: '44px 40px',
+          backdropFilter: 'blur(24px)',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04)',
+        }}>
+          <h1 style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.04em', marginBottom:6, color:C.text }}>Get started free</h1>
+          <p style={{ color:C.muted, fontSize:14, marginBottom:36 }}>Join hundreds of UIC international students</p>
 
           {error && (
-            <div style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:10, padding:'12px 16px', marginBottom:20, color:'#fca5a5', fontSize:14 }}>
-              {error}
+            <div style={{ background:'rgba(239,68,68,0.09)', border:'1px solid rgba(239,68,68,0.28)', borderRadius:12, padding:'13px 16px', marginBottom:20, color:'#fca5a5', fontSize:14 }}>
+              ⚠ {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:16 }}>
-            {/* First + Last name row */}
-            <div style={{ display:'flex', gap:12 }}>
-              <div style={{ position:'relative', flex:1 }}>
-                <User size={16} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)' }}/>
-                <input
-                  id="register-firstname"
-                  type="text"
-                  placeholder="First name"
-                  value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
-                  style={input}
-                  required
-                  onFocus={e => (e.target.style.borderColor = C.pine)}
-                  onBlur={e  => (e.target.style.borderColor = C.border)}
-                />
+          <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:18 }}>
+            {/* Name row */}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
+              <div>
+                <label style={labelStyle}>First name</label>
+                <div style={{ position:'relative' }}>
+                  <User size={15} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}/>
+                  <input id="reg-first" type="text" placeholder="Ada" value={firstName} onChange={e => setFirstName(e.target.value)} required className="inp" style={{ paddingLeft:42 }}/>
+                </div>
               </div>
-              <div style={{ position:'relative', flex:1 }}>
-                <input
-                  id="register-lastname"
-                  type="text"
-                  placeholder="Last name"
-                  value={lastName}
-                  onChange={e => setLastName(e.target.value)}
-                  style={{ ...input, paddingLeft:14 }}
-                  required
-                  onFocus={e => (e.target.style.borderColor = C.pine)}
-                  onBlur={e  => (e.target.style.borderColor = C.border)}
-                />
+              <div>
+                <label style={labelStyle}>Last name</label>
+                <input id="reg-last" type="text" placeholder="Lovelace" value={lastName} onChange={e => setLastName(e.target.value)} required className="inp"/>
               </div>
             </div>
 
             {/* Email */}
-            <div style={{ position:'relative' }}>
-              <Mail size={16} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)' }}/>
-              <input
-                id="register-email"
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                style={input}
-                required
-                onFocus={e => (e.target.style.borderColor = C.pine)}
-                onBlur={e  => (e.target.style.borderColor = C.border)}
-              />
+            <div>
+              <label style={labelStyle}>Email address</label>
+              <div style={{ position:'relative' }}>
+                <Mail size={15} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}/>
+                <input id="reg-email" type="email" placeholder="you@uic.edu" value={email} onChange={e => setEmail(e.target.value)} required className="inp" style={{ paddingLeft:42 }}/>
+              </div>
             </div>
 
             {/* Password */}
             <div>
+              <label style={labelStyle}>Password</label>
               <div style={{ position:'relative' }}>
-                <Lock size={16} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)' }}/>
-                <input
-                  id="register-password"
-                  type={showPw ? 'text' : 'password'}
-                  placeholder="Create a password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  style={{ ...input, paddingRight:44 }}
-                  required
-                  minLength={8}
-                  onFocus={e => (e.target.style.borderColor = C.pine)}
-                  onBlur={e  => (e.target.style.borderColor = C.border)}
-                />
-                <button type="button" onClick={() => setShowPw(s => !s)}
-                  style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:C.muted, display:'flex', padding:0 }}>
+                <Lock size={15} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}/>
+                <input id="reg-password" type={showPw ? 'text' : 'password'} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required className="inp" style={{ paddingLeft:42, paddingRight:44 }}/>
+                <button type="button" onClick={() => setShowPw(s => !s)} style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:C.muted, display:'flex', padding:0 }}>
                   {showPw ? <EyeOff size={16}/> : <Eye size={16}/>}
                 </button>
               </div>
@@ -160,33 +132,29 @@ export default function RegisterPage() {
             </div>
 
             <button
-              id="register-submit"
-              type="submit"
-              disabled={loading}
+              id="reg-submit" type="submit" disabled={loading}
+              className="btn-primary"
               style={{
-                background: loading ? 'rgba(83,128,131,0.4)' : grad,
-                color:'#fff', fontWeight:700, border:'none', borderRadius:12,
-                padding:'14px', fontSize:15, cursor: loading ? 'not-allowed' : 'pointer',
-                display:'flex', alignItems:'center', justifyContent:'center', gap:8,
-                marginTop:4,
-                transition:'transform .15s, box-shadow .15s',
+                background: loading ? 'rgba(83,128,131,0.35)' : grad,
+                color:'#fff', padding:'15px', fontSize:15,
+                justifyContent:'center', borderRadius:12, marginTop:4,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                boxShadow: loading ? 'none' : '0 8px 28px rgba(83,128,131,0.32)',
               }}
-              onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 10px 32px rgba(83,128,131,.4)'; } }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; (e.currentTarget as HTMLButtonElement).style.boxShadow = ''; }}
             >
-              {loading ? 'Creating account...' : (<>Create free account <ArrowRight size={16}/></>)}
+              {loading ? 'Creating account…' : <><span>Create account</span><ArrowRight size={16}/></>}
             </button>
           </form>
 
-          <div style={{ marginTop:24, textAlign:'center' }}>
+          <div style={{ marginTop:28, textAlign:'center' }}>
             <span style={{ color:C.muted, fontSize:14 }}>Already have an account? </span>
-            <Link href="/login" style={{ color:C.pine, fontSize:14, fontWeight:600, textDecoration:'none' }}>Sign in</Link>
+            <Link href="/login" style={{ color:C.pine, fontSize:14, fontWeight:700, textDecoration:'none' }}>Sign in</Link>
           </div>
         </div>
 
-        <div style={{ textAlign:'center', marginTop:20 }}>
-          <span style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:12, color:C.dim }}>
-            <Sparkles size={12} color={C.pine}/> No credit card required · Free for UIC students
+        <div style={{ textAlign:'center', marginTop:22 }}>
+          <span style={{ display:'inline-flex', alignItems:'center', gap:7, fontSize:12, color:C.dim }}>
+            <ShieldCheck size={13} color={C.pine}/> AES-256 encrypted · Free forever for UIC students
           </span>
         </div>
       </div>

@@ -31,19 +31,21 @@ interface Travel {
    PALETTE HELPERS
 ══════════════════════════════════════════════ */
 const card: React.CSSProperties = {
-  background: 'rgba(83,128,131,0.05)',
-  border: `1px solid ${C.border}`,
-  borderRadius: 18,
+  background: 'rgba(13,21,32,0.72)',
+  border: `1px solid rgba(83,145,150,0.20)`,
+  borderRadius: 20,
   padding: '28px 28px',
+  backdropFilter: 'blur(16px)',
+  boxShadow: '0 16px 48px rgba(0,0,0,0.30)',
 };
 
 const inputStyle: React.CSSProperties = {
   width: '100%', boxSizing: 'border-box',
-  background: 'rgba(83,128,131,0.08)',
-  border: `1px solid ${C.border}`,
-  borderRadius: 10, padding: '11px 14px',
+  background: 'rgba(83,145,150,0.07)',
+  border: `1px solid rgba(83,145,150,0.18)`,
+  borderRadius: 12, padding: '12px 14px',
   color: C.text, fontSize: 14, outline: 'none',
-  transition: 'border-color .2s', fontFamily: 'inherit',
+  transition: 'border-color .2s, box-shadow .2s', fontFamily: 'inherit',
 };
 
 const labelStyle: React.CSSProperties = {

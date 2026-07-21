@@ -203,24 +203,25 @@ export default function Form8843Page() {
 
   const inputStyle = {
     width: '100%',
-    background: 'rgba(83,128,131,0.08)',
-    border: `1px solid ${C.border}`,
-    borderRadius: 10,
+    background: 'rgba(83,145,150,0.07)',
+    border: `1px solid rgba(83,145,150,0.18)`,
+    borderRadius: 12,
     padding: '12px 14px',
     color: C.text,
     fontSize: 14,
     outline: 'none',
     boxSizing: 'border-box' as const,
-    marginTop: 6
+    marginTop: 6,
+    transition: 'border-color .2s, box-shadow .2s',
   };
 
   return (
     <PageShell title="Tax Form Hub" back="/dashboard" backLabel="Dashboard">
       {/* Three tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'rgba(83,128,131,0.06)', border: `1px solid ${C.border}`, borderRadius: 12, padding: 4 }}>
-        <button onClick={() => setMode('guide')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'guide' ? C.pine : 'transparent', color: mode === 'guide' ? '#fff' : C.muted }}>Filing Guide</button>
-        <button onClick={() => setMode('fill')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'fill' ? C.pine : 'transparent', color: mode === 'fill' ? '#fff' : C.muted }}>Federal 8843</button>
-        <button onClick={() => setMode('state')} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all .15s', background: mode === 'state' ? C.pine : 'transparent', color: mode === 'state' ? '#fff' : C.muted }}>Illinois State (IL-1040)</button>
+      <div style={{ display:'flex', gap:4, marginBottom:28, background:'rgba(10,15,20,0.60)', border:`1px solid rgba(83,145,150,0.18)`, borderRadius:14, padding:5, backdropFilter:'blur(8px)' }}>
+        <button onClick={() => setMode('guide')} style={{ flex:1, padding:'11px 10px', borderRadius:10, border:'none', cursor:'pointer', fontSize:13, fontWeight:600, transition:'all .18s', background:mode==='guide'?`linear-gradient(135deg,${C.pine},${C.teal})`:'transparent', color:mode==='guide'?'#fff':C.muted, boxShadow:mode==='guide'?'0 4px 16px rgba(83,128,131,0.30)':'none' }}>Filing Guide</button>
+        <button onClick={() => setMode('fill')} style={{ flex:1, padding:'11px 10px', borderRadius:10, border:'none', cursor:'pointer', fontSize:13, fontWeight:600, transition:'all .18s', background:mode==='fill'?`linear-gradient(135deg,${C.pine},${C.teal})`:'transparent', color:mode==='fill'?'#fff':C.muted, boxShadow:mode==='fill'?'0 4px 16px rgba(83,128,131,0.30)':'none' }}>Federal 8843</button>
+        <button onClick={() => setMode('state')} style={{ flex:1, padding:'11px 10px', borderRadius:10, border:'none', cursor:'pointer', fontSize:13, fontWeight:600, transition:'all .18s', background:mode==='state'?`linear-gradient(135deg,${C.pine},${C.teal})`:'transparent', color:mode==='state'?'#fff':C.muted, boxShadow:mode==='state'?'0 4px 16px rgba(83,128,131,0.30)':'none' }}>Illinois State (IL-1040)</button>
       </div>
 
       {/* ── MODE: GUIDE ── */}

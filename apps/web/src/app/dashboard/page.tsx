@@ -5,11 +5,10 @@ import Link from 'next/link';
 import { apiFetch, C, grad, gradText } from '@/lib/api';
 import {
   LayoutDashboard, FileText, Globe, LogOut,
-  CheckCircle, Clock, ArrowRight, User, ChevronRight,
-  Shield, AlertTriangle, Menu, X, ClipboardList, TrendingUp,
+  ArrowRight, User, Shield, AlertTriangle, Menu, X,
+  ClipboardList, TrendingUp, Sparkles, ChevronRight,
 } from 'lucide-react';
 
-/* ── Sidebar nav items ── */
 const NAV = [
   { href:'/dashboard',  icon:LayoutDashboard, label:'Dashboard' },
   { href:'/profile',    icon:User,            label:'My Profile' },
@@ -19,100 +18,73 @@ const NAV = [
   { href:'/tax',        icon:TrendingUp,      label:'Tax Calculator' },
 ];
 
-/* ── Task cards ── */
 const TASKS = [
-  {
-    id:'residency', href:'/residency',
-    icon:ClipboardList, color:C.pine,
-    title:'Tax Residency Check',
-    desc:'Run the IRS Substantial Presence Test and determine your filing status.',
-    status:'Start',
-    badge:'Step 1',
-  },
-  {
-    id:'form8843', href:'/form-8843',
-    icon:FileText, color:C.teal,
-    title:'Form 8843 Guide',
-    desc:'Step-by-step instructions for exempt individual declaration.',
-    status:'Start',
-    badge:'Step 2',
-  },
-  {
-    id:'treaty', href:'/treaty',
-    icon:Globe, color:C.pine,
-    title:'Tax Treaty Check',
-    desc:'Verify your country\'s treaty with the U.S. and claim eligible exemptions.',
-    status:'Start',
-    badge:'Step 3',
-  },
-  {
-    id:'calc', href:'/tax',
-    icon:TrendingUp, color:C.teal,
-    title:'Tax Calculation',
-    desc:'Federal + Illinois state tax, fully explained with zero black boxes.',
-    status:'Start',
-    badge:'Step 4',
-  },
+  { id:'residency', href:'/residency', icon:ClipboardList, color:C.pine,  title:'Tax Residency Check', desc:'Run the IRS Substantial Presence Test and determine your filing status.', badge:'Step 1' },
+  { id:'form8843',  href:'/form-8843', icon:FileText,      color:C.teal,  title:'Form 8843 Guide',     desc:'Step-by-step instructions and PDF filler for your exempt individual declaration.', badge:'Step 2' },
+  { id:'treaty',    href:'/treaty',    icon:Globe,         color:C.pine,  title:'Tax Treaty Check',    desc:'Find country-specific exemptions under U.S. bilateral treaties.', badge:'Step 3' },
+  { id:'calc',      href:'/tax',       icon:TrendingUp,    color:C.teal,  title:'Tax Calculation',     desc:'Federal 1040-NR + Illinois flat-rate estimate, fully transparent.', badge:'Step 4' },
 ];
 
-/* ── Sidebar component ── */
 function Sidebar({ name, email, onSignOut, active }: { name:string; email:string; onSignOut:()=>void; active:string }) {
   return (
     <aside style={{
-      position:'fixed', top:0, left:0, bottom:0, width:240,
-      background:C.bg2, borderRight:`1px solid ${C.border}`,
+      position:'fixed', top:0, left:0, bottom:0, width:248,
+      background:'rgba(10,15,20,0.95)', borderRight:`1px solid rgba(83,145,150,0.14)`,
       display:'flex', flexDirection:'column', zIndex:50,
+      backdropFilter:'blur(20px)',
     }}>
       {/* Logo */}
-      <div style={{ padding:'24px 20px 20px', borderBottom:`1px solid ${C.border}` }}>
-        <Link href="/" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
-          <div style={{ width:34, height:34, borderRadius:10, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:16, color:'#fff' }}>F</div>
-          <span style={{ fontWeight:800, fontSize:17, color:C.text, letterSpacing:'-0.03em' }}>FTax</span>
+      <div style={{ padding:'26px 22px 22px', borderBottom:`1px solid rgba(83,145,150,0.12)` }}>
+        <Link href="/" style={{ display:'flex', alignItems:'center', gap:11, textDecoration:'none', marginBottom:14 }}>
+          <div style={{ width:36, height:36, borderRadius:11, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:17, color:'#fff', boxShadow:'0 4px 16px rgba(83,128,131,0.38)', flexShrink:0 }}>F</div>
+          <span style={{ fontWeight:800, fontSize:18, color:C.text, letterSpacing:'-0.04em' }}>FTax</span>
         </Link>
-        <div style={{ marginTop:8, display:'inline-flex', alignItems:'center', gap:6, fontSize:11, fontWeight:700, letterSpacing:'0.06em', padding:'3px 10px', borderRadius:999, background:`${C.pine}1a`, border:`1px solid ${C.pine}40`, color:C.pine }}>
-          TAX YEAR 2025
+        <div style={{ display:'inline-flex', alignItems:'center', gap:5, fontSize:10, fontWeight:700, letterSpacing:'0.07em', padding:'4px 10px', borderRadius:999, background:'rgba(201,168,76,0.10)', border:'1px solid rgba(201,168,76,0.25)', color:'#C9A84C' }}>
+          <Sparkles size={9}/> TAX YEAR 2025
         </div>
       </div>
 
       {/* Nav */}
-      <nav style={{ flex:1, padding:'12px 10px', display:'flex', flexDirection:'column', gap:2 }}>
+      <nav style={{ flex:1, padding:'14px 10px', display:'flex', flexDirection:'column', gap:3, overflowY:'auto' }}>
         {NAV.map(({ href, icon:Icon, label }) => {
           const isActive = active === href;
           return (
             <Link key={href} href={href} style={{
-              display:'flex', alignItems:'center', gap:12, padding:'10px 12px',
-              borderRadius:10, textDecoration:'none', transition:'all .15s',
-              background: isActive ? `rgba(83,128,131,0.15)` : 'transparent',
-              color: isActive ? C.pine : C.muted,
-              fontWeight: isActive ? 600 : 400, fontSize:14,
-              border: isActive ? `1px solid rgba(83,128,131,0.3)` : '1px solid transparent',
+              display:'flex', alignItems:'center', gap:12, padding:'10px 14px',
+              borderRadius:11, textDecoration:'none', transition:'all .18s',
+              background: isActive ? 'rgba(83,145,150,0.14)' : 'transparent',
+              color: isActive ? C.text : C.muted,
+              fontWeight: isActive ? 700 : 400, fontSize:14,
+              border: isActive ? '1px solid rgba(83,145,150,0.30)' : '1px solid transparent',
+              boxShadow: isActive ? '0 2px 12px rgba(83,128,131,0.14)' : 'none',
             }}>
-              <Icon size={16}/>
+              <Icon size={16} color={isActive ? C.pine : undefined}/>
               {label}
+              {isActive && <ChevronRight size={12} color={C.pine} style={{ marginLeft:'auto' }}/>}
             </Link>
           );
         })}
       </nav>
 
-      {/* User + Sign out */}
-      <div style={{ padding:'16px 16px 20px', borderTop:`1px solid ${C.border}` }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:12 }}>
-          <div style={{ width:34, height:34, borderRadius:'50%', background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:14, color:'#fff', flexShrink:0 }}>
+      {/* User */}
+      <div style={{ padding:'16px 16px 22px', borderTop:`1px solid rgba(83,145,150,0.12)` }}>
+        <div style={{ display:'flex', alignItems:'center', gap:11, marginBottom:14, padding:'10px 12px', borderRadius:12, background:'rgba(83,145,150,0.05)', border:`1px solid rgba(83,145,150,0.12)` }}>
+          <div style={{ width:36, height:36, borderRadius:'50%', background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:15, color:'#fff', flexShrink:0 }}>
             {name?.[0]?.toUpperCase() || 'U'}
           </div>
           <div style={{ minWidth:0 }}>
-            <p style={{ fontSize:13, fontWeight:600, color:C.text, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{name}</p>
+            <p style={{ fontSize:13, fontWeight:700, color:C.text, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{name}</p>
             <p style={{ fontSize:11, color:C.dim, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{email}</p>
           </div>
         </div>
         <button onClick={onSignOut} style={{
           width:'100%', display:'flex', alignItems:'center', gap:8,
-          background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)',
-          borderRadius:8, padding:'8px 12px', color:'#fca5a5', fontSize:13,
+          background:'rgba(239,68,68,0.07)', border:'1px solid rgba(239,68,68,0.18)',
+          borderRadius:10, padding:'9px 14px', color:'#fca5a5', fontSize:13,
           cursor:'pointer', fontWeight:500, transition:'all .15s',
         }}
-        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.15)'; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.08)'; }}
+        onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.14)'}
+        onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.07)'}
         >
           <LogOut size={14}/> Sign out
         </button>
@@ -121,83 +93,74 @@ function Sidebar({ name, email, onSignOut, active }: { name:string; email:string
   );
 }
 
-/* ── Stat card ── */
-function StatCard({ label, value, sub, color }: { label:string; value:string; sub:string; color:string }) {
+function StatCard({ label, value, sub, color, mono=false }: { label:string; value:string; sub:string; color:string; mono?:boolean }) {
   return (
-    <div style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:16, padding:'22px 24px' }}>
-      <p style={{ fontSize:12, color:C.muted, fontWeight:600, letterSpacing:'0.06em', textTransform:'uppercase', marginBottom:8 }}>{label}</p>
-      <p style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.04em', background:gradText, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>{value}</p>
-      <p style={{ fontSize:12, color, marginTop:4 }}>{sub}</p>
+    <div style={{ background:'rgba(13,21,32,0.70)', border:`1px solid rgba(83,145,150,0.16)`, borderRadius:18, padding:'22px 24px', backdropFilter:'blur(12px)' }}>
+      <p style={{ fontSize:11, color:C.muted, fontWeight:700, letterSpacing:'0.07em', textTransform:'uppercase', marginBottom:10 }}>{label}</p>
+      <p style={{ fontSize:30, fontWeight:900, letterSpacing:'-0.05em', background:gradText, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', fontFamily: mono ? 'JetBrains Mono, monospace' : undefined }}>{value}</p>
+      <p style={{ fontSize:12, color, marginTop:6 }}>{sub}</p>
     </div>
   );
 }
 
-/* ── Page ── */
 export default function DashboardPage() {
   const router  = useRouter();
-  const [user,    setUser]    = useState<any>(null);
-  const [mobile,  setMobile]  = useState(false);
+  const [user,   setUser]   = useState<any>(null);
+  const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (!token) { router.push('/login'); return; }
-
-    apiFetch('/auth/me')
-      .then(setUser)
-      .catch(() => {
-        localStorage.removeItem('access_token');
-        router.push('/login');
-      });
+    apiFetch('/auth/me').then(setUser).catch(() => { localStorage.removeItem('access_token'); router.push('/login'); });
   }, [router]);
 
-  const signOut = () => {
-    localStorage.removeItem('access_token');
-    router.push('/login');
-  };
+  const signOut = () => { localStorage.removeItem('access_token'); router.push('/login'); };
 
-  if (!user) {
-    return (
-      <div style={{ minHeight:'100vh', background:C.bg, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Inter',system-ui,sans-serif" }}>
-        <div style={{ textAlign:'center', color:C.muted }}>
-          <div style={{ width:40, height:40, borderRadius:'50%', border:`3px solid ${C.pine}`, borderTopColor:'transparent', margin:'0 auto 16px', animation:'spin 0.8s linear infinite' }}/>
-          Loading your dashboard...
-        </div>
+  if (!user) return (
+    <div style={{ minHeight:'100vh', background:C.bg, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Inter',system-ui,sans-serif" }}>
+      <div style={{ textAlign:'center', color:C.muted }}>
+        <div style={{ width:38, height:38, borderRadius:'50%', border:`3px solid ${C.pine}`, borderTopColor:'transparent', margin:'0 auto 14px', animation:'spin 0.8s linear infinite' }}/>
+        <p style={{ fontSize:13 }}>Loading dashboard…</p>
       </div>
-    );
-  }
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
 
   const firstName = user.firstName || user.name?.split(' ')[0] || 'there';
   const email     = user.email || '';
 
   return (
     <div style={{ minHeight:'100vh', background:C.bg, color:C.text, fontFamily:"'Inter',system-ui,sans-serif" }}>
+      {/* Ambient glow */}
+      <div style={{ position:'fixed', top:0, right:0, width:600, height:500, background:'radial-gradient(ellipse, rgba(42,127,98,0.07) 0%, transparent 65%)', pointerEvents:'none', zIndex:0 }}/>
+      <div style={{ position:'fixed', bottom:0, left:248, width:500, height:400, background:'radial-gradient(ellipse, rgba(83,128,131,0.07) 0%, transparent 65%)', pointerEvents:'none', zIndex:0 }}/>
 
-      {/* Desktop Sidebar */}
+      {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <Sidebar name={firstName} email={email} onSignOut={signOut} active="/dashboard"/>
       </div>
 
       {/* Mobile topbar */}
-      <div className="lg:hidden" style={{ position:'sticky', top:0, zIndex:50, height:56, background:`rgba(10,15,20,0.95)`, borderBottom:`1px solid ${C.border}`, backdropFilter:'blur(12px)', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 20px' }}>
-        <Link href="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none' }}>
-          <div style={{ width:30, height:30, borderRadius:8, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:14, color:'#fff' }}>F</div>
-          <span style={{ fontWeight:800, fontSize:16, color:C.text }}>FTax</span>
+      <div className="lg:hidden" style={{ position:'sticky', top:0, zIndex:50, height:60, background:'rgba(10,15,20,0.94)', borderBottom:`1px solid rgba(83,145,150,0.14)`, backdropFilter:'blur(20px)', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 22px' }}>
+        <Link href="/" style={{ display:'flex', alignItems:'center', gap:9, textDecoration:'none' }}>
+          <div style={{ width:32, height:32, borderRadius:9, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:15, color:'#fff' }}>F</div>
+          <span style={{ fontWeight:800, fontSize:16, color:C.text, letterSpacing:'-0.03em' }}>FTax</span>
         </Link>
-        <button onClick={() => setMobile(o => !o)} style={{ background:'none', border:`1px solid ${C.border}`, borderRadius:8, padding:6, cursor:'pointer', color:C.text, display:'flex' }}>
+        <button onClick={() => setMobile(o => !o)} style={{ background:'none', border:`1px solid rgba(83,145,150,0.25)`, borderRadius:9, padding:7, cursor:'pointer', color:C.text, display:'flex', transition:'background .15s' }}>
           {mobile ? <X size={18}/> : <Menu size={18}/>}
         </button>
       </div>
 
-      {/* Mobile nav drawer */}
+      {/* Mobile drawer */}
       {mobile && (
-        <div style={{ position:'fixed', inset:0, zIndex:40, background:`rgba(10,15,20,0.98)`, paddingTop:56 }}>
-          <div style={{ padding:'16px 20px', display:'flex', flexDirection:'column', gap:4 }}>
+        <div style={{ position:'fixed', inset:0, zIndex:40, background:'rgba(10,15,20,0.97)', paddingTop:60, backdropFilter:'blur(20px)' }}>
+          <div style={{ padding:'18px 20px', display:'flex', flexDirection:'column', gap:4 }}>
             {NAV.map(({ href, icon:Icon, label }) => (
-              <Link key={href} href={href} onClick={() => setMobile(false)} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderRadius:10, textDecoration:'none', color:C.muted, fontSize:15 }}>
+              <Link key={href} href={href} onClick={() => setMobile(false)} style={{ display:'flex', alignItems:'center', gap:13, padding:'14px 16px', borderRadius:12, textDecoration:'none', color:C.muted, fontSize:15 }}>
                 <Icon size={18}/> {label}
               </Link>
             ))}
-            <div style={{ marginTop:16, borderTop:`1px solid ${C.border}`, paddingTop:16 }}>
+            <div style={{ marginTop:18, borderTop:`1px solid rgba(83,145,150,0.14)`, paddingTop:18 }}>
               <button onClick={signOut} style={{ display:'flex', alignItems:'center', gap:8, background:'none', border:'none', color:'#fca5a5', fontSize:14, cursor:'pointer' }}>
                 <LogOut size={16}/> Sign out
               </button>
@@ -206,97 +169,85 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Main content */}
-      <main style={{ paddingLeft:0, transition:'padding .3s' }} className="lg:pl-60">
-        <div style={{ maxWidth:1000, margin:'0 auto', padding:'40px 24px' }}>
+      {/* Main */}
+      <main style={{ paddingLeft:0, position:'relative', zIndex:1 }} className="lg:pl-[248px]">
+        <div style={{ maxWidth:1020, margin:'0 auto', padding:'48px 28px' }}>
 
           {/* Header */}
-          <div style={{ marginBottom:36 }}>
-            <p style={{ fontSize:13, color:C.muted, fontWeight:500, marginBottom:4 }}>Welcome back</p>
-            <h1 style={{ fontSize:'clamp(26px,4vw,36px)', fontWeight:900, letterSpacing:'-0.03em', marginBottom:8 }}>
+          <div style={{ marginBottom:40 }}>
+            <p style={{ fontSize:12, color:C.muted, fontWeight:600, letterSpacing:'0.07em', textTransform:'uppercase', marginBottom:6 }}>Welcome back</p>
+            <h1 style={{ fontSize:'clamp(28px,4vw,40px)', fontWeight:900, letterSpacing:'-0.04em', marginBottom:10 }}>
               Hello, <span style={{ background:gradText, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>{firstName}</span> 👋
             </h1>
-            <p style={{ color:C.muted, fontSize:15 }}>Here&apos;s your tax filing progress for <strong style={{ color:C.text }}>Tax Year 2025</strong>.</p>
+            <p style={{ color:C.muted, fontSize:15, lineHeight:1.6 }}>Here&apos;s your tax filing progress for <strong style={{ color:C.text }}>Tax Year 2025</strong>.</p>
           </div>
 
-          {/* Info banner */}
-          <div style={{ display:'flex', alignItems:'flex-start', gap:12, background:'rgba(83,128,131,0.08)', border:`1px solid rgba(83,128,131,0.25)`, borderRadius:12, padding:'14px 18px', marginBottom:32 }}>
+          {/* Banner */}
+          <div style={{ display:'flex', alignItems:'flex-start', gap:13, background:'rgba(83,128,131,0.07)', border:`1px solid rgba(83,145,150,0.22)`, borderRadius:16, padding:'16px 20px', marginBottom:36, backdropFilter:'blur(8px)' }}>
             <AlertTriangle size={16} color={C.pine} style={{ flexShrink:0, marginTop:2 }}/>
-            <p style={{ fontSize:13, color:C.muted, lineHeight:1.65 }}>
+            <p style={{ fontSize:13, color:C.muted, lineHeight:1.7 }}>
               <strong style={{ color:C.text }}>Important: </strong>
               F-1 students must file taxes by <strong style={{ color:C.text }}>April 15, 2025</strong>, even with zero income. Form 8843 is required for all F-1 visa holders.
             </p>
           </div>
 
-          {/* Stats row */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:14, marginBottom:36 }}>
-            <StatCard label="Tax Year" value="2025" sub="Filing deadline Apr 15" color={C.pine}/>
+          {/* Stats */}
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:14, marginBottom:40 }}>
+            <StatCard label="Tax Year" value="2025" sub="Filing deadline Apr 15" color={C.pine} mono/>
             <StatCard label="Your Visa" value="F-1" sub="Student visa status" color={C.teal}/>
-            <StatCard label="Forms" value="8843" sub="Minimum required" color={C.muted}/>
-            <StatCard label="Status" value="Pending" sub="Complete steps below" color={C.muted}/>
+            <StatCard label="Forms" value="8843" sub="Minimum required" color={C.muted} mono/>
+            <StatCard label="Status" value="4 Steps" sub="Complete the checklist" color={C.gold}/>
           </div>
 
-          {/* Filing steps */}
-          <div style={{ marginBottom:12 }}>
-            <h2 style={{ fontSize:18, fontWeight:800, letterSpacing:'-0.02em', marginBottom:4 }}>Your filing checklist</h2>
-            <p style={{ color:C.muted, fontSize:14, marginBottom:20 }}>Complete each step in order to prepare your tax filing.</p>
+          {/* Task cards */}
+          <div style={{ marginBottom:16 }}>
+            <h2 style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', marginBottom:6 }}>Filing checklist</h2>
+            <p style={{ color:C.muted, fontSize:14, marginBottom:24 }}>Complete each step in order to prepare your tax return.</p>
           </div>
 
-          <div style={{ display:'flex', flexDirection:'column', gap:12, marginBottom:48 }}>
-            {TASKS.map(({ id, href, icon:Icon, color, title, desc, status, badge }, idx) => {
-              const available = status === 'Start';
-              return (
-                <div key={id} style={{
-                  display:'flex', alignItems:'center', gap:18,
-                  background: available ? 'rgba(83,128,131,0.07)' : 'rgba(255,255,255,0.02)',
-                  border: `1px solid ${available ? 'rgba(83,128,131,0.25)' : C.border}`,
-                  borderRadius:16, padding:'20px 24px',
-                  transition:'all .2s', cursor: available ? 'pointer' : 'default',
-                  opacity: available ? 1 : 0.6,
+          <div style={{ display:'flex', flexDirection:'column', gap:14, marginBottom:52 }}>
+            {TASKS.map(({ id, href, icon:Icon, color, title, desc, badge }) => (
+              <div key={id}
+                style={{
+                  display:'flex', alignItems:'center', gap:20,
+                  background:'rgba(13,21,32,0.70)', border:`1px solid rgba(83,145,150,0.18)`,
+                  borderRadius:18, padding:'22px 26px',
+                  transition:'all .22s', cursor:'pointer',
+                  backdropFilter:'blur(12px)',
                 }}
-                onClick={() => available && router.push(href)}
-                onMouseEnter={e => { if (available) (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(83,128,131,0.5)'; }}
-                onMouseLeave={e => { if (available) (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(83,128,131,0.25)'; }}
-                >
-                  {/* Step number */}
-                  <div style={{ width:40, height:40, borderRadius:12, background:`${color}1a`, border:`1px solid ${color}40`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                    <Icon size={18} color={color}/>
-                  </div>
-
-                  <div style={{ flex:1 }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
-                      <span style={{ fontSize:10, fontWeight:800, letterSpacing:'0.08em', color, padding:'2px 8px', borderRadius:999, background:`${color}1a`, border:`1px solid ${color}30` }}>{badge}</span>
-                    </div>
-                    <h3 style={{ fontWeight:700, fontSize:15, color:C.text, marginBottom:4 }}>{title}</h3>
-                    <p style={{ fontSize:13, color:C.muted, lineHeight:1.6 }}>{desc}</p>
-                  </div>
-
-                  <div style={{ flexShrink:0 }}>
-                    {available ? (
-                      <Link href={href} style={{
-                        display:'inline-flex', alignItems:'center', gap:6, textDecoration:'none',
-                        background:grad, color:'#fff', fontWeight:700, fontSize:13,
-                        padding:'8px 16px', borderRadius:10,
-                      }}>
-                        Start <ArrowRight size={14}/>
-                      </Link>
-                    ) : (
-                      <span style={{ fontSize:12, color:C.dim, fontWeight:500, padding:'6px 12px', borderRadius:8, border:`1px solid ${C.border}` }}>
-                        <Clock size={12} style={{ display:'inline', marginRight:4 }}/>Coming soon
-                      </span>
-                    )}
-                  </div>
+                onClick={() => router.push(href)}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(83,145,150,0.42)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 36px rgba(0,0,0,0.25)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(83,145,150,0.18)'; (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
+              >
+                <div style={{ width:48, height:48, borderRadius:14, background:`${color}18`, border:`1px solid ${color}35`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <Icon size={20} color={color}/>
                 </div>
-              );
-            })}
+
+                <div style={{ flex:1 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:9, marginBottom:5 }}>
+                    <span style={{ fontSize:10, fontWeight:800, letterSpacing:'0.08em', color, padding:'3px 9px', borderRadius:999, background:`${color}15`, border:`1px solid ${color}30` }}>{badge}</span>
+                  </div>
+                  <h3 style={{ fontWeight:700, fontSize:16, color:C.text, marginBottom:4 }}>{title}</h3>
+                  <p style={{ fontSize:13, color:C.muted, lineHeight:1.6 }}>{desc}</p>
+                </div>
+
+                <Link href={href} onClick={e => e.stopPropagation()} style={{
+                  display:'inline-flex', alignItems:'center', gap:7, textDecoration:'none',
+                  background:grad, color:'#fff', fontWeight:700, fontSize:13,
+                  padding:'10px 18px', borderRadius:11, flexShrink:0,
+                  boxShadow:'0 4px 16px rgba(83,128,131,0.28)',
+                  transition:'transform .15s, box-shadow .15s',
+                }}>
+                  Start <ArrowRight size={14}/>
+                </Link>
+              </div>
+            ))}
           </div>
 
-          {/* Security footer */}
-          <div style={{ display:'flex', alignItems:'center', gap:10, padding:'16px 20px', borderRadius:12, background:'rgba(42,127,98,0.06)', border:'1px solid rgba(42,127,98,0.18)' }}>
+          {/* Footer */}
+          <div style={{ display:'flex', alignItems:'center', gap:11, padding:'18px 22px', borderRadius:14, background:'rgba(42,127,98,0.05)', border:'1px solid rgba(42,127,98,0.16)' }}>
             <Shield size={16} color={C.teal}/>
-            <p style={{ fontSize:13, color:C.muted }}>
-              Your data is encrypted with AES-256. We never sell or share your personal information.
-            </p>
+            <p style={{ fontSize:13, color:C.muted }}>Your data is encrypted with AES-256. We never sell or share your personal information.</p>
           </div>
         </div>
       </main>

@@ -18,19 +18,25 @@ export async function apiFetch(path: string, opts: RequestInit = {}) {
   return data;
 }
 
-// ── Palette (mirrors landing page) ──────────────────────────────────────────
+// ── Premium Palette (cinematic dark — mirrors landing page vibe) ─────────────
 export const C = {
-  bg:     '#0a0f14',
-  bg2:    '#0f1920',
-  border: 'rgba(83,128,131,0.18)',
-  card:   'rgba(83,128,131,0.06)',
-  text:   '#f0eeee',
-  muted:  '#89909F',
-  dim:    'rgba(137,144,159,0.45)',
-  pine:   '#538083',
-  teal:   '#2A7F62',
-  lilac:  '#C3ACCE',
+  bg:     '#0a0f14',          // near-black base
+  bg2:    '#0d1520',          // sidebar / elevated surface
+  bg3:    '#111b28',          // card surface
+  border: 'rgba(83,145,150,0.16)',
+  card:   'rgba(83,145,150,0.05)',
+  text:   '#f0eeee',          // primary text
+  muted:  '#8A97A8',          // secondary text
+  dim:    'rgba(138,151,168,0.38)',
+  pine:   '#538083',          // primary teal accent
+  teal:   '#2A7F62',          // secondary green
+  gold:   '#C9A84C',          // premium gold for highlights
+  lilac:  '#C3ACCE',          // gradient accent
+  error:  '#e55',             // error red
 } as const;
 
-export const grad     = `linear-gradient(135deg,${C.pine},${C.teal})`;
-export const gradText = `linear-gradient(135deg,${C.lilac} 0%,${C.pine} 55%,${C.teal} 100%)`;
+// Gradients
+export const grad      = `linear-gradient(135deg, ${C.pine}, ${C.teal})`;
+export const gradText  = `linear-gradient(135deg, ${C.lilac} 0%, ${C.pine} 55%, ${C.teal} 100%)`;
+export const gradGold  = `linear-gradient(135deg, #C9A84C, #E8C96A)`;
+export const gradDark  = `linear-gradient(160deg, ${C.bg2} 0%, ${C.bg} 100%)`;

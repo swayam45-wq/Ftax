@@ -157,26 +157,29 @@ export default function ResidencyPage() {
   };
 
   const cardStyle: React.CSSProperties = {
-    background:'rgba(83,128,131,0.05)',
-    border:`1px solid ${C.border}`,
+    background:'rgba(13,21,32,0.75)',
+    border:`1px solid rgba(83,145,150,0.22)`,
     borderRadius:20, padding:'32px',
-    boxShadow:'0 16px 48px rgba(0,0,0,0.4)',
+    boxShadow:'0 24px 60px rgba(0,0,0,0.45)',
+    backdropFilter:'blur(16px)',
   };
 
   return (
-    <div style={{ minHeight:'100vh', background:C.bg, color:C.text, fontFamily:"'Inter',system-ui,sans-serif" }}>
+    <div style={{ minHeight:'100vh', background:C.bg, color:C.text, fontFamily:"'Inter',system-ui,sans-serif", position:'relative' }}>
+      {/* Ambient glow */}
+      <div style={{ position:'fixed', top:0, left:'50%', transform:'translateX(-50%)', width:800, height:400, background:'radial-gradient(ellipse, rgba(83,128,131,0.10) 0%, transparent 65%)', pointerEvents:'none', zIndex:0 }}/>
 
       {/* Top nav bar */}
-      <div style={{ position:'sticky', top:0, zIndex:50, height:56, background:`rgba(10,15,20,0.95)`, borderBottom:`1px solid ${C.border}`, backdropFilter:'blur(12px)', display:'flex', alignItems:'center', padding:'0 24px', gap:16 }}>
-        <Link href="/dashboard" style={{ display:'flex', alignItems:'center', gap:6, textDecoration:'none', color:C.muted, fontSize:14 }}>
-          <ArrowLeft size={16}/> Dashboard
+      <div style={{ position:'sticky', top:0, zIndex:50, height:60, background:`rgba(10,15,20,0.92)`, borderBottom:`1px solid rgba(83,145,150,0.14)`, backdropFilter:'blur(20px)', display:'flex', alignItems:'center', padding:'0 28px', gap:16 }}>
+        <Link href="/dashboard" style={{ display:'flex', alignItems:'center', gap:6, textDecoration:'none', color:C.muted, fontSize:14, fontWeight:500, transition:'color .15s' }}>
+          <ArrowLeft size={15}/> Dashboard
         </Link>
-        <span style={{ color:C.border }}>·</span>
-        <span style={{ fontSize:14, color:C.text, fontWeight:600 }}>Tax Residency Check</span>
-        <div style={{ marginLeft:'auto', fontSize:12, color:C.dim }}>Tax Year {taxYear}</div>
+        <span style={{ color:'rgba(83,145,150,0.35)' }}>·</span>
+        <span style={{ fontSize:14, color:C.text, fontWeight:700 }}>Tax Residency Check</span>
+        <div style={{ marginLeft:'auto', fontSize:11, color:C.dim, fontFamily:'JetBrains Mono,monospace', fontWeight:600 }}>Tax Year {taxYear}</div>
       </div>
 
-      <div style={{ maxWidth:680, margin:'0 auto', padding:'40px 24px' }}>
+      <div style={{ maxWidth:680, margin:'0 auto', padding:'44px 28px', position:'relative', zIndex:1 }}>
 
         {/* Header */}
         {step < 3 && (

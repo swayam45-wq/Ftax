@@ -86,16 +86,28 @@ export default function Home() {
   ];
 
   return (
-    <div className="relative w-full min-h-screen overflow-x-hidden bg-[#0a0f14]" style={{ fontFamily: 'var(--font-body)', color: '#f0eeee' }}>
-      
+    <div
+      className="relative w-full overflow-x-hidden bg-[#0a0f14]"
+      style={{
+        fontFamily: 'var(--font-body)',
+        color: '#f0eeee',
+        height: '100dvh',
+        overflowY: 'scroll',
+        scrollSnapType: 'y mandatory',
+        scrollBehavior: 'smooth',
+      }}
+    >
       {/* ── HERO VIEWPORT CONTAINER ── */}
-      <div className="relative w-full min-h-screen flex flex-col justify-between">
-        
-        {/* Background video with overlay */}
+      <div
+        className="relative w-full flex flex-col"
+        style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
+      >
+        {/* Background video — no heavy overlay so it shows through */}
         <video autoPlay muted loop playsInline className="absolute inset-0 z-0 w-full h-full object-cover">
           <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#0a0f14]/92 z-10" />
+        {/* Subtle dark vignette so text stays readable */}
+        <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(10,15,20,0.45) 0%, rgba(10,15,20,0.25) 40%, rgba(10,15,20,0.55) 100%)' }} />
 
         {/* Navbar */}
         <header className="relative z-20 w-full">
@@ -144,12 +156,12 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Hero content */}
-        <main className="relative z-20 max-w-[1200px] mx-auto px-6 sm:px-8 flex-grow flex items-center justify-center py-12">
+        {/* Hero content — perfectly centered */}
+        <main className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 sm:px-8">
           <div className="max-w-[720px] w-full flex flex-col items-center text-center">
             {/* Tagline */}
             <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible" className="mb-6">
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '6px 16px', borderRadius: 999, background: `${C.teal}1e`, border: `1px solid ${C.teal}35`, color: C.teal }}>UIC F-1 TAX ASSISTANT</span>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '6px 16px', borderRadius: 999, background: `${C.teal}30`, border: `1px solid ${C.teal}55`, color: C.teal }}>UIC F-1 TAX ASSISTANT</span>
             </motion.div>
 
             {/* Heading */}
@@ -163,7 +175,8 @@ export default function Home() {
                 fontFamily: 'var(--font-heading)',
                 fontSize: 'clamp(2rem, 5.5vw, 3.5rem)',
                 lineHeight: '1.05',
-                color: '#f0eeee',
+                color: '#ffffff',
+                textShadow: '0 2px 20px rgba(0,0,0,0.6)',
               }}
             >
               Lock{' '}
@@ -205,7 +218,8 @@ export default function Home() {
               style={{
                 fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
                 lineHeight: '1.7',
-                color: C.muted,
+                color: 'rgba(240,238,238,0.85)',
+                textShadow: '0 1px 8px rgba(0,0,0,0.5)',
               }}
             >
               Determine your tax residency status, auto-fill your official Form 8843 statement, and check eligible treaty benefits. Simple, secure, and built specifically for UIC international students.
@@ -222,7 +236,7 @@ export default function Home() {
                     fontSize: 'clamp(0.95rem, 2vw, 1.05rem)',
                     padding: '18px 30px',
                     minWidth: '240px',
-                    boxShadow: '0 8px 30px rgba(83,128,131,0.3)',
+                    boxShadow: '0 8px 30px rgba(83,128,131,0.4)',
                     gap: '32px',
                   }}
                 >
@@ -234,21 +248,25 @@ export default function Home() {
           </div>
         </main>
 
-        {/* Scroll prompt anchor */}
+        {/* Scroll cue */}
         <div className="relative z-20 w-full text-center pb-8 flex flex-col items-center gap-2">
-          <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.08em', fontWeight: 600 }}>SCROLL TO LEARN MORE</span>
+          <span style={{ fontSize: 11, color: 'rgba(240,238,238,0.6)', letterSpacing: '0.08em', fontWeight: 600, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>SCROLL TO LEARN MORE</span>
           <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6 }} className="w-5 h-5 flex items-center justify-center">
-            <ChevronDown size={16} color={C.muted} />
+            <ChevronDown size={16} color="rgba(240,238,238,0.6)" />
           </motion.div>
         </div>
       </div>
 
-      {/* ── SCROLLABLE SECTIONS ── */}
-      
-      {/* 1. The 4 Steps Grid */}
-      <section id="residency" className="py-28 border-t border-white/[0.04] bg-[#0f1920]/30 relative z-20">
-        <div className="max-w-[1200px] mx-auto px-6 sm:px-8">
-          <div className="text-center mb-20">
+      {/* ── SNAP SECTIONS ── */}
+
+      {/* 1. How It Works */}
+      <section
+        id="residency"
+        className="relative z-20 border-t border-white/[0.04] bg-[#0f1920]/80"
+        style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <div className="max-w-[1200px] w-full mx-auto px-6 sm:px-8">
+          <div className="text-center mb-14">
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: C.pine }}>WORKFLOW</span>
             <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginTop: 8 }}>How It Works</h2>
             <p style={{ color: C.muted, fontSize: 14, marginTop: 8 }}>From start to filing-ready in 4 simple checkpoints.</p>
@@ -291,9 +309,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. Feature Deep Dive (2-Column Desktop Grid) */}
-      <section id="8843" className="py-28 border-t border-white/[0.04] relative z-20">
-        <div className="max-w-[1200px] mx-auto px-6 sm:px-8">
+      {/* 2. Feature Deep Dive */}
+      <section
+        id="8843"
+        className="relative z-20 border-t border-white/[0.04]"
+        style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <div className="max-w-[1200px] w-full mx-auto px-6 sm:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch">
             
             {/* Left Content Column */}
@@ -353,9 +375,13 @@ export default function Home() {
       </section>
 
       {/* 3. FAQ Section */}
-      <section id="faq" className="py-28 border-t border-white/[0.04] bg-[#0f1920]/30 relative z-20">
-        <div className="max-w-[800px] mx-auto px-6 sm:px-8">
-          <div className="text-center mb-20">
+      <section
+        id="faq"
+        className="relative z-20 border-t border-white/[0.04] bg-[#0f1920]/80"
+        style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <div className="max-w-[800px] w-full mx-auto px-6 sm:px-8">
+          <div className="text-center mb-14">
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: C.pine }}>SUPPORT</span>
             <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginTop: 8 }}>FAQ</h2>
             <p style={{ color: C.muted, fontSize: 14, marginTop: 8 }}>Common student tax questions answered simply.</p>
@@ -370,8 +396,11 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-16 border-t border-white/[0.04] text-center relative z-20 bg-[#0a0f14]">
-        <div className="max-w-[1200px] mx-auto px-6 flex flex-col items-center">
+      <footer
+        className="relative z-20 border-t border-white/[0.04] bg-[#0a0f14] text-center"
+        style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}
+      >
+        <div className="max-w-[1200px] mx-auto px-6 py-16 flex flex-col items-center">
           <Logo />
           <p style={{ color: C.muted, fontSize: 12, marginTop: 20, lineHeight: 1.7, maxWidth: '480px' }}>
             FTax is an educational assistant platform for international students at UIC.<br />
