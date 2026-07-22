@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRightCircle, Shield, Calculator, FileText, Globe,
-  Menu, X, ChevronDown, ChevronUp, CheckCircle2, Lock, HelpCircle
+  Menu, X, ChevronDown, ChevronUp, CheckCircle2, Lock, Sparkles, ArrowRight
 } from 'lucide-react';
 import { C, grad, gradText } from '@/lib/api';
 
@@ -31,6 +31,15 @@ const fadeUp = {
   }),
 };
 
+const scrollReveal = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.21, 1.02, 0.43, 1.01] as any },
+  },
+};
+
 /* ── FAQs ── */
 const FAQS = [
   { q: 'Do I need to file taxes as an F-1 student?', a: 'Yes, even with zero income. If you were physically present in the U.S. during the tax year, you must file Form 8843. If you had U.S. source income, you must also file Form 1040-NR.' },
@@ -45,19 +54,21 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     <div
       onClick={() => setOpen(!open)}
       style={{
-        background: open ? 'rgba(83,128,131,0.06)' : 'rgba(255,255,255,0.01)',
-        border: `1px solid ${open ? 'rgba(83,128,131,0.3)' : C.border}`,
-        borderRadius: 16,
+        background: open ? 'rgba(83,145,150,0.08)' : 'rgba(13,21,32,0.65)',
+        border: `1px solid ${open ? 'rgba(83,145,150,0.38)' : 'rgba(83,145,150,0.16)'}`,
+        borderRadius: 20,
         cursor: 'pointer',
         transition: 'all .25s ease',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        backdropFilter: 'blur(16px)',
+        boxShadow: open ? '0 12px 36px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.2)',
       }}
-      className="hover:bg-white/[0.03] hover:border-white/10"
+      className="hover:border-white/20"
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px' }}>
-        <span style={{ fontWeight: 600, fontSize: 15, color: '#f0eeee' }}>{q}</span>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '50%', background: open ? grad : 'rgba(255,255,255,0.04)', transition: 'all .2s' }}>
-          {open ? <ChevronUp size={14} color="#fff"/> : <ChevronDown size={14} color={C.muted}/>}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '22px 28px' }}>
+        <span style={{ fontWeight: 600, fontSize: 16, color: '#f0eeee' }}>{q}</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: '50%', background: open ? grad : 'rgba(255,255,255,0.06)', transition: 'all .2s' }}>
+          {open ? <ChevronUp size={15} color="#fff"/> : <ChevronDown size={15} color={C.muted}/>}
         </div>
       </div>
       <AnimatePresence initial={false}>
@@ -68,7 +79,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
           >
-            <p style={{ padding: '0 24px 20px', color: C.muted, fontSize: 13, lineHeight: 1.75 }}>{a}</p>
+            <p style={{ padding: '0 28px 24px', color: C.muted, fontSize: 14, lineHeight: 1.8 }}>{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -80,7 +91,7 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Residency Check', href: '#residency' },
+    { label: 'Workflow', href: '#workflow' },
     { label: 'Form 8843', href: '#8843' },
     { label: 'FAQ', href: '#faq' }
   ];
@@ -91,29 +102,25 @@ export default function Home() {
       style={{
         fontFamily: 'var(--font-body)',
         color: '#f0eeee',
-        height: '100dvh',
-        overflowY: 'scroll',
-        scrollSnapType: 'y mandatory',
         scrollBehavior: 'smooth',
       }}
     >
-      {/* ── HERO VIEWPORT CONTAINER ── */}
-      <div
-        className="relative w-full flex flex-col"
-        style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
-      >
-        {/* Background video — no heavy overlay so it shows through */}
+      {/* ── HERO VIEWPORT CONTAINER WITH VIDEO ── */}
+      <div className="relative w-full flex flex-col min-h-screen">
+        {/* Background video */}
         <video autoPlay muted loop playsInline className="absolute inset-0 z-0 w-full h-full object-cover">
           <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4" type="video/mp4" />
         </video>
-        {/* Subtle dark vignette so text stays readable */}
-        <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(10,15,20,0.45) 0%, rgba(10,15,20,0.25) 40%, rgba(10,15,20,0.55) 100%)' }} />
+
+        {/* Ambient Dark Overlay */}
+        <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(10,15,20,0.50) 0%, rgba(10,15,20,0.30) 40%, rgba(10,15,20,0.75) 85%, #0a0f14 100%)' }} />
 
         {/* Navbar */}
-        <header className="relative z-20 w-full">
+        <header className="relative z-30 w-full">
           <div className="max-w-[1200px] mx-auto px-6 sm:px-8 py-5 flex justify-between items-center">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center gap-3">
               <Logo />
+              <span className="font-extrabold text-xl tracking-tight text-white">FTax</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">
@@ -133,14 +140,14 @@ export default function Home() {
               <Link
                 href="/register"
                 className="text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 hover:shadow-lg active:scale-95 text-white"
-                style={{ background: grad }}
+                style={{ background: grad, boxShadow: '0 4px 20px rgba(83,128,131,0.35)' }}
               >
                 Start For Free
               </Link>
               <Link
                 href="/login"
-                className="text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 hover:shadow-md active:scale-95"
-                style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}`, color: '#f0eeee' }}
+                className="text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 hover:bg-white/10 active:scale-95"
+                style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${C.border}`, color: '#f0eeee' }}
               >
                 Sign In
               </Link>
@@ -156,12 +163,14 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Hero content — perfectly centered */}
-        <main className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 sm:px-8">
-          <div className="max-w-[720px] w-full flex flex-col items-center text-center">
+        {/* Hero content */}
+        <main className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 sm:px-8 py-20">
+          <div className="max-w-[760px] w-full flex flex-col items-center text-center">
             {/* Tagline */}
             <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible" className="mb-6">
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '6px 16px', borderRadius: 999, background: `${C.teal}30`, border: `1px solid ${C.teal}55`, color: C.teal }}>UIC F-1 TAX ASSISTANT</span>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', padding: '6px 18px', borderRadius: 999, background: 'rgba(42,127,98,0.25)', border: '1px solid rgba(42,127,98,0.45)', color: '#38D499', boxShadow: '0 0 20px rgba(42,127,98,0.25)' }}>
+                UIC F-1 TAX ASSISTANT
+              </span>
             </motion.div>
 
             {/* Heading */}
@@ -170,35 +179,35 @@ export default function Home() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="font-bold tracking-[-0.02em] mb-6"
+              className="font-bold tracking-[-0.03em] mb-6"
               style={{
                 fontFamily: 'var(--font-heading)',
-                fontSize: 'clamp(2rem, 5.5vw, 3.5rem)',
+                fontSize: 'clamp(2.2rem, 5.5vw, 3.8rem)',
                 lineHeight: '1.05',
                 color: '#ffffff',
-                textShadow: '0 2px 20px rgba(0,0,0,0.6)',
+                textShadow: '0 4px 30px rgba(0,0,0,0.7)',
               }}
             >
               Lock{' '}
               <Shield
-                size={28}
+                size={32}
                 style={{
                   display: 'inline',
                   verticalAlign: 'middle',
                   position: 'relative',
-                  top: '-3px',
+                  top: '-4px',
                   color: C.pine,
                   margin: '0 4px',
                 }}
               />{' '}
               Down Your{' '}
               <Calculator
-                size={28}
+                size={32}
                 style={{
                   display: 'inline',
                   verticalAlign: 'middle',
                   position: 'relative',
-                  top: '-3px',
+                  top: '-4px',
                   color: C.teal,
                   margin: '0 4px',
                 }}
@@ -214,12 +223,12 @@ export default function Home() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="max-w-[580px] mb-10"
+              className="max-w-[620px] mb-10"
               style={{
-                fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
-                lineHeight: '1.7',
-                color: 'rgba(240,238,238,0.85)',
-                textShadow: '0 1px 8px rgba(0,0,0,0.5)',
+                fontSize: 'clamp(1rem, 2.5vw, 1.15rem)',
+                lineHeight: '1.75',
+                color: 'rgba(240,238,238,0.88)',
+                textShadow: '0 2px 12px rgba(0,0,0,0.6)',
               }}
             >
               Determine your tax residency status, auto-fill your official Form 8843 statement, and check eligible treaty benefits. Simple, secure, and built specifically for UIC international students.
@@ -227,21 +236,21 @@ export default function Home() {
 
             {/* CTA */}
             <motion.div custom={3} variants={fadeUp} initial="hidden" animate="visible">
-              <motion.div whileHover={{ scale: 1.03, filter: 'brightness(1.08)' }} whileTap={{ scale: 0.97 }}>
+              <motion.div whileHover={{ scale: 1.04, filter: 'brightness(1.08)' }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/register"
-                  className="inline-flex justify-between items-center rounded-full text-white font-semibold transition-all"
+                  className="inline-flex justify-between items-center rounded-full text-white font-bold transition-all"
                   style={{
                     background: grad,
-                    fontSize: 'clamp(0.95rem, 2vw, 1.05rem)',
-                    padding: '18px 30px',
-                    minWidth: '240px',
-                    boxShadow: '0 8px 30px rgba(83,128,131,0.4)',
-                    gap: '32px',
+                    fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+                    padding: '18px 34px',
+                    minWidth: '260px',
+                    boxShadow: '0 12px 40px rgba(83,128,131,0.45)',
+                    gap: '28px',
                   }}
                 >
                   <span>Get Started Free</span>
-                  <ArrowRightCircle size={20} />
+                  <ArrowRightCircle size={22} />
                 </Link>
               </motion.div>
             </motion.div>
@@ -250,164 +259,255 @@ export default function Home() {
 
         {/* Scroll cue */}
         <div className="relative z-20 w-full text-center pb-8 flex flex-col items-center gap-2">
-          <span style={{ fontSize: 11, color: 'rgba(240,238,238,0.6)', letterSpacing: '0.08em', fontWeight: 600, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>SCROLL TO LEARN MORE</span>
-          <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6 }} className="w-5 h-5 flex items-center justify-center">
-            <ChevronDown size={16} color="rgba(240,238,238,0.6)" />
+          <span style={{ fontSize: 11, color: 'rgba(240,238,238,0.5)', letterSpacing: '0.1em', fontWeight: 700, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>SCROLL TO EXPLORE</span>
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.8 }} className="w-6 h-6 flex items-center justify-center">
+            <ChevronDown size={18} color="rgba(240,238,238,0.5)" />
           </motion.div>
         </div>
+
+        {/* Smooth Seamless Dissolve Gradient into rest of page */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-20" style={{ background: 'linear-gradient(to bottom, transparent 0%, #0a0f14 100%)' }} />
       </div>
 
-      {/* ── SNAP SECTIONS ── */}
+      {/* ── SEAMLESS LOWER SECTIONS WITH AMBIENT GLOW ── */}
+      <div className="relative z-20 bg-[#0a0f14] overflow-hidden">
 
-      {/* 1. How It Works */}
-      <section
-        id="residency"
-        className="relative z-20 border-t border-white/[0.04] bg-[#0f1920]/80"
-        style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
-        <div className="max-w-[1200px] w-full mx-auto px-6 sm:px-8">
-          <div className="text-center mb-14">
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: C.pine }}>WORKFLOW</span>
-            <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginTop: 8 }}>How It Works</h2>
-            <p style={{ color: C.muted, fontSize: 14, marginTop: 8 }}>From start to filing-ready in 4 simple checkpoints.</p>
-          </div>
+        {/* Continuous Background Glow Blobs */}
+        <div className="absolute top-[5%] left-[50%] -translate-x-[50%] w-[900px] h-[500px] bg-emerald-900/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-[35%] right-[10%] w-[600px] h-[600px] bg-teal-900/10 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-[65%] left-[5%] w-[700px] h-[500px] bg-slate-800/20 rounded-full blur-[130px] pointer-events-none" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { step: '01', title: 'Residency Check', desc: 'Run the Substantial Presence Test dynamically.', icon: Shield, color: C.pine },
-              { step: '02', title: 'Form 8843 Filler', desc: 'Generate and pre-fill the official IRS PDF statement.', icon: FileText, color: C.teal },
-              { step: '03', title: 'Treaty Lookup', desc: 'Find country-specific student exemptions.', icon: Globe, color: C.pine },
-              { step: '04', title: 'Tax Estimator', desc: 'Calculate federal and Illinois state allocations.', icon: Calculator, color: C.teal },
-            ].map((s, idx) => (
-              <div
-                key={idx}
-                style={{
-                  background: 'rgba(255,255,255,0.01)',
-                  border: `1px solid ${C.border}`,
-                  borderRadius: 20,
-                  padding: 28,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 16,
-                  transition: 'all .25s ease'
-                }}
-                className="hover:bg-white/[0.02] hover:border-white/10 hover:-translate-y-1"
-              >
-                <div className="flex justify-between items-center">
-                  <span style={{ fontSize: 32, fontWeight: 900, color: `${s.color}25` }}>{s.step}</span>
-                  <div style={{ borderRadius: 10, background: `${s.color}1e`, width: 36, height: 36 }} className="flex items-center justify-center">
-                    <s.icon size={18} color={s.color} />
-                  </div>
-                </div>
-                <div>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: '#f0eeee', marginBottom: 6 }}>{s.title}</h3>
-                  <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Feature Deep Dive */}
-      <section
-        id="8843"
-        className="relative z-20 border-t border-white/[0.04]"
-        style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
-        <div className="max-w-[1200px] w-full mx-auto px-6 sm:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch">
-            
-            {/* Left Content Column */}
-            <div className="flex flex-col justify-center">
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: C.teal }}>DOCUMENT COMPLIANCE</span>
-              <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginTop: 8, marginBottom: 16 }}>Original U.S. Form Auto-Filling</h2>
-              <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.75, marginBottom: 28 }}>
-                We use secure, client-side PDF document generation to populate your personal, academic, and visa entries directly into the official, interactive IRS Form 8843. No third-party data handlers, no black-box logic.
+        {/* 1. How It Works Section */}
+        <section id="workflow" className="relative py-28 px-6 sm:px-8">
+          <div className="max-w-[1200px] w-full mx-auto">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-100px' }}
+              variants={scrollReveal}
+              className="text-center mb-16"
+            >
+              <span className="step-badge" style={{ color: C.pine, borderColor: 'rgba(83,128,131,0.30)', background: 'rgba(83,128,131,0.12)' }}>
+                WORKFLOW
+              </span>
+              <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 900, color: '#ffffff', fontFamily: 'var(--font-heading)', marginTop: 12, letterSpacing: '-0.03em' }}>
+                How It Works
+              </h2>
+              <p style={{ color: C.muted, fontSize: 16, marginTop: 10, maxWidth: 540, marginInline: 'auto' }}>
+                From start to filing-ready in 4 clear, guided checkpoints.
               </p>
-              
-              <div className="flex flex-col gap-4">
-                {[
-                  'Bank-grade AES-256 encryption at rest',
-                  'Direct local download of official IRS PDFs',
-                  'Pre-configured defaults for UIC student visa holders'
-                ].map((pt, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                      <CheckCircle2 size={14} color={C.teal} />
+            </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { step: '01', title: 'Residency Check', desc: 'Run the Substantial Presence Test dynamically.', icon: Shield, color: C.pine },
+                { step: '02', title: 'Form 8843 Filler', desc: 'Generate and pre-fill the official IRS PDF statement.', icon: FileText, color: C.teal },
+                { step: '03', title: 'Treaty Lookup', desc: 'Find country-specific student exemptions.', icon: Globe, color: C.pine },
+                { step: '04', title: 'Tax Estimator', desc: 'Calculate federal and Illinois state allocations.', icon: Calculator, color: C.teal },
+              ].map((s, idx) => (
+                <motion.div
+                  key={idx}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: '-50px' }}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0, transition: { delay: idx * 0.1, duration: 0.6 } }
+                  }}
+                  style={{
+                    background: 'rgba(13,21,32,0.72)',
+                    border: '1px solid rgba(83,145,150,0.18)',
+                    borderRadius: 24,
+                    padding: 32,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 20,
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
+                    transition: 'all .25s ease'
+                  }}
+                  className="hover:border-teal-500/40 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-teal-950/40"
+                >
+                  <div className="flex justify-between items-center">
+                    <span style={{ fontSize: 36, fontWeight: 900, color: `${s.color}35`, fontFamily: 'JetBrains Mono, monospace' }}>{s.step}</span>
+                    <div style={{ borderRadius: 14, background: `${s.color}22`, border: `1px solid ${s.color}40`, width: 44, height: 44 }} className="flex items-center justify-center">
+                      <s.icon size={20} color={s.color} />
                     </div>
-                    <span style={{ fontSize: 14, color: '#f0eeee', fontWeight: 500 }}>{pt}</span>
                   </div>
-                ))}
-              </div>
+                  <div>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#ffffff', marginBottom: 8 }}>{s.title}</h3>
+                    <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.65 }}>{s.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
-            
-            {/* Right Card Column */}
-            <div className="flex items-center justify-center lg:justify-end">
-              <div
-                style={{
-                  background: 'rgba(255,255,255,0.01)',
-                  border: `1px solid ${C.border}`,
-                  borderRadius: 24,
-                  padding: 36,
-                  maxWidth: '480px',
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 20
-                }}
-                className="hover:border-white/10 transition-colors duration-300"
+          </div>
+        </section>
+
+        {/* Divider Glow Line */}
+        <div className="max-w-[1200px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-teal-500/20 to-transparent my-4" />
+
+        {/* 2. Feature Deep Dive Section */}
+        <section id="8843" className="relative py-28 px-6 sm:px-8">
+          <div className="max-w-[1200px] w-full mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              
+              {/* Left Column */}
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={scrollReveal}
+                className="flex flex-col justify-center"
               >
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: `${C.teal}1e` }} className="flex items-center justify-center">
-                  <Lock size={22} color={C.teal} />
+                <span className="step-badge mb-4" style={{ color: C.teal, borderColor: 'rgba(42,127,98,0.35)', background: 'rgba(42,127,98,0.12)' }}>
+                  DOCUMENT COMPLIANCE
+                </span>
+                <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 900, color: '#ffffff', fontFamily: 'var(--font-heading)', marginTop: 8, marginBottom: 20, letterSpacing: '-0.03em' }}>
+                  Original U.S. Form Auto-Filling
+                </h2>
+                <p style={{ color: C.muted, fontSize: 16, lineHeight: 1.8, marginBottom: 32 }}>
+                  We use secure, client-side PDF document generation to populate your personal, academic, and visa entries directly into the official, interactive IRS Form 8843. No third-party data handlers, no black-box logic.
+                </p>
+                
+                <div className="flex flex-col gap-4">
+                  {[
+                    'Bank-grade AES-256 encryption at rest',
+                    'Direct local download of official IRS PDFs',
+                    'Pre-configured defaults for UIC student visa holders'
+                  ].map((pt, i) => (
+                    <div key={i} className="flex items-center gap-3.5">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center">
+                        <CheckCircle2 size={15} color={C.teal} />
+                      </div>
+                      <span style={{ fontSize: 15, color: '#f0eeee', fontWeight: 600 }}>{pt}</span>
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f0eeee', marginBottom: 8 }}>Secure Tax Identifier Storage</h3>
-                  <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.65 }}>
-                    Unlike commercial filing networks, we encrypt sensitive SSN/ITIN digits on-device using a cryptographic key before storing, ensuring complete PII compliance.
-                  </p>
+              </motion.div>
+              
+              {/* Right Card Column */}
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={scrollReveal}
+                className="flex items-center justify-center lg:justify-end"
+              >
+                <div
+                  style={{
+                    background: 'rgba(13,21,32,0.80)',
+                    border: '1px solid rgba(83,145,150,0.22)',
+                    borderRadius: 28,
+                    padding: 40,
+                    maxWidth: '500px',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 24,
+                    backdropFilter: 'blur(24px)',
+                    boxShadow: '0 24px 60px rgba(0,0,0,0.4)',
+                  }}
+                  className="hover:border-teal-500/30 transition-all duration-300"
+                >
+                  <div style={{ width: 54, height: 54, borderRadius: 16, background: `${C.teal}25`, border: `1px solid ${C.teal}40` }} className="flex items-center justify-center">
+                    <Lock size={24} color={C.teal} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 20, fontWeight: 800, color: '#ffffff', marginBottom: 10 }}>Secure Tax Identifier Storage</h3>
+                    <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.7 }}>
+                      Unlike commercial filing networks, we encrypt sensitive SSN/ITIN digits on-device using a cryptographic key before storing, ensuring complete PII compliance.
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
+
             </div>
-
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 3. FAQ Section */}
-      <section
-        id="faq"
-        className="relative z-20 border-t border-white/[0.04] bg-[#0f1920]/80"
-        style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
-        <div className="max-w-[800px] w-full mx-auto px-6 sm:px-8">
-          <div className="text-center mb-14">
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: C.pine }}>SUPPORT</span>
-            <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f0eeee', fontFamily: 'var(--font-heading)', marginTop: 8 }}>FAQ</h2>
-            <p style={{ color: C.muted, fontSize: 14, marginTop: 8 }}>Common student tax questions answered simply.</p>
+        {/* Divider Glow Line */}
+        <div className="max-w-[1200px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-teal-500/20 to-transparent my-4" />
+
+        {/* 3. FAQ Section */}
+        <section id="faq" className="relative py-28 px-6 sm:px-8">
+          <div className="max-w-[840px] w-full mx-auto">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={scrollReveal}
+              className="text-center mb-16"
+            >
+              <span className="step-badge" style={{ color: C.pine, borderColor: 'rgba(83,128,131,0.30)', background: 'rgba(83,128,131,0.12)' }}>
+                SUPPORT
+              </span>
+              <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 900, color: '#ffffff', fontFamily: 'var(--font-heading)', marginTop: 12, letterSpacing: '-0.03em' }}>
+                Frequently Asked Questions
+              </h2>
+              <p style={{ color: C.muted, fontSize: 16, marginTop: 10 }}>
+                Common international student tax questions answered clearly.
+              </p>
+            </motion.div>
+
+            <div className="flex flex-col gap-4">
+              {FAQS.map((faq, idx) => (
+                <FaqItem key={idx} q={faq.q} a={faq.a} />
+              ))}
+            </div>
           </div>
+        </section>
 
-          <div className="flex flex-col gap-4">
-            {FAQS.map((faq, idx) => (
-              <FaqItem key={idx} q={faq.q} a={faq.a} />
-            ))}
+        {/* 4. Pre-Footer High Impact CTA */}
+        <section className="relative py-24 px-6 sm:px-8">
+          <div className="max-w-[1000px] mx-auto">
+            <div
+              style={{
+                background: 'linear-gradient(135deg, rgba(83,145,150,0.15) 0%, rgba(42,127,98,0.10) 100%)',
+                border: '1px solid rgba(83,145,150,0.28)',
+                borderRadius: 32,
+                padding: '56px 36px',
+                backdropFilter: 'blur(20px)',
+                textAlign: 'center',
+                boxShadow: '0 32px 80px rgba(0,0,0,0.5)',
+              }}
+              className="flex flex-col items-center"
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold tracking-wider mb-6">
+                <Sparkles size={13}/> READY FOR TAX YEAR 2025
+              </div>
+              <h2 style={{ fontSize: 'clamp(2.2rem, 4vw, 3.2rem)', fontWeight: 900, color: '#ffffff', fontFamily: 'var(--font-heading)', letterSpacing: '-0.03em', marginBottom: 16 }}>
+                Prepare Your Taxes with Zero Stress
+              </h2>
+              <p style={{ color: C.muted, fontSize: 16, maxWidth: 560, lineHeight: 1.7, marginBottom: 32 }}>
+                Takes less than 10 minutes. Designed exclusively for F-1 visa holders at the University of Illinois Chicago.
+              </p>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-white transition-all hover:scale-105"
+                style={{ background: grad, boxShadow: '0 10px 36px rgba(83,128,131,0.45)', fontSize: 16 }}
+              >
+                Get Started Free <ArrowRight size={18} />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Footer ── */}
-      <footer
-        className="relative z-20 border-t border-white/[0.04] bg-[#0a0f14] text-center"
-        style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}
-      >
-        <div className="max-w-[1200px] mx-auto px-6 py-16 flex flex-col items-center">
-          <Logo />
-          <p style={{ color: C.muted, fontSize: 12, marginTop: 20, lineHeight: 1.7, maxWidth: '480px' }}>
-            FTax is an educational assistant platform for international students at UIC.<br />
-            &copy; 2026 FTax Assistant. All rights reserved.
-          </p>
-        </div>
-      </footer>
+        {/* ── Footer ── */}
+        <footer className="relative border-t border-white/10 bg-[#0a0f14] text-center">
+          <div className="max-w-[1200px] mx-auto px-6 py-16 flex flex-col items-center">
+            <div className="flex items-center gap-3 mb-4">
+              <Logo />
+              <span className="font-extrabold text-lg text-white">FTax Assistant</span>
+            </div>
+            <p style={{ color: C.muted, fontSize: 13, lineHeight: 1.7, maxWidth: '520px' }}>
+              FTax is an educational tax assistant platform built specifically for international students at UIC.<br />
+              &copy; 2026 FTax Assistant. All rights reserved.
+            </p>
+          </div>
+        </footer>
+
+      </div>
 
       {/* ── Mobile Menu Slide-in Sheet ── */}
       <AnimatePresence>
