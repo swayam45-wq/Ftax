@@ -179,7 +179,22 @@ export default function Home() {
           <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4" type="video/mp4"/>
         </motion.video>
 
-        {/* Overlays — keeps video visible but readable */}
+        {/* Film grain overlay — cinematic texture */}
+        <div className="film-grain" />
+
+        {/* Aurora ambient glows */}
+        <div className="aurora-1" style={{
+          width: 500, height: 400, zIndex: 2,
+          top: '30%', left: '20%',
+          background: 'radial-gradient(ellipse, rgba(123,164,184,0.35) 0%, transparent 70%)',
+        }} />
+        <div className="aurora-2" style={{
+          width: 400, height: 350, zIndex: 2,
+          top: '45%', right: '15%',
+          background: 'radial-gradient(ellipse, rgba(196,149,90,0.20) 0%, transparent 70%)',
+        }} />
+
+        {/* Overlays */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(8,11,16,0.52) 0%, rgba(8,11,16,0.18) 45%, rgba(8,11,16,0.65) 80%, #080B10 100%)' }} />
 
         {/* Navbar */}
@@ -215,14 +230,23 @@ export default function Home() {
             </span>
           </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.75, ease: [0.21,1,0.43,1] }}
-            style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(2.2rem, 5.5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.06, letterSpacing: '-0.03em', color: T.heading, textShadow: '0 3px 24px rgba(0,0,0,0.60)', marginBottom: 20 }}
-          >
-            File Your F-1 Student<br/>
-            <span style={{ background: gradText, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              Taxes with Confidence
-            </span>
-          </motion.h1>
+          {/* Word-by-word staggered headline */}
+          <div style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(2.2rem, 5.5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.06, letterSpacing: '-0.03em', color: T.heading, textShadow: '0 3px 24px rgba(0,0,0,0.60)', marginBottom: 20 }}>
+            {'File Your F-1 Student'.split(' ').map((word, i) => (
+              <span key={i} className="word-reveal" style={{ animationDelay: `${0.20 + i * 0.10}s`, marginRight: '0.28em' }}>{word}</span>
+            ))}
+            <br/>
+            {['Taxes', 'with', 'Confidence'].map((word, i) => (
+              <span key={i} className="word-reveal" style={{
+                animationDelay: `${0.60 + i * 0.10}s`,
+                marginRight: '0.28em',
+                background: gradText,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>{word}</span>
+            ))}
+          </div>
 
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32, duration: 0.65 }}
             style={{ fontSize: 'clamp(0.95rem, 2.2vw, 1.08rem)', lineHeight: 1.78, color: T.muted, maxWidth: 560, margin: '0 auto 32px', textShadow: '0 2px 12px rgba(0,0,0,0.50)' }}
