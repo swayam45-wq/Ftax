@@ -9,80 +9,67 @@ import {
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════
-   DESIGN TOKENS — Minimal Luxury
-   Deep black × White accent × Subtle gold badge
-   Inspired by: Vercel · Linear · Arc Browser
+   DESIGN TOKENS
+   Muted Cinematic Dark — blends with video BG
+   Accent: steel-blue #7BA4B8 (desaturated, calm)
+   Nothing bright. Nothing harsh.
 ═══════════════════════════════════════════════ */
+const A = '#7BA4B8';           // steel-blue accent — calm, muted
+const AG = 'rgba(123,164,184,0.14)'; // accent glass bg
+const AB = 'rgba(123,164,184,0.30)'; // accent border
+const GOLD = '#C4955A';        // warm amber — used only on badges
+
 const T = {
-  bg:       '#0A0A0F',          // near-black, barely blue
-  surface:  '#111118',          // card surfaces
-  card:     'rgba(17,17,24,0.92)',
-  white:    '#FFFFFF',          // primary accent
-  offwhite: '#E2E8F0',          // secondary text/icons
-  gold:     '#D4A853',          // warm badge accent (used sparingly)
-  text:     '#F8FAFC',          // body text
-  muted:    '#64748B',          // slate-500
-  dim:      'rgba(100,116,139,0.45)',
-  border:   'rgba(255,255,255,0.08)',  // barely visible
-  borderHi: 'rgba(255,255,255,0.18)', // hover state
-  green:    '#FFFFFF',          // alias kept for compatibility
+  bg:      '#080B10',          // deepest bg
+  surface: '#0E1218',          // card surface
+  card:    'rgba(14,18,24,0.88)',
+  text:    '#C8CBD0',          // warm light-gray — NOT pure white
+  heading: '#E8E8E6',          // slightly brighter for headings
+  muted:   '#5A6472',          // muted slate
+  dim:     'rgba(90,100,114,0.55)',
+  border:  'rgba(255,255,255,0.07)',
+  borderHi:'rgba(123,164,184,0.22)',
 } as const;
 
-const gradGreen = 'linear-gradient(135deg, #E2E8F0 0%, #FFFFFF 100%)';
-const gradSlate = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)';
-const gradFull  = 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)';
-const glowGreen = '0 0 32px rgba(255,255,255,0.12), 0 0 64px rgba(255,255,255,0.04)';
-
+// Gradients — very subtle, not saturated
+const gradAccent = `linear-gradient(135deg, ${A} 0%, #9ABFCE 100%)`;
+const gradText   = `linear-gradient(135deg, ${T.heading} 0%, ${A} 100%)`;
+const glowAccent = `0 0 28px rgba(123,164,184,0.18)`;
 
 /* ═══════════════════════════════════════════════
-   TINY HELPERS
+   HELPERS
 ═══════════════════════════════════════════════ */
-/* Logo with forest-green gradient */
 function Logo() {
   return (
-    <svg width="30" height="30" viewBox="0 0 256 256" fill="url(#logoGrad)">
-      <defs>
-        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#E2E8F0"/>
-          <stop offset="100%" stopColor="#FFFFFF"/>
-        </linearGradient>
-      </defs>
+    <svg width="28" height="28" viewBox="0 0 256 256" fill={A}>
       <path d="M 64 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 L 128 64 L 128 64.5 L 161 32 L 192 0 L 256 0 L 256 64 L 192 128 L 128 128 L 128 192 L 96 223 L 63.5 256 L 0 256 L 0 192 Z M 256 192 L 224 223 L 191.5 256 L 128 256 L 128 192 L 192 128 L 256 128 Z" />
     </svg>
   );
 }
 
-/* Framer Motion fade-up when in view */
-function Reveal({ children, delay = 0, className = '', style }: { children: React.ReactNode; delay?: number; className?: string; style?: React.CSSProperties }) {
+function Reveal({ children, delay = 0, className = '', style }: {
+  children: React.ReactNode; delay?: number; className?: string; style?: React.CSSProperties;
+}) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: true, margin: '-60px' });
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 36 }}
+    <motion.div ref={ref}
+      initial={{ opacity: 0, y: 28 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.72, delay, ease: [0.21, 1.02, 0.43, 1.01] }}
-      className={className}
-      style={style}
-    >
-      {children}
-    </motion.div>
+      transition={{ duration: 0.65, delay, ease: [0.21, 1, 0.43, 1] }}
+      className={className} style={style}
+    >{children}</motion.div>
   );
 }
 
-/* Marquee ticker */
-const TICKER = ['Form 8843', 'Form 1040-NR', 'Treaty Benefits', 'FICA Refunds', 'Residency Test', 'F-1 Visa Taxes', 'Illinois IL-1040', 'SSN / ITIN Guide'];
+const TICKER = ['Form 8843', '1040-NR', 'Treaty Benefits', 'FICA Refunds', 'Residency Test', 'F-1 Visa', 'Illinois IL-1040', 'ITIN Guide'];
 function Marquee() {
   return (
-    <div style={{ overflow: 'hidden', borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: '14px 0', background: 'rgba(6,11,20,0.60)', backdropFilter: 'blur(10px)' }}>
-      <motion.div
-        style={{ display: 'flex', gap: 52, whiteSpace: 'nowrap' }}
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ repeat: Infinity, duration: 22, ease: 'linear' }}
-      >
+    <div style={{ overflow: 'hidden', borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: '12px 0', background: 'rgba(8,11,16,0.70)', backdropFilter: 'blur(8px)' }}>
+      <motion.div style={{ display: 'flex', gap: 48, whiteSpace: 'nowrap' }} animate={{ x: ['0%', '-50%'] }} transition={{ repeat: Infinity, duration: 26, ease: 'linear' }}>
         {[...TICKER, ...TICKER].map((t, i) => (
-          <span key={i} style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.10em', color: i % 2 === 0 ? T.green : T.muted, textTransform: 'uppercase' }}>
-            {t} <span style={{ color: T.border, margin: '0 8px' }}>·</span>
+          <span key={i} style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.10em', color: i % 2 === 0 ? A : T.muted, textTransform: 'uppercase' }}>
+            {t}&nbsp;&nbsp;<span style={{ color: T.border }}>·</span>&nbsp;&nbsp;
           </span>
         ))}
       </motion.div>
@@ -90,282 +77,214 @@ function Marquee() {
   );
 }
 
-/* Counter badge */
 function Stat({ number, label }: { number: string; label: string }) {
   return (
     <div style={{ textAlign: 'center' }}>
-      <p style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 900, letterSpacing: '-0.05em', background: gradFull, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{number}</p>
-      <p style={{ fontSize: 12, color: T.muted, fontWeight: 600, letterSpacing: '0.04em', marginTop: 4 }}>{label}</p>
+      <p style={{ fontSize: 'clamp(1.9rem, 4vw, 2.6rem)', fontWeight: 800, letterSpacing: '-0.05em', color: T.heading, fontFamily: 'var(--font-heading)' }}>{number}</p>
+      <p style={{ fontSize: 11, color: T.muted, fontWeight: 600, letterSpacing: '0.08em', marginTop: 4, textTransform: 'uppercase' }}>{label}</p>
     </div>
   );
 }
 
-/* FAQ Item */
 const FAQS = [
-  { q: 'Do I need to file taxes as an F-1 student?', a: 'Yes — even with zero income. All F-1 students physically present in the U.S. during the tax year must file Form 8843. If you earned U.S.-source income, you must also file Form 1040-NR.' },
-  { q: 'What is Form 8843?', a: 'A statement declaring you as an "exempt individual" under IRS rules — not exempt from taxes, but exempt from counting days toward the Substantial Presence Test. Required for every F-1 student regardless of income.' },
-  { q: 'How do tax treaties work for Indian/Chinese students?', a: 'Indian students may claim a standard deduction equivalent under Article 21(2). Chinese students can exempt up to $5,000 in wages annually under Article 20. FTax auto-detects your treaty eligibility.' },
-  { q: 'Is my data secure on FTax?', a: 'Yes. SSN/ITIN digits are encrypted on-device with AES-256-GCM before any storage. We use short-lived JWT sessions and never share your data with third parties.' }
+  { q: 'Do I need to file taxes as an F-1 student?', a: 'Yes — even with zero income. All F-1 students physically present in the U.S. must file Form 8843. If you earned U.S.-source income, you also file Form 1040-NR.' },
+  { q: 'What is Form 8843?', a: 'A statement declaring you as an "exempt individual" under IRS rules — not exempt from taxes, but from counting days toward the Substantial Presence Test. Required for every F-1 student.' },
+  { q: 'How do tax treaties work?', a: 'Indian students may claim a standard deduction equivalent under Article 21(2). Chinese students can exempt up to $5,000 in wages annually under Article 20. FTax auto-detects your eligibility.' },
+  { q: 'Is my data secure?', a: 'SSN/ITIN digits are encrypted on-device with AES-256-GCM before any storage. Short-lived JWT sessions. We never share data with third parties.' },
 ];
 
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <motion.div
-      onClick={() => setOpen(!open)}
-      layout
-      style={{
-        background: open ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.70)',
-        border: `1px solid ${open ? 'rgba(34,197,94,0.40)' : T.border}`,
-        borderRadius: 18,
-        cursor: 'pointer',
-        overflow: 'hidden',
-        backdropFilter: 'blur(16px)',
-        transition: 'all .22s',
-      }}
-    >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '22px 26px' }}>
-        <span style={{ fontWeight: 700, fontSize: 15, color: T.text, maxWidth: '88%' }}>{q}</span>
-        <motion.div
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          style={{ width: 30, height: 30, borderRadius: '50%', background: open ? gradGreen : 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-        >
-          <ChevronDown size={14} color="#fff"/>
+    <div onClick={() => setOpen(!open)} style={{
+      background: open ? 'rgba(123,164,184,0.06)' : 'rgba(14,18,24,0.60)',
+      border: `1px solid ${open ? AB : T.border}`,
+      borderRadius: 14, cursor: 'pointer', overflow: 'hidden',
+      backdropFilter: 'blur(12px)', transition: 'all .20s',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px' }}>
+        <span style={{ fontWeight: 600, fontSize: 14, color: T.heading, maxWidth: '88%' }}>{q}</span>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.18 }}
+          style={{ width: 26, height: 26, borderRadius: '50%', background: open ? AG : 'rgba(255,255,255,0.04)', border: `1px solid ${open ? AB : T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <ChevronDown size={13} color={T.text}/>
         </motion.div>
       </div>
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-          >
-            <p style={{ padding: '0 26px 24px', color: T.muted, fontSize: 14, lineHeight: 1.8 }}>{a}</p>
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }}>
+            <p style={{ padding: '0 22px 20px', color: T.muted, fontSize: 13, lineHeight: 1.8 }}>{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
 /* ═══════════════════════════════════════════════
-   MAIN PAGE
+   PAGE
 ═══════════════════════════════════════════════ */
 export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll({ container: containerRef });
-  // Parallax video scale: 1.0 → 1.12 as you scroll down
-  const videoScale   = useTransform(scrollY, [0, 600], [1, 1.12]);
-  const heroOpacity  = useTransform(scrollY, [0, 400], [1, 0]);
+  const videoScale  = useTransform(scrollY, [0, 600], [1, 1.10]);
+  const heroOpacity = useTransform(scrollY, [0, 350], [1, 0]);
 
   const navLinks = [
     { label: 'How It Works', href: '#workflow' },
-    { label: 'Security',     href: '#security' },
-    { label: 'FAQ',          href: '#faq' }
+    { label: 'Security',     href: '#security'  },
+    { label: 'FAQ',          href: '#faq'        },
   ];
 
-  /* Scroll-snap helper */
-  const sectionStyle: React.CSSProperties = {
-    height: '100dvh',
-    scrollSnapAlign: 'start',
-    scrollSnapStop: 'always',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    overflow: 'hidden',
+  const section: React.CSSProperties = {
+    height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always',
+    display: 'flex', flexDirection: 'column', alignItems: 'center',
+    justifyContent: 'center', position: 'relative', overflow: 'hidden',
+  };
+
+  // Button styles
+  const btnPrimary: React.CSSProperties = {
+    display: 'inline-flex', alignItems: 'center', gap: 9,
+    padding: '13px 28px', borderRadius: 99,
+    background: AG, border: `1px solid ${AB}`,
+    color: T.heading, fontWeight: 700, fontSize: 14,
+    textDecoration: 'none', backdropFilter: 'blur(8px)',
+    boxShadow: glowAccent, letterSpacing: '-0.01em',
+    transition: 'all .18s',
+  };
+  const btnSecondary: React.CSSProperties = {
+    display: 'inline-flex', alignItems: 'center', gap: 9,
+    padding: '13px 24px', borderRadius: 99,
+    background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}`,
+    color: T.muted, fontWeight: 600, fontSize: 14,
+    textDecoration: 'none', backdropFilter: 'blur(6px)',
+    transition: 'all .18s',
   };
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        fontFamily: "'Inter', system-ui, sans-serif",
-        color: T.text,
-        background: T.bg,
-        height: '100dvh',
-        overflowY: 'scroll',
-        overflowX: 'hidden',
-        scrollSnapType: 'y mandatory',
-        scrollBehavior: 'smooth',
-      }}
-    >
-      {/* ══════════════════════════════════════
-          SECTION 1 — VIDEO HERO
-      ══════════════════════════════════════ */}
-      <section ref={heroRef} style={{ ...sectionStyle, scrollSnapStop: 'always' }}>
-        {/* Video with parallax */}
-        <motion.video
-          autoPlay muted loop playsInline
-          style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%',
-            objectFit: 'cover', zIndex: 0,
-            scale: videoScale,
-          }}
-        >
-          <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4" type="video/mp4" />
+    <div ref={containerRef} style={{
+      fontFamily: "'Inter', system-ui, sans-serif", color: T.text,
+      background: T.bg, height: '100dvh',
+      overflowY: 'scroll', overflowX: 'hidden',
+      scrollSnapType: 'y mandatory', scrollBehavior: 'smooth',
+    }}>
+
+      {/* ── SECTION 1: VIDEO HERO ─────────────────── */}
+      <section ref={heroRef} style={section}>
+        <motion.video autoPlay muted loop playsInline style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover', zIndex: 0, scale: videoScale,
+        }}>
+          <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4" type="video/mp4"/>
         </motion.video>
 
-        {/* Multi-layer overlay: dark top + brand-tinted bottom dissolve */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(6,11,20,0.55) 0%, rgba(6,11,20,0.25) 45%, rgba(6,11,20,0.70) 80%, #060B14 100%)' }} />
-        {/* Subtle indigo tint for brand color bleed */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'radial-gradient(ellipse at 60% 70%, rgba(255,255,255,0.06) 0%, transparent 65%)' }} />
+        {/* Overlays — keeps video visible but readable */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(8,11,16,0.52) 0%, rgba(8,11,16,0.18) 45%, rgba(8,11,16,0.65) 80%, #080B10 100%)' }} />
 
         {/* Navbar */}
-        <header style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 30, padding: '20px 0' }}>
-          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+        <header style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 30, padding: '18px 0' }}>
+          <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}>
               <Logo />
-              <span style={{ fontWeight: 800, fontSize: 20, color: T.text, letterSpacing: '-0.04em' }}>FTax</span>
+              <span style={{ fontWeight: 700, fontSize: 18, color: T.heading, letterSpacing: '-0.03em' }}>FTax</span>
             </Link>
-
-            <nav className="hidden md:flex" style={{ gap: 36, alignItems: 'center' }}>
-              {navLinks.map(link => (
-                <a key={link.label} href={link.href} style={{ color: 'rgba(248,250,252,0.65)', fontSize: 14, fontWeight: 500, textDecoration: 'none', transition: 'color .18s' }}
+            <nav className="hidden md:flex" style={{ gap: 32, alignItems: 'center' }}>
+              {navLinks.map(l => (
+                <a key={l.label} href={l.href} style={{ color: T.muted, fontSize: 13, fontWeight: 500, textDecoration: 'none', transition: 'color .15s' }}
                   onMouseEnter={e => (e.currentTarget.style.color = T.text)}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(248,250,252,0.65)')}
-                >{link.label}</a>
+                  onMouseLeave={e => (e.currentTarget.style.color = T.muted)}
+                >{l.label}</a>
               ))}
             </nav>
-
-            <div className="hidden md:flex" style={{ gap: 10, alignItems: 'center' }}>
-              <Link href="/login" style={{ fontSize: 13, fontWeight: 600, padding: '9px 20px', borderRadius: 99, color: T.text, border: '1px solid rgba(255,255,255,0.14)', textDecoration: 'none', background: 'rgba(255,255,255,0.04)', transition: 'all .18s' }}>
-                Sign In
-              </Link>
-              <Link href="/register" style={{ fontSize: 13, fontWeight: 700, padding: '9px 20px', borderRadius: 99, color: '#fff', textDecoration: 'none', background: gradGreen, boxShadow: glowGreen, transition: 'all .18s' }}>
-                Start Free
-              </Link>
+            <div className="hidden md:flex" style={{ gap: 8, alignItems: 'center' }}>
+              <Link href="/login" style={btnSecondary}>Sign In</Link>
+              <Link href="/register" style={btnPrimary}>Start Free <ArrowRight size={15}/></Link>
             </div>
-
-            <button className="md:hidden" onClick={() => setMobileMenuOpen(true)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: 8, color: T.text, cursor: 'pointer' }}>
-              <Menu size={20}/>
+            <button className="md:hidden" onClick={() => setMenuOpen(true)} style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${T.border}`, borderRadius: 9, padding: 7, color: T.text, cursor: 'pointer', display: 'flex' }}>
+              <Menu size={18}/>
             </button>
           </div>
         </header>
 
-        {/* Hero Content */}
-        <motion.div
-          style={{ opacity: heroOpacity, zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 800, margin: '0 auto' }}
-        >
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.7 }} style={{ marginBottom: 22 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 18px', borderRadius: 99, background: 'rgba(34,197,94,0.20)', border: '1px solid rgba(34,197,94,0.45)', color: '#6EC4A7', boxShadow: '0 0 24px rgba(255,255,255,0.15)' }}>
+        {/* Hero text */}
+        <motion.div style={{ opacity: heroOpacity, zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 760, margin: '0 auto' }}>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.65 }} style={{ marginBottom: 20 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '6px 16px', borderRadius: 99, background: `rgba(196,149,90,0.12)`, border: `1px solid rgba(196,149,90,0.28)`, color: GOLD }}>
               UIC F-1 TAX ASSISTANT · 2025
             </span>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8, ease: [0.21,1.02,0.43,1.01] }}
-            style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(2.4rem, 6vw, 4.2rem)', fontWeight: 900, lineHeight: 1.04, letterSpacing: '-0.035em', color: '#fff', textShadow: '0 4px 32px rgba(0,0,0,0.65)', marginBottom: 24 }}
+          <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.75, ease: [0.21,1,0.43,1] }}
+            style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(2.2rem, 5.5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.06, letterSpacing: '-0.03em', color: T.heading, textShadow: '0 3px 24px rgba(0,0,0,0.60)', marginBottom: 20 }}
           >
             File Your F-1 Student<br/>
-            <span style={{ background: gradFull, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            <span style={{ background: gradText, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               Taxes with Confidence
             </span>
           </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.7 }}
-            style={{ fontSize: 'clamp(1rem, 2.5vw, 1.15rem)', lineHeight: 1.75, color: 'rgba(248,250,252,0.85)', textShadow: '0 2px 12px rgba(0,0,0,0.55)', maxWidth: 620, margin: '0 auto 36px' }}
+          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32, duration: 0.65 }}
+            style={{ fontSize: 'clamp(0.95rem, 2.2vw, 1.08rem)', lineHeight: 1.78, color: T.muted, maxWidth: 560, margin: '0 auto 32px', textShadow: '0 2px 12px rgba(0,0,0,0.50)' }}
           >
-            Residency status, Form 8843 auto-fill, treaty benefits, and a full tax estimate — all in one place. Built exclusively for international students at UIC.
+            Residency status, Form 8843 auto-fill, treaty benefits, and a full tax estimate — all in one place. Built for international students at UIC.
           </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.48, duration: 0.6 }}
-            style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}
+          <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.44, duration: 0.55 }}
+            style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}
           >
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Link href="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '16px 32px', borderRadius: 99, background: gradGreen, color: '#fff', fontWeight: 700, fontSize: 16, textDecoration: 'none', boxShadow: glowGreen, letterSpacing: '-0.01em' }}>
-                Get Started Free <ArrowRight size={18}/>
-              </Link>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <Link href="/register" style={btnPrimary}>Get Started Free <ArrowRight size={15}/></Link>
             </motion.div>
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '16px 28px', borderRadius: 99, background: 'rgba(255,255,255,0.06)', color: '#fff', fontWeight: 600, fontSize: 15, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)' }}>
-                Sign In
-              </Link>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <Link href="/login" style={btnSecondary}>Sign In</Link>
             </motion.div>
           </motion.div>
         </motion.div>
 
         {/* Scroll cue */}
-        <div style={{ position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)', zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: 10, color: 'rgba(248,250,252,0.45)', letterSpacing: '0.12em', fontWeight: 700 }}>SCROLL</span>
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.8 }}>
-            <ChevronDown size={18} color="rgba(248,250,252,0.45)"/>
+        <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+          <span style={{ fontSize: 9, color: T.muted, letterSpacing: '0.14em', fontWeight: 600 }}>SCROLL</span>
+          <motion.div animate={{ y: [0, 7, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
+            <ChevronDown size={16} color={T.muted}/>
           </motion.div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          MARQUEE TICKER (between sections 1→2)
-          — Part of Section 2 so it's visible on scroll snap
-      ══════════════════════════════════════ */}
-
-      {/* ══════════════════════════════════════
-          SECTION 2 — HOW IT WORKS (4 steps)
-      ══════════════════════════════════════ */}
-      <section id="workflow" style={{ ...sectionStyle }}>
-        {/* Ambient glow */}
-        <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)', width: 700, height: 400, background: 'radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 65%)', pointerEvents: 'none' }} />
+      {/* ── SECTION 2: HOW IT WORKS ───────────────── */}
+      <section id="workflow" style={{ ...section, background: T.bg }}>
+        <div style={{ position: 'absolute', top: '15%', left: '50%', transform: 'translateX(-50%)', width: 600, height: 300, background: `radial-gradient(ellipse, ${AG} 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
         <Marquee />
 
-        <div style={{ maxWidth: 1200, width: '100%', padding: '0 28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <Reveal className="text-center" style={{ marginBottom: 48 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.green, textTransform: 'uppercase' }}>WORKFLOW</span>
-            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: T.text, letterSpacing: '-0.035em', marginTop: 10, lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
-              4 Steps to<br/>
-              <span style={{ background: gradFull, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Filing-Ready</span>
+        <div style={{ maxWidth: 1180, width: '100%', padding: '0 28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Reveal className="text-center" style={{ marginBottom: 40 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: A, textTransform: 'uppercase' }}>THE WORKFLOW</span>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.7rem)', fontWeight: 900, color: T.heading, letterSpacing: '-0.03em', marginTop: 10, lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
+              4 Steps to Filing-Ready
             </h2>
           </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 16 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 14 }}>
             {[
-              { step: '01', title: 'Residency Check', desc: 'Run the IRS Substantial Presence Test. Know your filing status instantly.', icon: Shield, color: T.green, glow: 'rgba(255,255,255,0.20)' },
-              { step: '02', title: 'Form 8843', desc: 'Auto-fill & download the official IRS declaration PDF in minutes.', icon: FileText, color: T.green, glow: 'rgba(255,255,255,0.20)' },
-              { step: '03', title: 'Treaty Lookup', desc: 'Discover country-specific exemptions under bilateral tax treaties.', icon: Globe, color: T.green, glow: 'rgba(255,255,255,0.20)' },
-              { step: '04', title: 'Tax Estimate', desc: 'Federal 1040-NR + Illinois flat-rate calculation, fully transparent.', icon: Calculator, color: T.green, glow: 'rgba(255,255,255,0.20)' },
+              { n: '01', title: 'Residency Check', desc: 'Run the IRS Substantial Presence Test instantly.', Icon: Shield },
+              { n: '02', title: 'Form 8843',       desc: 'Auto-fill & download the official IRS declaration PDF.', Icon: FileText },
+              { n: '03', title: 'Treaty Lookup',   desc: 'Country-specific exemptions under bilateral treaties.', Icon: Globe },
+              { n: '04', title: 'Tax Estimate',    desc: 'Federal 1040-NR + Illinois flat-rate, fully transparent.', Icon: Calculator },
             ].map((s, i) => (
-              <Reveal key={i} delay={i * 0.10}>
+              <Reveal key={i} delay={i * 0.08}>
                 <motion.div
-                  whileHover={{ y: -6, boxShadow: `0 20px 50px rgba(0,0,0,0.4), 0 0 40px ${s.glow}` }}
-                  style={{
-                    background: T.card,
-                    border: `1px solid rgba(255,255,255,0.07)`,
-                    borderRadius: 22,
-                    padding: '28px 24px',
-                    backdropFilter: 'blur(20px)',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                    transition: 'border-color .22s',
-                    cursor: 'default',
-                    height: '100%',
-                  }}
-                  onHoverStart={e => {
-                    (e.currentTarget as HTMLElement).style.borderColor = `${s.color}50`;
-                  }}
-                  onHoverEnd={e => {
-                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)';
-                  }}
+                  whileHover={{ y: -5, borderColor: AB }}
+                  style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 18, padding: '24px 20px', backdropFilter: 'blur(18px)', boxShadow: '0 6px 24px rgba(0,0,0,0.28)', cursor: 'default', height: '100%', transition: 'border-color .2s' }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-                    <span style={{ fontSize: 32, fontWeight: 900, color: `${s.color}30`, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{s.step}</span>
-                    <div style={{ width: 44, height: 44, borderRadius: 14, background: `${s.color}18`, border: `1px solid ${s.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px ${s.glow}` }}>
-                      <s.icon size={20} color={s.color}/>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                    <span style={{ fontSize: 28, fontWeight: 800, color: 'rgba(123,164,184,0.18)', fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{s.n}</span>
+                    <div style={{ width: 38, height: 38, borderRadius: 11, background: AG, border: `1px solid ${AB}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <s.Icon size={17} color={A}/>
                     </div>
                   </div>
-                  <h3 style={{ fontSize: 17, fontWeight: 800, color: T.text, marginBottom: 10 }}>{s.title}</h3>
-                  <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.7 }}>{s.desc}</p>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: T.heading, marginBottom: 8 }}>{s.title}</h3>
+                  <p style={{ fontSize: 12, color: T.muted, lineHeight: 1.7 }}>{s.desc}</p>
                 </motion.div>
               </Reveal>
             ))}
@@ -373,64 +292,48 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          SECTION 3 — SECURITY / FORM FEATURE
-      ══════════════════════════════════════ */}
-      <section id="security" style={{ ...sectionStyle }}>
-        {/* Ambient glow */}
-        <div style={{ position: 'absolute', top: '10%', right: '15%', width: 500, height: 500, background: 'radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 65%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: 400, height: 400, background: 'radial-gradient(ellipse, rgba(34,197,94,0.08) 0%, transparent 65%)', pointerEvents: 'none' }} />
+      {/* ── SECTION 3: SECURITY ───────────────────── */}
+      <section id="security" style={{ ...section, background: T.surface }}>
+        <div style={{ position: 'absolute', top: '10%', right: '10%', width: 400, height: 400, background: `radial-gradient(ellipse, rgba(123,164,184,0.07) 0%, transparent 65%)`, pointerEvents: 'none' }} />
 
-        <div style={{ maxWidth: 1200, width: '100%', padding: '0 28px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72, alignItems: 'center' }} className="grid-cols-1 lg:grid-cols-2">
-          {/* Left */}
+        <div style={{ maxWidth: 1180, width: '100%', padding: '0 28px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
           <Reveal>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.green, textTransform: 'uppercase' }}>DOCUMENT COMPLIANCE</span>
-            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: T.text, letterSpacing: '-0.035em', marginTop: 10, marginBottom: 20, lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
-              Official IRS Form<br/>
-              <span style={{ background: 'linear-gradient(135deg, #CBD5E1, #FFFFFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Auto-Filled for You
-              </span>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: A, textTransform: 'uppercase' }}>DOCUMENT COMPLIANCE</span>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.7rem)', fontWeight: 900, color: T.heading, letterSpacing: '-0.03em', marginTop: 10, marginBottom: 18, lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
+              Official IRS Form,<br/>Auto-Filled for You
             </h2>
-            <p style={{ color: T.muted, fontSize: 15, lineHeight: 1.8, marginBottom: 32, maxWidth: 460 }}>
-              Client-side PDF generation populates your personal, academic, and visa entries directly into the official IRS Form 8843. Zero third-party data handlers. Zero black-box logic.
+            <p style={{ color: T.muted, fontSize: 14, lineHeight: 1.8, marginBottom: 28, maxWidth: 420 }}>
+              Client-side PDF generation populates your personal, academic, and visa entries directly into IRS Form 8843. Zero third-party handlers. Zero black-box logic.
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {[
-                { text: 'Bank-grade AES-256-GCM encryption at rest', color: T.green },
-                { text: 'Direct local download — no data leaves your device', color: T.green },
-                { text: 'Pre-configured defaults for UIC F-1 holders', color: T.green },
-              ].map((pt, i) => (
-                <Reveal key={i} delay={i * 0.08}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{ width: 26, height: 26, borderRadius: '50%', background: `${pt.color}18`, border: `1px solid ${pt.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: `0 0 14px ${pt.color}30` }}>
-                      <CheckCircle2 size={14} color={pt.color}/>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {['Bank-grade AES-256-GCM encryption at rest', 'Local download — no data leaves your device', 'Pre-configured for UIC F-1 holders'].map((pt, i) => (
+                <Reveal key={i} delay={i * 0.07}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: AG, border: `1px solid ${AB}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <CheckCircle2 size={13} color={A}/>
                     </div>
-                    <span style={{ fontSize: 15, color: T.text, fontWeight: 600 }}>{pt.text}</span>
+                    <span style={{ fontSize: 14, color: T.text, fontWeight: 500 }}>{pt}</span>
                   </div>
                 </Reveal>
               ))}
             </div>
           </Reveal>
 
-          {/* Right: Floating glass card stack */}
-          <Reveal delay={0.15}>
-            <div style={{ position: 'relative', height: 340, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {/* Back card */}
-              <div style={{ position: 'absolute', top: 24, right: 0, width: '82%', height: 240, background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 24, backdropFilter: 'blur(12px)', transform: 'rotate(3deg)' }} />
-              {/* Front card */}
+          <Reveal delay={0.12}>
+            <div style={{ position: 'relative', height: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ position: 'absolute', top: 20, right: 0, width: '80%', height: 230, background: AG, border: `1px solid ${AB}`, borderRadius: 22, backdropFilter: 'blur(10px)', transform: 'rotate(3deg)' }} />
               <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
-                style={{ position: 'relative', width: '88%', background: T.card, border: '1px solid rgba(34,197,94,0.28)', borderRadius: 24, padding: '30px 28px', backdropFilter: 'blur(24px)', boxShadow: `0 28px 70px rgba(0,0,0,0.5), ${glowGreen}` }}
+                animate={{ y: [0, -7, 0] }} transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
+                style={{ position: 'relative', width: '86%', background: T.card, border: `1px solid ${AB}`, borderRadius: 22, padding: '28px 26px', backdropFilter: 'blur(20px)', boxShadow: `0 24px 60px rgba(0,0,0,0.45), ${glowAccent}` }}
               >
-                <div style={{ width: 50, height: 50, borderRadius: 16, background: 'rgba(34,197,94,0.18)', border: '1px solid rgba(34,197,94,0.38)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, boxShadow: '0 0 24px rgba(255,255,255,0.18)' }}>
-                  <Lock size={22} color={T.green}/>
+                <div style={{ width: 46, height: 46, borderRadius: 14, background: AG, border: `1px solid ${AB}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                  <Lock size={20} color={A}/>
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 800, color: T.text, marginBottom: 10 }}>Secure Tax ID Storage</h3>
-                <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.7 }}>SSN/ITIN digits encrypted on-device before storage. Complete PII compliance with zero third-party exposure.</p>
-                <div style={{ marginTop: 18, display: 'flex', gap: 8 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: T.heading, marginBottom: 8 }}>Secure Tax ID Storage</h3>
+                <p style={{ fontSize: 12, color: T.muted, lineHeight: 1.7 }}>SSN/ITIN digits encrypted on-device. PII compliance with zero third-party exposure.</p>
+                <div style={{ marginTop: 16, display: 'flex', gap: 7 }}>
                   {['AES-256', 'JWT Sessions', 'Zero Sharing'].map(tag => (
-                    <span key={tag} style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 99, background: 'rgba(34,197,94,0.14)', border: '1px solid rgba(34,197,94,0.28)', color: '#8FD3C8' }}>{tag}</span>
+                    <span key={tag} style={{ fontSize: 10, fontWeight: 700, padding: '4px 9px', borderRadius: 99, background: AG, border: `1px solid ${AB}`, color: A, letterSpacing: '0.04em' }}>{tag}</span>
                   ))}
                 </div>
               </motion.div>
@@ -439,105 +342,84 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          SECTION 4 — STATS + FAQ
-      ══════════════════════════════════════ */}
-      <section id="faq" style={{ ...sectionStyle }}>
-        <div style={{ position: 'absolute', top: '5%', left: '50%', transform: 'translateX(-50%)', width: 900, height: 300, background: 'radial-gradient(ellipse, rgba(34,197,94,0.07) 0%, transparent 65%)', pointerEvents: 'none' }} />
+      {/* ── SECTION 4: STATS + FAQ ─────────────────── */}
+      <section id="faq" style={{ ...section, background: T.bg }}>
+        <div style={{ position: 'absolute', top: '5%', left: '50%', transform: 'translateX(-50%)', width: 700, height: 250, background: `radial-gradient(ellipse, rgba(196,149,90,0.05) 0%, transparent 65%)`, pointerEvents: 'none' }} />
 
-        <div style={{ maxWidth: 1000, width: '100%', padding: '0 28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 48 }}>
-          {/* Stats row */}
+        <div style={{ maxWidth: 880, width: '100%', padding: '0 28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 40 }}>
           <Reveal>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28, padding: '28px 32px', background: 'rgba(15,23,42,0.75)', border: `1px solid rgba(255,255,255,0.07)`, borderRadius: 24, backdropFilter: 'blur(20px)' }}>
-              <Stat number="4" label="GUIDED STEPS"/>
-              <Stat number="50+" label="TREATY COUNTRIES"/>
-              <Stat number="100%" label="FREE FOR UIC"/>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, padding: '24px 28px', background: 'rgba(14,18,24,0.70)', border: `1px solid ${T.border}`, borderRadius: 20, backdropFilter: 'blur(16px)' }}>
+              <Stat number="4"    label="Guided Steps"/>
+              <Stat number="50+" label="Treaty Countries"/>
+              <Stat number="Free" label="For UIC Students"/>
             </div>
           </Reveal>
 
-          {/* FAQ */}
           <div>
             <Reveal>
-              <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.green, textTransform: 'uppercase' }}>SUPPORT</span>
-                <h2 style={{ fontSize: 'clamp(1.7rem, 3.5vw, 2.4rem)', fontWeight: 900, color: T.text, letterSpacing: '-0.03em', marginTop: 8, fontFamily: 'var(--font-heading)' }}>
-                  Common Questions
-                </h2>
+              <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: A, textTransform: 'uppercase' }}>SUPPORT</span>
+                <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.1rem)', fontWeight: 900, color: T.heading, letterSpacing: '-0.03em', marginTop: 8, fontFamily: 'var(--font-heading)' }}>Common Questions</h2>
               </div>
             </Reveal>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {FAQS.map((faq, idx) => (
-                <FaqItem key={idx} q={faq.q} a={faq.a}/>
-              ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {FAQS.map((f, i) => <FaqItem key={i} q={f.q} a={f.a}/>)}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          SECTION 5 — CTA + FOOTER
-      ══════════════════════════════════════ */}
-      <section style={{ ...sectionStyle }}>
-        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 40%, rgba(34,197,94,0.18) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+      {/* ── SECTION 5: CTA + FOOTER ──────────────── */}
+      <section style={{ ...section, background: T.surface }}>
+        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 35%, rgba(123,164,184,0.07) 0%, transparent 60%)`, pointerEvents: 'none' }} />
 
-        <div style={{ maxWidth: 900, width: '100%', padding: '0 28px', textAlign: 'center', zIndex: 2 }}>
-          {/* Big CTA card */}
+        <div style={{ maxWidth: 800, width: '100%', padding: '0 28px', textAlign: 'center', zIndex: 2 }}>
           <Reveal>
-            <motion.div
-              style={{
-                background: 'rgba(15,23,42,0.80)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                borderRadius: 32,
-                padding: 'clamp(40px, 6vw, 70px) clamp(28px, 5vw, 64px)',
-                backdropFilter: 'blur(24px)',
-                boxShadow: `0 40px 100px rgba(0,0,0,0.55), ${glowGreen}`,
-                marginBottom: 56,
-              }}
-            >
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 16px', borderRadius: 99, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.20)', color: T.green, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 20 }}>
-                <Sparkles size={12}/> TAX YEAR 2025 — OPEN NOW
+            <motion.div style={{
+              background: 'rgba(14,18,24,0.85)', border: `1px solid ${T.border}`,
+              borderRadius: 28, padding: 'clamp(36px, 5vw, 60px) clamp(24px, 4vw, 56px)',
+              backdropFilter: 'blur(20px)', boxShadow: `0 32px 80px rgba(0,0,0,0.50), ${glowAccent}`,
+              marginBottom: 48,
+            }}>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', padding: '6px 14px', borderRadius: 99, background: `rgba(196,149,90,0.10)`, border: `1px solid rgba(196,149,90,0.24)`, color: GOLD, display: 'inline-flex', alignItems: 'center', gap: 5, marginBottom: 18 }}>
+                <Sparkles size={11}/> TAX YEAR 2025 — OPEN NOW
               </span>
-              <h2 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.6rem)', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.06, color: '#fff', marginBottom: 16, fontFamily: 'var(--font-heading)' }}>
+              <h2 style={{ fontSize: 'clamp(1.9rem, 4.5vw, 3.1rem)', fontWeight: 900, letterSpacing: '-0.035em', lineHeight: 1.08, color: T.heading, marginBottom: 14, fontFamily: 'var(--font-heading)' }}>
                 Your F-1 Taxes,<br/>
-                <span style={{ background: gradFull, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                <span style={{ background: gradText, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   Sorted in Minutes
                 </span>
               </h2>
-              <p style={{ color: T.muted, fontSize: 16, lineHeight: 1.7, maxWidth: 520, margin: '0 auto 36px' }}>
-                Takes less than 10 minutes. Designed exclusively for F-1 visa holders at the University of Illinois Chicago. Free, forever.
+              <p style={{ color: T.muted, fontSize: 14, lineHeight: 1.8, maxWidth: 460, margin: '0 auto 30px' }}>
+                Under 10 minutes. Free, forever. Designed exclusively for F-1 visa holders at the University of Illinois Chicago.
               </p>
-              <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
-                  <Link href="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '16px 34px', borderRadius: 99, background: gradGreen, color: '#fff', fontWeight: 700, fontSize: 16, textDecoration: 'none', boxShadow: `0 12px 40px rgba(34,197,94,0.45)` }}>
-                    Get Started Free <ArrowRight size={18}/>
-                  </Link>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                  <Link href="/register" style={btnPrimary}>Get Started Free <ArrowRight size={15}/></Link>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
-                  <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '16px 28px', borderRadius: 99, background: 'rgba(255,255,255,0.06)', color: '#fff', fontWeight: 600, fontSize: 15, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.16)' }}>
-                    Sign In
-                  </Link>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                  <Link href="/login" style={btnSecondary}>Sign In</Link>
                 </motion.div>
               </div>
             </motion.div>
           </Reveal>
 
-          {/* Footer */}
-          <Reveal delay={0.15}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Reveal delay={0.12}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Logo/>
-                <span style={{ fontWeight: 800, fontSize: 18, color: T.text }}>FTax Assistant</span>
+                <span style={{ fontWeight: 700, fontSize: 16, color: T.text }}>FTax Assistant</span>
               </div>
-              <p style={{ color: T.dim, fontSize: 13, lineHeight: 1.7, maxWidth: 480 }}>
+              <p style={{ color: T.muted, fontSize: 12, lineHeight: 1.7 }}>
                 Educational tax assistant for international students at UIC.<br/>
                 &copy; 2026 FTax Assistant. All rights reserved.
               </p>
-              <div style={{ display: 'flex', gap: 24, marginTop: 4 }}>
-                {[['Privacy', '#'], ['Terms', '#'], ['Contact', '#']].map(([label, href]) => (
-                  <a key={label} href={href} style={{ fontSize: 12, color: T.dim, textDecoration: 'none', fontWeight: 500, transition: 'color .15s' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = T.muted)}
-                    onMouseLeave={e => (e.currentTarget.style.color = T.dim)}
-                  >{label}</a>
+              <div style={{ display: 'flex', gap: 20 }}>
+                {[['Privacy','#'],['Terms','#'],['Contact','#']].map(([l,h]) => (
+                  <a key={l} href={h} style={{ fontSize: 11, color: T.muted, textDecoration: 'none', fontWeight: 500, transition: 'color .14s' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = T.text)}
+                    onMouseLeave={e => (e.currentTarget.style.color = T.muted)}
+                  >{l}</a>
                 ))}
               </div>
             </div>
@@ -545,51 +427,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          MOBILE MENU
-      ══════════════════════════════════════ */}
+      {/* ── MOBILE MENU ───────────────────────────── */}
       <AnimatePresence>
-        {mobileMenuOpen && (
+        {menuOpen && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              style={{ position: 'fixed', inset: 0, zIndex: 45, background: 'rgba(6,11,20,0.80)', backdropFilter: 'blur(6px)' }}
-              onClick={() => setMobileMenuOpen(false)}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}
+              style={{ position: 'fixed', inset: 0, zIndex: 45, background: 'rgba(8,11,16,0.75)', backdropFilter: 'blur(5px)' }}
+              onClick={() => setMenuOpen(false)}
             />
-            <motion.div
-              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-              transition={{ type: 'tween', ease: [0.22, 1, 0.36, 1], duration: 0.4 }}
-              style={{ position: 'fixed', right: 0, top: 0, bottom: 0, zIndex: 50, width: 'min(88vw, 340px)', background: '#0E1223', borderLeft: '1px solid rgba(34,197,94,0.20)', boxShadow: '-16px 0 60px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}
+            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'tween', ease: [0.22,1,0.36,1], duration: 0.38 }}
+              style={{ position: 'fixed', right: 0, top: 0, bottom: 0, zIndex: 50, width: 'min(85vw, 320px)', background: T.surface, borderLeft: `1px solid ${T.border}`, boxShadow: '-12px 0 50px rgba(0,0,0,0.50)', display: 'flex', flexDirection: 'column' }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 22px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Logo/>
-                  <span style={{ fontWeight: 800, fontSize: 18, color: T.text }}>FTax</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 20px', borderBottom: `1px solid ${T.border}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Logo/><span style={{ fontWeight: 700, fontSize: 16, color: T.heading }}>FTax</span>
                 </div>
-                <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 10, padding: 8, cursor: 'pointer', color: T.text, display: 'flex' }}>
-                  <X size={18}/>
+                <button onClick={() => setMenuOpen(false)} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}`, borderRadius: 8, padding: 7, cursor: 'pointer', color: T.text, display: 'flex' }}>
+                  <X size={16}/>
                 </button>
               </div>
-              <div style={{ flex: 1, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {navLinks.map((link, i) => (
-                  <motion.a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)}
-                    initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 + i * 0.06 }}
-                    style={{ display: 'block', padding: '14px 16px', borderRadius: 12, color: T.muted, fontWeight: 500, fontSize: 16, textDecoration: 'none', transition: 'all .15s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLAnchorElement).style.color = T.text; }}
+              <div style={{ flex: 1, padding: '14px 12px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {navLinks.map((l, i) => (
+                  <motion.a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
+                    initial={{ x: 16, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.08 + i * 0.05 }}
+                    style={{ display: 'block', padding: '13px 14px', borderRadius: 10, color: T.muted, fontWeight: 500, fontSize: 15, textDecoration: 'none', transition: 'all .14s' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = AG; (e.currentTarget as HTMLAnchorElement).style.color = T.text; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; (e.currentTarget as HTMLAnchorElement).style.color = T.muted; }}
-                  >
-                    {link.label}
-                  </motion.a>
+                  >{l.label}</motion.a>
                 ))}
               </div>
-              <div style={{ padding: '16px 18px 28px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <Link href="/register" onClick={() => setMobileMenuOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '14px', borderRadius: 14, background: gradGreen, color: '#fff', fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: '0 6px 24px rgba(34,197,94,0.40)' }}>
-                  Start Free
-                </Link>
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '14px', borderRadius: 14, background: 'rgba(255,255,255,0.05)', color: T.text, fontWeight: 600, fontSize: 14, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.12)' }}>
-                  Sign In
-                </Link>
+              <div style={{ padding: '14px 16px 26px', display: 'flex', flexDirection: 'column', gap: 9 }}>
+                <Link href="/register" onClick={() => setMenuOpen(false)} style={{ ...btnPrimary, justifyContent: 'center', padding: '13px' }}>Start Free</Link>
+                <Link href="/login"    onClick={() => setMenuOpen(false)} style={{ ...btnSecondary, justifyContent: 'center', padding: '13px' }}>Sign In</Link>
               </div>
             </motion.div>
           </>
@@ -598,9 +467,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-
-
-
-

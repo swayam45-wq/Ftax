@@ -6,21 +6,20 @@
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Minimal Luxury — Vercel/Linear inspired */
-  --bg:         #0A0A0F;
-  --bg2:        #111118;
-  --bg3:        #18181F;
-  --background: #0A0A0F;
-  --foreground: #F8FAFC;
-  --card:       rgba(17,17,24,0.92);
-  --card-foreground: #F8FAFC;
-  --accent:     #FFFFFF;
-  --accent-dim: rgba(255,255,255,0.08);
-  --gold:       #D4A853;
-  --text:       #F8FAFC;
-  --muted:      #64748B;
-  --border:     rgba(255,255,255,0.08);
-  --border-hi:  rgba(255,255,255,0.18);
+  /* Muted Cinematic Dark */
+  --bg:         #080B10;
+  --bg2:        #0E1218;
+  --bg3:        #111620;
+  --background: #080B10;
+  --foreground: #C8CBD0;
+  --card:       rgba(14,18,24,0.88);
+  --card-foreground: #E8E8E6;
+  --accent:     #7BA4B8;
+  --accent-bg:  rgba(123,164,184,0.14);
+  --gold:       #C4955A;
+  --text:       #C8CBD0;
+  --muted:      #5A6472;
+  --border:     rgba(255,255,255,0.07);
 }
 
 /* ── Base ── */
