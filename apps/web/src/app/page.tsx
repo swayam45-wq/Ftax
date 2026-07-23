@@ -9,28 +9,30 @@ import {
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════
-   DESIGN TOKENS — Deep Slate × Forest Green × Aged Gold
-   Premium & Trustworthy — Mercury / Stripe energy
+   DESIGN TOKENS — Financial Dashboard Palette
+   Source: ui-ux-pro-max skill DB · color domain
+   Pairing: Calistoga (heading) + Inter (body)
 ═══════════════════════════════════════════════ */
 const T = {
-  bg:      '#070C11',          // near-black, cool blue undertone
-  surface: '#0C1520',          // dark navy-slate for cards
-  card:    'rgba(12,21,32,0.88)',
-  green:   '#1C7A5A',          // mature forest green
-  teal:    '#3AABA8',          // cooler teal highlight
-  gold:    '#C9963F',          // aged brass / warm gold
-  text:    '#EDE9E4',          // warm cream, not cold white
-  muted:   '#7B8A97',          // blue-gray
-  dim:     'rgba(123,138,151,0.45)',
-  border:  'rgba(28,122,90,0.22)',   // subtle green tint
-  borderB: 'rgba(255,255,255,0.06)',
+  bg:      '#020617',           // deep navy-black
+  surface: '#0E1223',           // dark slate surface
+  card:    'rgba(14,18,35,0.90)',
+  green:   '#22C55E',           // emerald — money, growth, trust
+  greenDim:'rgba(34,197,94,0.12)',
+  greenGlow:'rgba(34,197,94,0.25)',
+  slate:   '#334155',           // structural borders
+  text:    '#F8FAFC',           // clean off-white
+  muted:   '#94A3B8',           // slate-400
+  dim:     'rgba(148,163,184,0.40)',
+  border:  '#1E293B',           // slate-800 — subtle
+  borderA: 'rgba(51,65,85,0.70)',
 } as const;
 
-const gradGreen  = 'linear-gradient(135deg, #1C7A5A 0%, #3AABA8 100%)';
-const gradGold   = 'linear-gradient(135deg, #C9963F 0%, #E0B86A 100%)';
-const gradFull   = 'linear-gradient(135deg, #1C7A5A 0%, #3AABA8 55%, #C9963F 100%)';
-const glowGreen  = '0 0 40px rgba(28,122,90,0.32), 0 0 80px rgba(28,122,90,0.12)';
-const glowGold   = '0 0 30px rgba(201,150,63,0.38)';
+const gradGreen = 'linear-gradient(135deg, #16A34A 0%, #22C55E 100%)';
+const gradSlate = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)';
+const gradFull  = 'linear-gradient(135deg, #16A34A 0%, #22C55E 60%, #4ADE80 100%)';
+const glowGreen = '0 0 32px rgba(34,197,94,0.30), 0 0 64px rgba(34,197,94,0.10)';
+
 
 /* ═══════════════════════════════════════════════
    TINY HELPERS
@@ -41,8 +43,8 @@ function Logo() {
     <svg width="30" height="30" viewBox="0 0 256 256" fill="url(#logoGrad)">
       <defs>
         <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#1C7A5A"/>
-          <stop offset="100%" stopColor="#3AABA8"/>
+          <stop offset="0%" stopColor="#16A34A"/>
+          <stop offset="100%" stopColor="#22C55E"/>
         </linearGradient>
       </defs>
       <path d="M 64 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 L 128 64 L 128 64.5 L 161 32 L 192 0 L 256 0 L 256 64 L 192 128 L 128 128 L 128 192 L 96 223 L 63.5 256 L 0 256 L 0 192 Z M 256 192 L 224 223 L 191.5 256 L 128 256 L 128 192 L 192 128 L 256 128 Z" />
@@ -72,7 +74,7 @@ function Reveal({ children, delay = 0, className = '', style }: { children: Reac
 const TICKER = ['Form 8843', 'Form 1040-NR', 'Treaty Benefits', 'FICA Refunds', 'Residency Test', 'F-1 Visa Taxes', 'Illinois IL-1040', 'SSN / ITIN Guide'];
 function Marquee() {
   return (
-    <div style={{ overflow: 'hidden', borderTop: `1px solid ${T.borderB}`, borderBottom: `1px solid ${T.borderB}`, padding: '14px 0', background: 'rgba(6,11,20,0.60)', backdropFilter: 'blur(10px)' }}>
+    <div style={{ overflow: 'hidden', borderTop: `1px solid ${T.borderA}`, borderBottom: `1px solid ${T.borderA}`, padding: '14px 0', background: 'rgba(6,11,20,0.60)', backdropFilter: 'blur(10px)' }}>
       <motion.div
         style={{ display: 'flex', gap: 52, whiteSpace: 'nowrap' }}
         animate={{ x: ['0%', '-50%'] }}
@@ -80,7 +82,7 @@ function Marquee() {
       >
         {[...TICKER, ...TICKER].map((t, i) => (
           <span key={i} style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.10em', color: i % 2 === 0 ? T.green : T.muted, textTransform: 'uppercase' }}>
-            {t} <span style={{ color: T.borderB, margin: '0 8px' }}>·</span>
+            {t} <span style={{ color: T.borderA, margin: '0 8px' }}>·</span>
           </span>
         ))}
       </motion.div>
@@ -113,8 +115,8 @@ function FaqItem({ q, a }: { q: string; a: string }) {
       onClick={() => setOpen(!open)}
       layout
       style={{
-        background: open ? 'rgba(28,122,90,0.10)' : 'rgba(15,23,42,0.70)',
-        border: `1px solid ${open ? 'rgba(28,122,90,0.40)' : T.border}`,
+        background: open ? 'rgba(34,197,94,0.10)' : 'rgba(15,23,42,0.70)',
+        border: `1px solid ${open ? 'rgba(34,197,94,0.40)' : T.border}`,
         borderRadius: 18,
         cursor: 'pointer',
         overflow: 'hidden',
@@ -212,7 +214,7 @@ export default function Home() {
         {/* Multi-layer overlay: dark top + brand-tinted bottom dissolve */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(6,11,20,0.55) 0%, rgba(6,11,20,0.25) 45%, rgba(6,11,20,0.70) 80%, #060B14 100%)' }} />
         {/* Subtle indigo tint for brand color bleed */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'radial-gradient(ellipse at 60% 70%, rgba(28,122,90,0.12) 0%, transparent 65%)' }} />
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'radial-gradient(ellipse at 60% 70%, rgba(34,197,94,0.12) 0%, transparent 65%)' }} />
 
         {/* Navbar */}
         <header style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 30, padding: '20px 0' }}>
@@ -251,7 +253,7 @@ export default function Home() {
           style={{ opacity: heroOpacity, zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 800, margin: '0 auto' }}
         >
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.7 }} style={{ marginBottom: 22 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 18px', borderRadius: 99, background: 'rgba(28,122,90,0.20)', border: '1px solid rgba(28,122,90,0.45)', color: '#6EC4A7', boxShadow: '0 0 24px rgba(28,122,90,0.25)' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 18px', borderRadius: 99, background: 'rgba(34,197,94,0.20)', border: '1px solid rgba(34,197,94,0.45)', color: '#6EC4A7', boxShadow: '0 0 24px rgba(34,197,94,0.25)' }}>
               UIC F-1 TAX ASSISTANT · 2025
             </span>
           </motion.div>
@@ -315,7 +317,7 @@ export default function Home() {
       ══════════════════════════════════════ */}
       <section id="workflow" style={{ ...sectionStyle }}>
         {/* Ambient glow */}
-        <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)', width: 700, height: 400, background: 'radial-gradient(ellipse, rgba(28,122,90,0.12) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)', width: 700, height: 400, background: 'radial-gradient(ellipse, rgba(34,197,94,0.12) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
         <Marquee />
 
@@ -330,10 +332,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 16 }}>
             {[
-              { step: '01', title: 'Residency Check', desc: 'Run the IRS Substantial Presence Test. Know your filing status instantly.', icon: Shield, color: T.green, glow: 'rgba(28,122,90,0.35)' },
-              { step: '02', title: 'Form 8843', desc: 'Auto-fill & download the official IRS declaration PDF in minutes.', icon: FileText, color: T.teal, glow: 'rgba(58,171,168,0.35)' },
-              { step: '03', title: 'Treaty Lookup', desc: 'Discover country-specific exemptions under bilateral tax treaties.', icon: Globe, color: T.teal, glow: 'rgba(58,171,168,0.35)' },
-              { step: '04', title: 'Tax Estimate', desc: 'Federal 1040-NR + Illinois flat-rate calculation, fully transparent.', icon: Calculator, color: T.gold, glow: 'rgba(201,150,63,0.35)' },
+              { step: '01', title: 'Residency Check', desc: 'Run the IRS Substantial Presence Test. Know your filing status instantly.', icon: Shield, color: T.green, glow: 'rgba(34,197,94,0.35)' },
+              { step: '02', title: 'Form 8843', desc: 'Auto-fill & download the official IRS declaration PDF in minutes.', icon: FileText, color: T.green, glow: 'rgba(34,197,94,0.35)' },
+              { step: '03', title: 'Treaty Lookup', desc: 'Discover country-specific exemptions under bilateral tax treaties.', icon: Globe, color: T.green, glow: 'rgba(34,197,94,0.35)' },
+              { step: '04', title: 'Tax Estimate', desc: 'Federal 1040-NR + Illinois flat-rate calculation, fully transparent.', icon: Calculator, color: T.green, glow: 'rgba(34,197,94,0.35)' },
             ].map((s, i) => (
               <Reveal key={i} delay={i * 0.10}>
                 <motion.div
@@ -376,16 +378,16 @@ export default function Home() {
       ══════════════════════════════════════ */}
       <section id="security" style={{ ...sectionStyle }}>
         {/* Ambient glow */}
-        <div style={{ position: 'absolute', top: '10%', right: '15%', width: 500, height: 500, background: 'radial-gradient(ellipse, rgba(58,171,168,0.12) 0%, transparent 65%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: 400, height: 400, background: 'radial-gradient(ellipse, rgba(58,171,168,0.08) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '10%', right: '15%', width: 500, height: 500, background: 'radial-gradient(ellipse, rgba(34,197,94,0.12) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: 400, height: 400, background: 'radial-gradient(ellipse, rgba(34,197,94,0.08) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
         <div style={{ maxWidth: 1200, width: '100%', padding: '0 28px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72, alignItems: 'center' }} className="grid-cols-1 lg:grid-cols-2">
           {/* Left */}
           <Reveal>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.teal, textTransform: 'uppercase' }}>DOCUMENT COMPLIANCE</span>
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.green, textTransform: 'uppercase' }}>DOCUMENT COMPLIANCE</span>
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: T.text, letterSpacing: '-0.035em', marginTop: 10, marginBottom: 20, lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
               Official IRS Form<br/>
-              <span style={{ background: 'linear-gradient(135deg, #3AABA8, #1C7A5A)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span style={{ background: 'linear-gradient(135deg, #4ADE80, #22C55E)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Auto-Filled for You
               </span>
             </h2>
@@ -395,8 +397,8 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {[
                 { text: 'Bank-grade AES-256-GCM encryption at rest', color: T.green },
-                { text: 'Direct local download — no data leaves your device', color: T.teal },
-                { text: 'Pre-configured defaults for UIC F-1 holders', color: T.teal },
+                { text: 'Direct local download — no data leaves your device', color: T.green },
+                { text: 'Pre-configured defaults for UIC F-1 holders', color: T.green },
               ].map((pt, i) => (
                 <Reveal key={i} delay={i * 0.08}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -414,21 +416,21 @@ export default function Home() {
           <Reveal delay={0.15}>
             <div style={{ position: 'relative', height: 340, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {/* Back card */}
-              <div style={{ position: 'absolute', top: 24, right: 0, width: '82%', height: 240, background: 'rgba(28,122,90,0.07)', border: '1px solid rgba(28,122,90,0.18)', borderRadius: 24, backdropFilter: 'blur(12px)', transform: 'rotate(3deg)' }} />
+              <div style={{ position: 'absolute', top: 24, right: 0, width: '82%', height: 240, background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 24, backdropFilter: 'blur(12px)', transform: 'rotate(3deg)' }} />
               {/* Front card */}
               <motion.div
                 animate={{ y: [0, -8, 0] }}
                 transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
-                style={{ position: 'relative', width: '88%', background: T.card, border: '1px solid rgba(28,122,90,0.28)', borderRadius: 24, padding: '30px 28px', backdropFilter: 'blur(24px)', boxShadow: `0 28px 70px rgba(0,0,0,0.5), ${glowGreen}` }}
+                style={{ position: 'relative', width: '88%', background: T.card, border: '1px solid rgba(34,197,94,0.28)', borderRadius: 24, padding: '30px 28px', backdropFilter: 'blur(24px)', boxShadow: `0 28px 70px rgba(0,0,0,0.5), ${glowGreen}` }}
               >
-                <div style={{ width: 50, height: 50, borderRadius: 16, background: 'rgba(58,171,168,0.18)', border: '1px solid rgba(58,171,168,0.38)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, boxShadow: '0 0 24px rgba(58,171,168,0.30)' }}>
-                  <Lock size={22} color={T.teal}/>
+                <div style={{ width: 50, height: 50, borderRadius: 16, background: 'rgba(34,197,94,0.18)', border: '1px solid rgba(34,197,94,0.38)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, boxShadow: '0 0 24px rgba(34,197,94,0.30)' }}>
+                  <Lock size={22} color={T.green}/>
                 </div>
                 <h3 style={{ fontSize: 18, fontWeight: 800, color: T.text, marginBottom: 10 }}>Secure Tax ID Storage</h3>
                 <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.7 }}>SSN/ITIN digits encrypted on-device before storage. Complete PII compliance with zero third-party exposure.</p>
                 <div style={{ marginTop: 18, display: 'flex', gap: 8 }}>
                   {['AES-256', 'JWT Sessions', 'Zero Sharing'].map(tag => (
-                    <span key={tag} style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 99, background: 'rgba(28,122,90,0.14)', border: '1px solid rgba(28,122,90,0.28)', color: '#8FD3C8' }}>{tag}</span>
+                    <span key={tag} style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 99, background: 'rgba(34,197,94,0.14)', border: '1px solid rgba(34,197,94,0.28)', color: '#8FD3C8' }}>{tag}</span>
                   ))}
                 </div>
               </motion.div>
@@ -441,7 +443,7 @@ export default function Home() {
           SECTION 4 — STATS + FAQ
       ══════════════════════════════════════ */}
       <section id="faq" style={{ ...sectionStyle }}>
-        <div style={{ position: 'absolute', top: '5%', left: '50%', transform: 'translateX(-50%)', width: 900, height: 300, background: 'radial-gradient(ellipse, rgba(201,150,63,0.07) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '5%', left: '50%', transform: 'translateX(-50%)', width: 900, height: 300, background: 'radial-gradient(ellipse, rgba(34,197,94,0.07) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
         <div style={{ maxWidth: 1000, width: '100%', padding: '0 28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 48 }}>
           {/* Stats row */}
@@ -457,7 +459,7 @@ export default function Home() {
           <div>
             <Reveal>
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.gold, textTransform: 'uppercase' }}>SUPPORT</span>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.green, textTransform: 'uppercase' }}>SUPPORT</span>
                 <h2 style={{ fontSize: 'clamp(1.7rem, 3.5vw, 2.4rem)', fontWeight: 900, color: T.text, letterSpacing: '-0.03em', marginTop: 8, fontFamily: 'var(--font-heading)' }}>
                   Common Questions
                 </h2>
@@ -476,7 +478,7 @@ export default function Home() {
           SECTION 5 — CTA + FOOTER
       ══════════════════════════════════════ */}
       <section style={{ ...sectionStyle }}>
-        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 40%, rgba(28,122,90,0.18) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 40%, rgba(34,197,94,0.18) 0%, transparent 60%)`, pointerEvents: 'none' }} />
 
         <div style={{ maxWidth: 900, width: '100%', padding: '0 28px', textAlign: 'center', zIndex: 2 }}>
           {/* Big CTA card */}
@@ -484,7 +486,7 @@ export default function Home() {
             <motion.div
               style={{
                 background: 'rgba(15,23,42,0.80)',
-                border: '1px solid rgba(28,122,90,0.30)',
+                border: '1px solid rgba(34,197,94,0.30)',
                 borderRadius: 32,
                 padding: 'clamp(40px, 6vw, 70px) clamp(28px, 5vw, 64px)',
                 backdropFilter: 'blur(24px)',
@@ -492,7 +494,7 @@ export default function Home() {
                 marginBottom: 56,
               }}
             >
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 16px', borderRadius: 99, background: 'rgba(201,150,63,0.15)', border: '1px solid rgba(201,150,63,0.35)', color: T.gold, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 20 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 16px', borderRadius: 99, background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.35)', color: T.green, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 20 }}>
                 <Sparkles size={12}/> TAX YEAR 2025 — OPEN NOW
               </span>
               <h2 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.6rem)', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.06, color: '#fff', marginBottom: 16, fontFamily: 'var(--font-heading)' }}>
@@ -506,7 +508,7 @@ export default function Home() {
               </p>
               <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
-                  <Link href="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '16px 34px', borderRadius: 99, background: gradGreen, color: '#fff', fontWeight: 700, fontSize: 16, textDecoration: 'none', boxShadow: `0 12px 40px rgba(28,122,90,0.45)` }}>
+                  <Link href="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '16px 34px', borderRadius: 99, background: gradGreen, color: '#fff', fontWeight: 700, fontSize: 16, textDecoration: 'none', boxShadow: `0 12px 40px rgba(34,197,94,0.45)` }}>
                     Get Started Free <ArrowRight size={18}/>
                   </Link>
                 </motion.div>
@@ -558,7 +560,7 @@ export default function Home() {
             <motion.div
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
               transition={{ type: 'tween', ease: [0.22, 1, 0.36, 1], duration: 0.4 }}
-              style={{ position: 'fixed', right: 0, top: 0, bottom: 0, zIndex: 50, width: 'min(88vw, 340px)', background: '#0C1520', borderLeft: '1px solid rgba(28,122,90,0.20)', boxShadow: '-16px 0 60px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}
+              style={{ position: 'fixed', right: 0, top: 0, bottom: 0, zIndex: 50, width: 'min(88vw, 340px)', background: '#0E1223', borderLeft: '1px solid rgba(34,197,94,0.20)', boxShadow: '-16px 0 60px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 22px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -574,7 +576,7 @@ export default function Home() {
                   <motion.a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)}
                     initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 + i * 0.06 }}
                     style={{ display: 'block', padding: '14px 16px', borderRadius: 12, color: T.muted, fontWeight: 500, fontSize: 16, textDecoration: 'none', transition: 'all .15s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(28,122,90,0.10)'; (e.currentTarget as HTMLAnchorElement).style.color = T.text; }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(34,197,94,0.10)'; (e.currentTarget as HTMLAnchorElement).style.color = T.text; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; (e.currentTarget as HTMLAnchorElement).style.color = T.muted; }}
                   >
                     {link.label}
@@ -582,7 +584,7 @@ export default function Home() {
                 ))}
               </div>
               <div style={{ padding: '16px 18px 28px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <Link href="/register" onClick={() => setMobileMenuOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '14px', borderRadius: 14, background: gradGreen, color: '#fff', fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: '0 6px 24px rgba(28,122,90,0.40)' }}>
+                <Link href="/register" onClick={() => setMobileMenuOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '14px', borderRadius: 14, background: gradGreen, color: '#fff', fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: '0 6px 24px rgba(34,197,94,0.40)' }}>
                   Start Free
                 </Link>
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '14px', borderRadius: 14, background: 'rgba(255,255,255,0.05)', color: T.text, fontWeight: 600, fontSize: 14, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.12)' }}>
@@ -596,6 +598,7 @@ export default function Home() {
     </div>
   );
 }
+
 
 
 
