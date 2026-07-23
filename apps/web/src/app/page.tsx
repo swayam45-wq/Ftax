@@ -9,29 +9,29 @@ import {
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════
-   DESIGN TOKENS — Financial Dashboard Palette
-   Source: ui-ux-pro-max skill DB · color domain
-   Pairing: Calistoga (heading) + Inter (body)
+   DESIGN TOKENS — Minimal Luxury
+   Deep black × White accent × Subtle gold badge
+   Inspired by: Vercel · Linear · Arc Browser
 ═══════════════════════════════════════════════ */
 const T = {
-  bg:      '#020617',           // deep navy-black
-  surface: '#0E1223',           // dark slate surface
-  card:    'rgba(14,18,35,0.90)',
-  green:   '#22C55E',           // emerald — money, growth, trust
-  greenDim:'rgba(34,197,94,0.12)',
-  greenGlow:'rgba(34,197,94,0.25)',
-  slate:   '#334155',           // structural borders
-  text:    '#F8FAFC',           // clean off-white
-  muted:   '#94A3B8',           // slate-400
-  dim:     'rgba(148,163,184,0.40)',
-  border:  '#1E293B',           // slate-800 — subtle
-  borderA: 'rgba(51,65,85,0.70)',
+  bg:       '#0A0A0F',          // near-black, barely blue
+  surface:  '#111118',          // card surfaces
+  card:     'rgba(17,17,24,0.92)',
+  white:    '#FFFFFF',          // primary accent
+  offwhite: '#E2E8F0',          // secondary text/icons
+  gold:     '#D4A853',          // warm badge accent (used sparingly)
+  text:     '#F8FAFC',          // body text
+  muted:    '#64748B',          // slate-500
+  dim:      'rgba(100,116,139,0.45)',
+  border:   'rgba(255,255,255,0.08)',  // barely visible
+  borderHi: 'rgba(255,255,255,0.18)', // hover state
+  green:    '#FFFFFF',          // alias kept for compatibility
 } as const;
 
-const gradGreen = 'linear-gradient(135deg, #16A34A 0%, #22C55E 100%)';
+const gradGreen = 'linear-gradient(135deg, #E2E8F0 0%, #FFFFFF 100%)';
 const gradSlate = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)';
-const gradFull  = 'linear-gradient(135deg, #16A34A 0%, #22C55E 60%, #4ADE80 100%)';
-const glowGreen = '0 0 32px rgba(34,197,94,0.30), 0 0 64px rgba(34,197,94,0.10)';
+const gradFull  = 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)';
+const glowGreen = '0 0 32px rgba(255,255,255,0.12), 0 0 64px rgba(255,255,255,0.04)';
 
 
 /* ═══════════════════════════════════════════════
@@ -43,8 +43,8 @@ function Logo() {
     <svg width="30" height="30" viewBox="0 0 256 256" fill="url(#logoGrad)">
       <defs>
         <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#16A34A"/>
-          <stop offset="100%" stopColor="#22C55E"/>
+          <stop offset="0%" stopColor="#E2E8F0"/>
+          <stop offset="100%" stopColor="#FFFFFF"/>
         </linearGradient>
       </defs>
       <path d="M 64 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 L 128 64 L 128 64.5 L 161 32 L 192 0 L 256 0 L 256 64 L 192 128 L 128 128 L 128 192 L 96 223 L 63.5 256 L 0 256 L 0 192 Z M 256 192 L 224 223 L 191.5 256 L 128 256 L 128 192 L 192 128 L 256 128 Z" />
@@ -74,7 +74,7 @@ function Reveal({ children, delay = 0, className = '', style }: { children: Reac
 const TICKER = ['Form 8843', 'Form 1040-NR', 'Treaty Benefits', 'FICA Refunds', 'Residency Test', 'F-1 Visa Taxes', 'Illinois IL-1040', 'SSN / ITIN Guide'];
 function Marquee() {
   return (
-    <div style={{ overflow: 'hidden', borderTop: `1px solid ${T.borderA}`, borderBottom: `1px solid ${T.borderA}`, padding: '14px 0', background: 'rgba(6,11,20,0.60)', backdropFilter: 'blur(10px)' }}>
+    <div style={{ overflow: 'hidden', borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: '14px 0', background: 'rgba(6,11,20,0.60)', backdropFilter: 'blur(10px)' }}>
       <motion.div
         style={{ display: 'flex', gap: 52, whiteSpace: 'nowrap' }}
         animate={{ x: ['0%', '-50%'] }}
@@ -82,7 +82,7 @@ function Marquee() {
       >
         {[...TICKER, ...TICKER].map((t, i) => (
           <span key={i} style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.10em', color: i % 2 === 0 ? T.green : T.muted, textTransform: 'uppercase' }}>
-            {t} <span style={{ color: T.borderA, margin: '0 8px' }}>·</span>
+            {t} <span style={{ color: T.border, margin: '0 8px' }}>·</span>
           </span>
         ))}
       </motion.div>
@@ -115,7 +115,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
       onClick={() => setOpen(!open)}
       layout
       style={{
-        background: open ? 'rgba(34,197,94,0.10)' : 'rgba(15,23,42,0.70)',
+        background: open ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.70)',
         border: `1px solid ${open ? 'rgba(34,197,94,0.40)' : T.border}`,
         borderRadius: 18,
         cursor: 'pointer',
@@ -214,7 +214,7 @@ export default function Home() {
         {/* Multi-layer overlay: dark top + brand-tinted bottom dissolve */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(6,11,20,0.55) 0%, rgba(6,11,20,0.25) 45%, rgba(6,11,20,0.70) 80%, #060B14 100%)' }} />
         {/* Subtle indigo tint for brand color bleed */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'radial-gradient(ellipse at 60% 70%, rgba(34,197,94,0.12) 0%, transparent 65%)' }} />
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'radial-gradient(ellipse at 60% 70%, rgba(255,255,255,0.06) 0%, transparent 65%)' }} />
 
         {/* Navbar */}
         <header style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 30, padding: '20px 0' }}>
@@ -253,7 +253,7 @@ export default function Home() {
           style={{ opacity: heroOpacity, zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 800, margin: '0 auto' }}
         >
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.7 }} style={{ marginBottom: 22 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 18px', borderRadius: 99, background: 'rgba(34,197,94,0.20)', border: '1px solid rgba(34,197,94,0.45)', color: '#6EC4A7', boxShadow: '0 0 24px rgba(34,197,94,0.25)' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 18px', borderRadius: 99, background: 'rgba(34,197,94,0.20)', border: '1px solid rgba(34,197,94,0.45)', color: '#6EC4A7', boxShadow: '0 0 24px rgba(255,255,255,0.15)' }}>
               UIC F-1 TAX ASSISTANT · 2025
             </span>
           </motion.div>
@@ -317,7 +317,7 @@ export default function Home() {
       ══════════════════════════════════════ */}
       <section id="workflow" style={{ ...sectionStyle }}>
         {/* Ambient glow */}
-        <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)', width: 700, height: 400, background: 'radial-gradient(ellipse, rgba(34,197,94,0.12) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)', width: 700, height: 400, background: 'radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
         <Marquee />
 
@@ -332,10 +332,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 16 }}>
             {[
-              { step: '01', title: 'Residency Check', desc: 'Run the IRS Substantial Presence Test. Know your filing status instantly.', icon: Shield, color: T.green, glow: 'rgba(34,197,94,0.35)' },
-              { step: '02', title: 'Form 8843', desc: 'Auto-fill & download the official IRS declaration PDF in minutes.', icon: FileText, color: T.green, glow: 'rgba(34,197,94,0.35)' },
-              { step: '03', title: 'Treaty Lookup', desc: 'Discover country-specific exemptions under bilateral tax treaties.', icon: Globe, color: T.green, glow: 'rgba(34,197,94,0.35)' },
-              { step: '04', title: 'Tax Estimate', desc: 'Federal 1040-NR + Illinois flat-rate calculation, fully transparent.', icon: Calculator, color: T.green, glow: 'rgba(34,197,94,0.35)' },
+              { step: '01', title: 'Residency Check', desc: 'Run the IRS Substantial Presence Test. Know your filing status instantly.', icon: Shield, color: T.green, glow: 'rgba(255,255,255,0.20)' },
+              { step: '02', title: 'Form 8843', desc: 'Auto-fill & download the official IRS declaration PDF in minutes.', icon: FileText, color: T.green, glow: 'rgba(255,255,255,0.20)' },
+              { step: '03', title: 'Treaty Lookup', desc: 'Discover country-specific exemptions under bilateral tax treaties.', icon: Globe, color: T.green, glow: 'rgba(255,255,255,0.20)' },
+              { step: '04', title: 'Tax Estimate', desc: 'Federal 1040-NR + Illinois flat-rate calculation, fully transparent.', icon: Calculator, color: T.green, glow: 'rgba(255,255,255,0.20)' },
             ].map((s, i) => (
               <Reveal key={i} delay={i * 0.10}>
                 <motion.div
@@ -378,7 +378,7 @@ export default function Home() {
       ══════════════════════════════════════ */}
       <section id="security" style={{ ...sectionStyle }}>
         {/* Ambient glow */}
-        <div style={{ position: 'absolute', top: '10%', right: '15%', width: 500, height: 500, background: 'radial-gradient(ellipse, rgba(34,197,94,0.12) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '10%', right: '15%', width: 500, height: 500, background: 'radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 65%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: 400, height: 400, background: 'radial-gradient(ellipse, rgba(34,197,94,0.08) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
         <div style={{ maxWidth: 1200, width: '100%', padding: '0 28px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72, alignItems: 'center' }} className="grid-cols-1 lg:grid-cols-2">
@@ -387,7 +387,7 @@ export default function Home() {
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.green, textTransform: 'uppercase' }}>DOCUMENT COMPLIANCE</span>
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: T.text, letterSpacing: '-0.035em', marginTop: 10, marginBottom: 20, lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
               Official IRS Form<br/>
-              <span style={{ background: 'linear-gradient(135deg, #4ADE80, #22C55E)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span style={{ background: 'linear-gradient(135deg, #CBD5E1, #FFFFFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Auto-Filled for You
               </span>
             </h2>
@@ -423,7 +423,7 @@ export default function Home() {
                 transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
                 style={{ position: 'relative', width: '88%', background: T.card, border: '1px solid rgba(34,197,94,0.28)', borderRadius: 24, padding: '30px 28px', backdropFilter: 'blur(24px)', boxShadow: `0 28px 70px rgba(0,0,0,0.5), ${glowGreen}` }}
               >
-                <div style={{ width: 50, height: 50, borderRadius: 16, background: 'rgba(34,197,94,0.18)', border: '1px solid rgba(34,197,94,0.38)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, boxShadow: '0 0 24px rgba(34,197,94,0.30)' }}>
+                <div style={{ width: 50, height: 50, borderRadius: 16, background: 'rgba(34,197,94,0.18)', border: '1px solid rgba(34,197,94,0.38)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, boxShadow: '0 0 24px rgba(255,255,255,0.18)' }}>
                   <Lock size={22} color={T.green}/>
                 </div>
                 <h3 style={{ fontSize: 18, fontWeight: 800, color: T.text, marginBottom: 10 }}>Secure Tax ID Storage</h3>
@@ -486,7 +486,7 @@ export default function Home() {
             <motion.div
               style={{
                 background: 'rgba(15,23,42,0.80)',
-                border: '1px solid rgba(34,197,94,0.30)',
+                border: '1px solid rgba(255,255,255,0.18)',
                 borderRadius: 32,
                 padding: 'clamp(40px, 6vw, 70px) clamp(28px, 5vw, 64px)',
                 backdropFilter: 'blur(24px)',
@@ -494,7 +494,7 @@ export default function Home() {
                 marginBottom: 56,
               }}
             >
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 16px', borderRadius: 99, background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.35)', color: T.green, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 20 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '7px 16px', borderRadius: 99, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.20)', color: T.green, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 20 }}>
                 <Sparkles size={12}/> TAX YEAR 2025 — OPEN NOW
               </span>
               <h2 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.6rem)', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.06, color: '#fff', marginBottom: 16, fontFamily: 'var(--font-heading)' }}>
@@ -576,7 +576,7 @@ export default function Home() {
                   <motion.a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)}
                     initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 + i * 0.06 }}
                     style={{ display: 'block', padding: '14px 16px', borderRadius: 12, color: T.muted, fontWeight: 500, fontSize: 16, textDecoration: 'none', transition: 'all .15s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(34,197,94,0.10)'; (e.currentTarget as HTMLAnchorElement).style.color = T.text; }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLAnchorElement).style.color = T.text; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; (e.currentTarget as HTMLAnchorElement).style.color = T.muted; }}
                   >
                     {link.label}
@@ -598,6 +598,8 @@ export default function Home() {
     </div>
   );
 }
+
+
 
 
 

@@ -6,20 +6,21 @@
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Financial Dashboard Palette */
-  --bg:         #020617;
-  --bg2:        #0E1223;
-  --bg3:        #0F172A;
-  --background: #020617;
+  /* Minimal Luxury — Vercel/Linear inspired */
+  --bg:         #0A0A0F;
+  --bg2:        #111118;
+  --bg3:        #18181F;
+  --background: #0A0A0F;
   --foreground: #F8FAFC;
-  --card:       #0E1223;
+  --card:       rgba(17,17,24,0.92);
   --card-foreground: #F8FAFC;
-  --accent:     #22C55E;
-  --accent-dim: rgba(34,197,94,0.15);
+  --accent:     #FFFFFF;
+  --accent-dim: rgba(255,255,255,0.08);
+  --gold:       #D4A853;
   --text:       #F8FAFC;
-  --muted:      #94A3B8;
-  --border:     #334155;
-  --border-dim: rgba(51,65,85,0.60);
+  --muted:      #64748B;
+  --border:     rgba(255,255,255,0.08);
+  --border-hi:  rgba(255,255,255,0.18);
 }
 
 /* ── Base ── */
