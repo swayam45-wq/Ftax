@@ -2,22 +2,50 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { apiFetch, C, grad } from '@/lib/api';
-import { ArrowRight, Lock, Mail, User, Eye, EyeOff, ShieldCheck, CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { apiFetch } from '@/lib/api';
+import { ArrowRight, Lock, Mail, User, Eye, EyeOff, ShieldCheck, CheckCircle, Sparkles } from 'lucide-react';
+
+/* Design tokens matching the cinematic dark palette */
+const A = '#7BA4B8';
+const AG = 'rgba(123,164,184,0.14)';
+const AB = 'rgba(123,164,184,0.30)';
+const GOLD = '#C4955A';
+
+const T = {
+  bg:      '#080B10',
+  surface: '#0E1218',
+  card:    'rgba(14,18,24,0.88)',
+  text:    '#C8CBD0',
+  heading: '#E8E8E6',
+  muted:   '#5A6472',
+  dim:     'rgba(90,100,114,0.55)',
+  border:  'rgba(255,255,255,0.07)',
+} as const;
+
+function Logo() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 256 256" fill={A}>
+      <path d="M 64 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 L 128 64 L 128 64.5 L 161 32 L 192 0 L 256 0 L 256 64 L 192 128 L 128 128 L 128 192 L 96 223 L 63.5 256 L 0 256 L 0 192 Z M 256 192 L 224 223 L 191.5 256 L 128 256 L 128 192 L 192 128 L 256 128 Z" />
+    </svg>
+  );
+}
 
 function PasswordStrength({ password }: { password: string }) {
   const checks = [
-    { label: '8+ chars',   ok: password.length >= 8 },
-    { label: 'Uppercase',  ok: /[A-Z]/.test(password) },
-    { label: 'Number',     ok: /\d/.test(password) },
+    { label: '8+ chars',  ok: password.length >= 8 },
+    { label: 'Uppercase', ok: /[A-Z]/.test(password) },
+    { label: 'Number',    ok: /\d/.test(password) },
   ];
   if (!password) return null;
-  const strong = checks.every(c => c.ok);
   return (
-    <div style={{ display:'flex', gap:10, marginTop:7 }}>
+    <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
       {checks.map(({ label, ok }) => (
-        <span key={label} style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color: ok ? C.teal : C.dim, transition:'color .2s' }}>
-          <CheckCircle size={11} color={ok ? C.teal : 'rgba(138,151,168,0.35)'}/> {label}
+        <span key={label} style={{
+          display: 'flex', alignItems: 'center', gap: 5, fontSize: 11,
+          color: ok ? A : T.muted, transition: 'color 0.2s'
+        }}>
+          <CheckCircle size={12} color={ok ? A : T.dim} /> {label}
         </span>
       ))}
     </div>
@@ -45,119 +73,263 @@ export default function RegisterPage() {
       });
       router.push('/login?registered=1');
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
 
   const labelStyle: React.CSSProperties = {
-    display: 'block', fontSize: 12, fontWeight: 600,
-    color: C.muted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8,
+    display: 'block', fontSize: 11, fontWeight: 700,
+    color: T.muted, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8,
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    background: 'rgba(8,11,16,0.60)',
+    border: `1px solid ${T.border}`,
+    borderRadius: 12,
+    padding: '13px 16px',
+    color: T.heading,
+    fontSize: 14,
+    outline: 'none',
+    transition: 'all 0.2s',
   };
 
   return (
     <div style={{
-      minHeight: '100vh', background: C.bg,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 24, fontFamily: "'Inter',system-ui,sans-serif", position: 'relative', overflow: 'hidden',
+      minHeight: '100vh',
+      background: T.bg,
+      color: T.text,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '32px 24px',
+      fontFamily: "'Inter', system-ui, sans-serif",
+      position: 'relative',
+      overflow: 'hidden',
     }}>
-      {/* Ambient glows */}
-      <div style={{ position:'fixed', top:'-15%', right:'-5%', width:600, height:600, background:'radial-gradient(ellipse, rgba(83,128,131,0.13) 0%, transparent 65%)', pointerEvents:'none' }}/>
-      <div style={{ position:'fixed', bottom:'0%', left:'-5%', width:500, height:500, background:'radial-gradient(ellipse, rgba(42,127,98,0.09) 0%, transparent 65%)', pointerEvents:'none' }}/>
+      {/* Film grain overlay */}
+      <div className="film-grain" />
 
-      <div style={{ width:'100%', maxWidth:480, position:'relative', zIndex:1 }}>
-        {/* Logo */}
-        <div style={{ textAlign:'center', marginBottom:44 }}>
-          <Link href="/" style={{ textDecoration:'none', display:'inline-flex', alignItems:'center', gap:12 }}>
-            <div style={{ width:42, height:42, borderRadius:13, background:grad, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:20, color:'#fff', boxShadow:'0 4px 20px rgba(83,128,131,0.4)' }}>F</div>
-            <span style={{ fontWeight:800, fontSize:22, color:C.text, letterSpacing:'-0.04em' }}>FTax</span>
+      {/* Ambient background glows */}
+      <div className="aurora-1" style={{
+        width: 600, height: 450, zIndex: 0,
+        top: '-10%', right: '10%',
+        background: 'radial-gradient(ellipse, rgba(123,164,184,0.18) 0%, transparent 70%)',
+      }} />
+      <div className="aurora-2" style={{
+        width: 450, height: 400, zIndex: 0,
+        bottom: '5%', left: '10%',
+        background: 'radial-gradient(ellipse, rgba(196,149,90,0.12) 0%, transparent 70%)',
+      }} />
+
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.65, ease: [0.21, 1, 0.43, 1] }}
+        style={{ width: '100%', maxWidth: 480, position: 'relative', zIndex: 10 }}
+      >
+        {/* Top Header & Logo */}
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+            <Logo />
+            <span style={{ fontWeight: 800, fontSize: 24, color: T.heading, letterSpacing: '-0.04em' }}>FTax</span>
           </Link>
-          <p style={{ color:C.muted, fontSize:13, marginTop:10 }}>Create your free account</p>
-        </div>
-
-        {/* Card */}
-        <div style={{
-          background: 'rgba(13,21,32,0.80)',
-          border: `1px solid rgba(83,145,150,0.22)`,
-          borderRadius: 24, padding: '44px 40px',
-          backdropFilter: 'blur(24px)',
-          boxShadow: '0 32px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04)',
-        }}>
-          <h1 style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.04em', marginBottom:6, color:C.text }}>Get started free</h1>
-          <p style={{ color:C.muted, fontSize:14, marginBottom:36 }}>Join hundreds of UIC international students</p>
-
-          {error && (
-            <div style={{ background:'rgba(239,68,68,0.09)', border:'1px solid rgba(239,68,68,0.28)', borderRadius:12, padding:'13px 16px', marginBottom:20, color:'#fca5a5', fontSize:14 }}>
-              ⚠ {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:18 }}>
-            {/* Name row */}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
-              <div>
-                <label style={labelStyle}>First name</label>
-                <div style={{ position:'relative' }}>
-                  <User size={15} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}/>
-                  <input id="reg-first" type="text" placeholder="Ada" value={firstName} onChange={e => setFirstName(e.target.value)} required className="inp" style={{ paddingLeft:42 }}/>
-                </div>
-              </div>
-              <div>
-                <label style={labelStyle}>Last name</label>
-                <input id="reg-last" type="text" placeholder="Lovelace" value={lastName} onChange={e => setLastName(e.target.value)} required className="inp"/>
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label style={labelStyle}>Email address</label>
-              <div style={{ position:'relative' }}>
-                <Mail size={15} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}/>
-                <input id="reg-email" type="email" placeholder="you@uic.edu" value={email} onChange={e => setEmail(e.target.value)} required className="inp" style={{ paddingLeft:42 }}/>
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label style={labelStyle}>Password</label>
-              <div style={{ position:'relative' }}>
-                <Lock size={15} color={C.muted} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}/>
-                <input id="reg-password" type={showPw ? 'text' : 'password'} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required className="inp" style={{ paddingLeft:42, paddingRight:44 }}/>
-                <button type="button" onClick={() => setShowPw(s => !s)} style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:C.muted, display:'flex', padding:0 }}>
-                  {showPw ? <EyeOff size={16}/> : <Eye size={16}/>}
-                </button>
-              </div>
-              <PasswordStrength password={password}/>
-            </div>
-
-            <button
-              id="reg-submit" type="submit" disabled={loading}
-              className="btn-primary"
-              style={{
-                background: loading ? 'rgba(83,128,131,0.35)' : grad,
-                color:'#fff', padding:'15px', fontSize:15,
-                justifyContent:'center', borderRadius:12, marginTop:4,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: loading ? 'none' : '0 8px 28px rgba(83,128,131,0.32)',
-              }}
-            >
-              {loading ? 'Creating account…' : <><span>Create account</span><ArrowRight size={16}/></>}
-            </button>
-          </form>
-
-          <div style={{ marginTop:28, textAlign:'center' }}>
-            <span style={{ color:C.muted, fontSize:14 }}>Already have an account? </span>
-            <Link href="/login" style={{ color:C.pine, fontSize:14, fontWeight:700, textDecoration:'none' }}>Sign in</Link>
+          <div style={{ marginTop: 12 }}>
+            <span style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: '0.12em',
+              padding: '5px 14px', borderRadius: 99,
+              background: 'rgba(196,149,90,0.10)', border: '1px solid rgba(196,149,90,0.24)',
+              color: GOLD, display: 'inline-flex', alignItems: 'center', gap: 5
+            }}>
+              <Sparkles size={11} /> CREATE YOUR FREE ACCOUNT
+            </span>
           </div>
         </div>
 
-        <div style={{ textAlign:'center', marginTop:22 }}>
-          <span style={{ display:'inline-flex', alignItems:'center', gap:7, fontSize:12, color:C.dim }}>
-            <ShieldCheck size={13} color={C.pine}/> AES-256 encrypted · Free forever for UIC students
+        {/* Form Card */}
+        <div style={{
+          background: T.card,
+          border: `1px solid ${AB}`,
+          borderRadius: 24,
+          padding: '40px 36px',
+          backdropFilter: 'blur(24px)',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.55), 0 0 32px rgba(123,164,184,0.12)',
+        }}>
+          <h1 style={{
+            fontSize: 26, fontWeight: 900, letterSpacing: '-0.03em',
+            marginBottom: 6, color: T.heading, fontFamily: 'var(--font-heading)'
+          }}>
+            Get Started Free
+          </h1>
+          <p style={{ color: T.muted, fontSize: 14, marginBottom: 30 }}>
+            Join international students managing taxes effortlessly.
+          </p>
+
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{
+                background: 'rgba(239,68,68,0.10)',
+                border: '1px solid rgba(239,68,68,0.25)',
+                borderRadius: 12,
+                padding: '12px 16px',
+                marginBottom: 24,
+                color: '#FCA5A5',
+                fontSize: 13,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+              }}
+            >
+              <span style={{ fontSize: 16 }}>⚠</span>
+              <span>{error}</span>
+            </motion.div>
+          )}
+
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {/* Name Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div>
+                <label style={labelStyle}>First Name</label>
+                <div style={{ position: 'relative' }}>
+                  <User size={16} color={A} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', opacity: 0.8 }} />
+                  <input
+                    id="reg-first"
+                    type="text"
+                    placeholder="Ada"
+                    value={firstName}
+                    onChange={e => setFirstName(e.target.value)}
+                    required
+                    style={{ ...inputStyle, paddingLeft: 44 }}
+                    onFocus={e => { e.currentTarget.style.borderColor = AB; e.currentTarget.style.boxShadow = '0 0 16px rgba(123,164,184,0.15)'; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = 'none'; }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Last Name</label>
+                <input
+                  id="reg-last"
+                  type="text"
+                  placeholder="Lovelace"
+                  value={lastName}
+                  onChange={e => setLastName(e.target.value)}
+                  required
+                  style={inputStyle}
+                  onFocus={e => { e.currentTarget.style.borderColor = AB; e.currentTarget.style.boxShadow = '0 0 16px rgba(123,164,184,0.15)'; }}
+                  onBlur={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = 'none'; }}
+                />
+              </div>
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <label style={labelStyle}>Email Address</label>
+              <div style={{ position: 'relative' }}>
+                <Mail size={16} color={A} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', opacity: 0.8 }} />
+                <input
+                  id="reg-email"
+                  type="email"
+                  placeholder="you@uic.edu"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  style={{ ...inputStyle, paddingLeft: 44 }}
+                  onFocus={e => { e.currentTarget.style.borderColor = AB; e.currentTarget.style.boxShadow = '0 0 16px rgba(123,164,184,0.15)'; }}
+                  onBlur={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = 'none'; }}
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label style={labelStyle}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <Lock size={16} color={A} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', opacity: 0.8 }} />
+                <input
+                  id="reg-password"
+                  type={showPw ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  style={{ ...inputStyle, paddingLeft: 44, paddingRight: 44 }}
+                  onFocus={e => { e.currentTarget.style.borderColor = AB; e.currentTarget.style.boxShadow = '0 0 16px rgba(123,164,184,0.15)'; }}
+                  onBlur={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = 'none'; }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(s => !s)}
+                  style={{
+                    position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer', color: T.muted,
+                    display: 'flex', padding: 0, transition: 'color 0.15s'
+                  }}
+                >
+                  {showPw ? <EyeOff size={16} color={T.text} /> : <Eye size={16} color={T.muted} />}
+                </button>
+              </div>
+              <PasswordStrength password={password} />
+            </div>
+
+            {/* Submit Button */}
+            <motion.button
+              id="reg-submit"
+              type="submit"
+              disabled={loading}
+              whileHover={{ scale: loading ? 1 : 1.02 }}
+              whileTap={{ scale: loading ? 1 : 0.98 }}
+              style={{
+                width: '100%',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 10,
+                padding: '14px',
+                borderRadius: 12,
+                background: loading ? 'rgba(123,164,184,0.10)' : AG,
+                border: `1px solid ${AB}`,
+                color: T.heading,
+                fontWeight: 700,
+                fontSize: 15,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+                backdropFilter: 'blur(8px)',
+                marginTop: 6,
+                transition: 'all 0.2s',
+              }}
+            >
+              {loading ? (
+                <span>Creating account…</span>
+              ) : (
+                <>
+                  <span>Create Free Account</span>
+                  <ArrowRight size={16} />
+                </>
+              )}
+            </motion.button>
+          </form>
+
+          {/* Footer Navigation */}
+          <div style={{ marginTop: 28, textAlign: 'center', borderTop: `1px solid ${T.border}`, paddingTop: 20 }}>
+            <span style={{ color: T.muted, fontSize: 13 }}>Already have an account? </span>
+            <Link href="/login" style={{ color: A, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+              Sign in
+            </Link>
+          </div>
+        </div>
+
+        {/* Security badge */}
+        <div style={{ textAlign: 'center', marginTop: 24 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: T.muted }}>
+            <ShieldCheck size={14} color={A} /> AES-256 encrypted · Free forever for UIC students
           </span>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
